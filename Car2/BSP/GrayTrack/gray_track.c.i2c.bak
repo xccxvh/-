@@ -1,0 +1,328 @@
+#include "GrayTrack/gray_track.h"
+#include "MYI2C1/myi2c.h"
+
+/*
+ * 灰度模块 I2C 协议实现（软件 I2C）。
+ *
+ * 本文件通过 PA0/PA1 上的位操作 I2C 访问灰度模块寄存器：
+ * - 读状态区 0x00~0x04：协议版本、设备 ID、心跳、采样计数、比较位图。
+ * - 读数据区 0x20~0x2F：8 路 ADC 原始值（小端）。
+ *
+ * 实现原因：
+ * - 与参考例程 CORE_TEST_SIMPLE_PROTOCOL 相同硬件下，软件 I2C 已验证可通信，
+ *   而 I2C0 硬件控制器在该板卡组合下无法完成寄存器读事务。
+ * - gray_track_init() 会关闭硬件 I2C 控制器并调用 MyI2C_Init() 接管 PA0/PA1。
+ *
+ * 时序约束：
+ * - 读寄存器采用“写 1 字节地址 + 重复起始 + 读 N 字节 + STOP”，与 gray_sensor.c 一致。
+ * - 所有读写均为阻塞调用，不应在中断服务函数中使用。
+ */
+
+#define GRAY_TRACK_REG_PROTO_VERSION     (0x00U)
+#define GRAY_TRACK_REG_COMPARE_BITS      (0x04U)
+#define GRAY_TRACK_REG_ADC_BASE          (0x20U)
+#define GRAY_TRACK_REG_LED_THRESHOLD_L   (0x13U)
+
+#define GRAY_TRACK_STATUS_BYTES          (5U)
+#define GRAY_TRACK_ADC_BYTES             (GRAY_TRACK_CHANNEL_COUNT * 2U)
+
+static uint32_t s_gray_track_error_count;
+static gray_track_result_t s_gray_track_last_result = GRAY_TRACK_RESULT_OK;
+static gray_track_snapshot_t s_gray_track_last_snapshot;
+
+static void gray_track_set_result(gray_track_result_t result)
+{
+    s_gray_track_last_result = result;
+    if (result != GRAY_TRACK_RESULT_OK) {
+        s_gray_track_error_count++;
+    }
+}
+
+/*
+ * 发送 1 字节并检查从机 ACK。
+ * 返回 true 表示从机应答成功，可继续本事务。
+ */
+static bool gray_track_send_byte_with_ack(uint8_t value)
+{
+    MyI2C_SendByte(value);
+    return (MyI2C_ReceiveAck() == 0U);
+}
+
+/*
+ * 按超级简化协议读取连续寄存器。
+ * 时序：START + 地址(W) + 寄存器地址 + 重复 START + 地址(R) + 读 length 字节 + STOP。
+ */
+static bool gray_track_read_registers(uint8_t start_reg, uint8_t *buffer, uint16_t length)
+{
+    uint16_t index;
+
+    if ((buffer == NULL) || (length == 0U)) {
+        gray_track_set_result(GRAY_TRACK_RESULT_PARAM_ERROR);
+        return false;
+    }
+
+    MyI2C_Start();
+    if (!gray_track_send_byte_with_ack(GRAY_TRACK_I2C_ADDR_8BIT)) {
+        MyI2C_Stop();
+        gray_track_set_result(GRAY_TRACK_RESULT_BUS_ERROR);
+        return false;
+    }
+
+    if (!gray_track_send_byte_with_ack(start_reg)) {
+        MyI2C_Stop();
+        gray_track_set_result(GRAY_TRACK_RESULT_BUS_ERROR);
+        return false;
+    }
+
+    MyI2C_Start();
+    if (!gray_track_send_byte_with_ack((uint8_t)(GRAY_TRACK_I2C_ADDR_8BIT | 0x01U))) {
+        MyI2C_Stop();
+        gray_track_set_result(GRAY_TRACK_RESULT_BUS_ERROR);
+        return false;
+    }
+
+    for (index = 0U; index < length; index++) {
+        buffer[index] = MyI2C_ReceiveByte();
+        /* 最后一字节发 NACK(1)，其余字节发 ACK(0)。 */
+        MyI2C_SendAck((uint8_t)((index == (length - 1U)) ? 1U : 0U));
+    }
+
+    MyI2C_Stop();
+    gray_track_set_result(GRAY_TRACK_RESULT_OK);
+    return true;
+}
+
+/*
+ * 向灰度模块连续寄存器写入数据。
+ * 时序：START + 地址(W) + 起始寄存器 + N 字节 + STOP。
+ */
+static bool gray_track_write_registers(uint8_t start_reg,
+                                       const uint8_t *buffer,
+                                       uint16_t length)
+{
+    uint16_t index;
+
+    if ((buffer == NULL) || (length == 0U)) {
+        gray_track_set_result(GRAY_TRACK_RESULT_PARAM_ERROR);
+        return false;
+    }
+
+    MyI2C_Start();
+    if (!gray_track_send_byte_with_ack(GRAY_TRACK_I2C_ADDR_8BIT)) {
+        MyI2C_Stop();
+        gray_track_set_result(GRAY_TRACK_RESULT_BUS_ERROR);
+        return false;
+    }
+
+    if (!gray_track_send_byte_with_ack(start_reg)) {
+        MyI2C_Stop();
+        gray_track_set_result(GRAY_TRACK_RESULT_BUS_ERROR);
+        return false;
+    }
+
+    for (index = 0U; index < length; index++) {
+        if (!gray_track_send_byte_with_ack(buffer[index])) {
+            MyI2C_Stop();
+            gray_track_set_result(GRAY_TRACK_RESULT_BUS_ERROR);
+            return false;
+        }
+    }
+
+    MyI2C_Stop();
+    gray_track_set_result(GRAY_TRACK_RESULT_OK);
+    return true;
+}
+
+static uint16_t gray_track_sanitize_led_threshold(uint16_t threshold)
+{
+    if (threshold > GRAY_TRACK_LED_THRESHOLD_MAX) {
+        return GRAY_TRACK_LED_THRESHOLD_MAX;
+    }
+
+    return threshold;
+}
+
+bool gray_track_set_led_threshold(uint16_t threshold)
+{
+    uint8_t raw[2];
+    uint16_t sanitized = gray_track_sanitize_led_threshold(threshold);
+
+    raw[0] = (uint8_t)(sanitized & 0x00FFU);
+    raw[1] = (uint8_t)((sanitized >> 8) & 0x00FFU);
+    return gray_track_write_registers(GRAY_TRACK_REG_LED_THRESHOLD_L, raw, 2U);
+}
+
+bool gray_track_get_led_threshold(uint16_t *threshold)
+{
+    uint8_t raw[2];
+
+    if (threshold == NULL) {
+        gray_track_set_result(GRAY_TRACK_RESULT_PARAM_ERROR);
+        return false;
+    }
+
+    if (!gray_track_read_registers(GRAY_TRACK_REG_LED_THRESHOLD_L, raw, 2U)) {
+        return false;
+    }
+
+    *threshold = (uint16_t)raw[0] | ((uint16_t)raw[1] << 8);
+    return true;
+}
+
+void gray_track_init(void)
+{
+    /*
+     * 关闭 I2C0 硬件控制器，避免与软件 I2C 同时驱动 PA0/PA1。
+     * 随后按参考例程初始化 GPIO 位操作总线。
+     */
+    DL_I2C_disableController(I2C_GRAY_INST);
+    MyI2C_Init();
+
+    s_gray_track_error_count = 0U;
+    s_gray_track_last_result = GRAY_TRACK_RESULT_OK;
+    memset(&s_gray_track_last_snapshot, 0, sizeof(s_gray_track_last_snapshot));
+}
+
+bool gray_track_read_compare_bits(uint8_t *compare_bits)
+{
+    uint8_t value = 0U;
+
+    if (compare_bits == NULL) {
+        gray_track_set_result(GRAY_TRACK_RESULT_PARAM_ERROR);
+        return false;
+    }
+
+    if (!gray_track_read_registers(GRAY_TRACK_REG_COMPARE_BITS, &value, 1U)) {
+        return false;
+    }
+
+    *compare_bits = value;
+    return true;
+}
+
+bool gray_track_read_adc(uint16_t adc[GRAY_TRACK_CHANNEL_COUNT])
+{
+    uint8_t raw[GRAY_TRACK_ADC_BYTES];
+    uint32_t channel;
+
+    if (adc == NULL) {
+        gray_track_set_result(GRAY_TRACK_RESULT_PARAM_ERROR);
+        return false;
+    }
+
+    if (!gray_track_read_registers(GRAY_TRACK_REG_ADC_BASE,
+                                   raw,
+                                   (uint16_t)sizeof(raw))) {
+        return false;
+    }
+
+    for (channel = 0U; channel < GRAY_TRACK_CHANNEL_COUNT; channel++) {
+        adc[channel] = (uint16_t)raw[channel * 2U] |
+                       (uint16_t)((uint16_t)raw[channel * 2U + 1U] << 8);
+    }
+
+    return true;
+}
+
+/*
+ * 解析并校验 0x00~0x04 状态字节，写入 snapshot 对应字段。
+ */
+static bool gray_track_apply_status(gray_track_snapshot_t *snapshot,
+                                    const uint8_t *status)
+{
+    if ((snapshot == NULL) || (status == NULL)) {
+        gray_track_set_result(GRAY_TRACK_RESULT_PARAM_ERROR);
+        return false;
+    }
+
+    snapshot->proto_version  = status[0];
+    snapshot->device_id      = status[1];
+    snapshot->heartbeat      = status[2];
+    snapshot->sample_counter = status[3];
+    snapshot->compare_bits   = status[4];
+
+    if ((snapshot->proto_version != GRAY_TRACK_PROTO_VERSION) ||
+        (snapshot->device_id != GRAY_TRACK_DEVICE_ID)) {
+        snapshot->result = GRAY_TRACK_RESULT_ID_MISMATCH;
+        snapshot->online = false;
+        s_gray_track_last_snapshot = *snapshot;
+        gray_track_set_result(GRAY_TRACK_RESULT_ID_MISMATCH);
+        return false;
+    }
+
+    snapshot->online = true;
+    snapshot->result = GRAY_TRACK_RESULT_OK;
+    s_gray_track_last_snapshot = *snapshot;
+    gray_track_set_result(GRAY_TRACK_RESULT_OK);
+    return true;
+}
+
+bool gray_track_read_status(gray_track_snapshot_t *snapshot)
+{
+    uint8_t status[GRAY_TRACK_STATUS_BYTES];
+
+    if (snapshot == NULL) {
+        gray_track_set_result(GRAY_TRACK_RESULT_PARAM_ERROR);
+        return false;
+    }
+
+    if (!gray_track_read_registers(GRAY_TRACK_REG_PROTO_VERSION,
+                                   status,
+                                   (uint16_t)sizeof(status))) {
+        snapshot->result = gray_track_get_last_result();
+        snapshot->online = false;
+        return false;
+    }
+
+    return gray_track_apply_status(snapshot, status);
+}
+
+bool gray_track_read_snapshot(gray_track_snapshot_t *snapshot)
+{
+    if (snapshot == NULL) {
+        gray_track_set_result(GRAY_TRACK_RESULT_PARAM_ERROR);
+        return false;
+    }
+
+    memset(snapshot, 0, sizeof(*snapshot));
+
+    if (!gray_track_read_status(snapshot)) {
+        return false;
+    }
+
+    if (!gray_track_read_adc(snapshot->adc)) {
+        snapshot->result = gray_track_get_last_result();
+        snapshot->online = false;
+        return false;
+    }
+
+    return true;
+}
+
+uint32_t gray_track_get_error_count(void)
+{
+    return s_gray_track_error_count;
+}
+
+gray_track_result_t gray_track_get_last_result(void)
+{
+    return s_gray_track_last_result;
+}
+
+const char *gray_track_result_text(gray_track_result_t result)
+{
+    switch (result) {
+    case GRAY_TRACK_RESULT_OK:
+        return "OK";
+    case GRAY_TRACK_RESULT_PARAM_ERROR:
+        return "PARAM";
+    case GRAY_TRACK_RESULT_TIMEOUT:
+        return "TIMEOUT";
+    case GRAY_TRACK_RESULT_BUS_ERROR:
+        return "BUS";
+    case GRAY_TRACK_RESULT_ID_MISMATCH:
+        return "ID";
+    default:
+        return "UNKNOWN";
+    }
+}

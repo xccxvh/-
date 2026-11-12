@@ -1,0 +1,468 @@
+/**
+ * These arguments were used when this file was generated. They will be automatically applied on subsequent loads
+ * via the GUI or CLI. Run CLI with '--help' for additional information on how to override these arguments.
+ * @cliArgs --device "MSPM0G351X" --part "Default" --package "LQFP-80(PN)" --product "mspm0_sdk@2.08.00.03"
+ * @v2CliArgs --device "MSPM0G3519" --package "LQFP-80(PN)" --product "mspm0_sdk@2.08.00.03"
+ * @versions {"tool":"1.25.0+4268"}
+ */
+
+/**
+ * Import the modules used in this configuration.
+ */
+const ADC12  = scripting.addModule("/ti/driverlib/ADC12", {}, false);
+const ADC121 = ADC12.addInstance();
+const GPIO   = scripting.addModule("/ti/driverlib/GPIO", {}, false);
+const GPIO1  = GPIO.addInstance();
+const GPIO2  = GPIO.addInstance();
+const GPIO3  = GPIO.addInstance();
+const GPIO4  = GPIO.addInstance();
+const GPIO5  = GPIO.addInstance();
+const GPIO6  = GPIO.addInstance();
+const GPIO7  = GPIO.addInstance();
+const MCAN   = scripting.addModule("/ti/driverlib/MCAN", {}, false);
+const MCAN1  = MCAN.addInstance();
+const PWM    = scripting.addModule("/ti/driverlib/PWM", {}, false);
+const PWM1   = PWM.addInstance();
+const PWM2   = PWM.addInstance();
+const PWM3   = PWM.addInstance();
+const QEI    = scripting.addModule("/ti/driverlib/QEI", {}, false);
+const QEI1   = QEI.addInstance();
+const QEI2   = QEI.addInstance();
+const SPI    = scripting.addModule("/ti/driverlib/SPI", {}, false);
+const SPI1   = SPI.addInstance();
+const SPI2   = SPI.addInstance();
+const SYSCTL = scripting.addModule("/ti/driverlib/SYSCTL");
+const TIMER  = scripting.addModule("/ti/driverlib/TIMER", {}, false);
+const TIMER1 = TIMER.addInstance();
+const UART   = scripting.addModule("/ti/driverlib/UART", {}, false);
+const UART1  = UART.addInstance();
+const UART2  = UART.addInstance();
+const UART3  = UART.addInstance();
+const UART4  = UART.addInstance();
+const VREF   = scripting.addModule("/ti/driverlib/VREF");
+
+/**
+ * Write custom configuration values to the imported modules.
+ */
+const divider2       = system.clockTree["HFCLK4MFPCLKDIV"];
+divider2.divideValue = 10;
+
+const divider9       = system.clockTree["UDIV"];
+divider9.divideValue = 2;
+
+const gate7  = system.clockTree["MFCLKGATE"];
+gate7.enable = true;
+
+const gate8  = system.clockTree["MFPCLKGATE"];
+gate8.enable = true;
+
+const multiplier2         = system.clockTree["PLL_QDIV"];
+multiplier2.multiplyValue = 4;
+
+const mux4       = system.clockTree["EXHFMUX"];
+mux4.inputSelect = "EXHFMUX_XTAL";
+
+const mux5       = system.clockTree["EXLFMUX"];
+mux5.inputSelect = "EXLFMUX_XTAL";
+
+const mux8       = system.clockTree["HSCLKMUX"];
+mux8.inputSelect = "HSCLKMUX_SYSPLL0";
+
+const mux9       = system.clockTree["LFXTMUX"];
+mux9.inputSelect = "LFXTMUX_TRUE";
+
+const mux10       = system.clockTree["MFPCLKMUX"];
+mux10.inputSelect = "MFPCLKMUX_HFCLK";
+
+const mux12       = system.clockTree["SYSPLLMUX"];
+mux12.inputSelect = "zSYSPLLMUX_HFCLK";
+
+const pinFunction4                        = system.clockTree["HFXT"];
+pinFunction4.inputFreq                    = 40;
+pinFunction4.enable                       = true;
+pinFunction4.HFXTStartup                  = 100;
+pinFunction4.peripheral.$assign           = "SYSCTL";
+pinFunction4.peripheral.hfxInPin.$assign  = "PA5";
+pinFunction4.peripheral.hfxOutPin.$assign = "PA6";
+
+const pinFunction6     = system.clockTree["LFXT"];
+pinFunction6.inputFreq = 32.768;
+pinFunction6.enable    = true;
+
+ADC121.$name                      = "ADC12_0";
+ADC121.sampClkSrc                 = "DL_ADC12_CLOCK_ULPCLK";
+ADC121.sampClkDiv                 = "DL_ADC12_CLOCK_DIVIDE_8";
+ADC121.powerDownMode              = "DL_ADC12_POWER_DOWN_MODE_MANUAL";
+ADC121.samplingOperationMode      = "sequence";
+ADC121.sampleTime0                = "100 us";
+ADC121.endAdd                     = 3;
+ADC121.enabledInterrupts          = ["DL_ADC12_INTERRUPT_MEM3_RESULT_LOADED"];
+ADC121.adcMem1chansel             = "DL_ADC12_INPUT_CHAN_1";
+ADC121.adcMem2chansel             = "DL_ADC12_INPUT_CHAN_2";
+ADC121.adcMem3chansel             = "DL_ADC12_INPUT_CHAN_3";
+ADC121.adcPin0Config.$name        = "ti_driverlib_gpio_GPIOPinGeneric12";
+ADC121.adcPin1Config.$name        = "ti_driverlib_gpio_GPIOPinGeneric13";
+ADC121.adcPin2Config.$name        = "ti_driverlib_gpio_GPIOPinGeneric14";
+ADC121.peripheral.adcPin0.$assign = "PA27";
+ADC121.peripheral.adcPin1.$assign = "PA26";
+ADC121.peripheral.adcPin2.$assign = "PA25";
+ADC121.peripheral.adcPin3.$assign = "PA24";
+ADC121.adcPin3Config.$name        = "ti_driverlib_gpio_GPIOPinGeneric15";
+
+const Board                       = scripting.addModule("/ti/driverlib/Board", {}, false);
+Board.peripheral.$assign          = "DEBUGSS";
+Board.peripheral.swclkPin.$assign = "PA20";
+Board.peripheral.swdioPin.$assign = "PA19";
+
+GPIO1.$name                         = "LCD";
+GPIO1.associatedPins.create(3);
+GPIO1.associatedPins[0].$name       = "BLK";
+GPIO1.associatedPins[0].pin.$assign = "PA7";
+GPIO1.associatedPins[1].$name       = "DC";
+GPIO1.associatedPins[1].pin.$assign = "PA14";
+GPIO1.associatedPins[2].$name       = "RES";
+GPIO1.associatedPins[2].pin.$assign = "PC0";
+
+GPIO2.$name                              = "KEY";
+GPIO2.associatedPins.create(2);
+GPIO2.associatedPins[0].$name            = "K1";
+GPIO2.associatedPins[0].direction        = "INPUT";
+GPIO2.associatedPins[0].internalResistor = "PULL_UP";
+GPIO2.associatedPins[0].interruptEn      = true;
+GPIO2.associatedPins[0].polarity         = "FALL";
+GPIO2.associatedPins[0].pin.$assign      = "PA17";
+GPIO2.associatedPins[1].$name            = "K2";
+GPIO2.associatedPins[1].direction        = "INPUT";
+GPIO2.associatedPins[1].internalResistor = "PULL_UP";
+GPIO2.associatedPins[1].interruptEn      = true;
+GPIO2.associatedPins[1].polarity         = "FALL";
+GPIO2.associatedPins[1].pin.$assign      = "PC5";
+
+/*
+ * DRV8874 四路 PH/EN 模式方向脚（PH/IN2）。
+ * 速度 PWM 由下方 MOTOR_PWM（TIMG14）在 PA29/PA30/PA28/PB1 输出，接 EN/IN1。
+ */
+GPIO3.$name                               = "MOTOR";
+GPIO3.associatedPins.create(12);
+GPIO3.associatedPins[0].$name             = "PH1";
+GPIO3.associatedPins[0].pin.$assign       = "PA31";
+GPIO3.associatedPins[1].$name             = "PH2";
+GPIO3.associatedPins[1].pin.$assign       = "PB0";
+GPIO3.associatedPins[2].$name             = "PH3";
+GPIO3.associatedPins[2].pin.$assign       = "PB2";
+GPIO3.associatedPins[3].$name             = "PH4";
+GPIO3.associatedPins[3].pin.$assign       = "PB3";
+GPIO3.associatedPins[4].$name             = "nSLEEP1";
+GPIO3.associatedPins[4].direction         = "INPUT";
+GPIO3.associatedPins[4].internalResistor  = "PULL_UP";
+GPIO3.associatedPins[4].pin.$assign       = "PB4";
+GPIO3.associatedPins[5].$name             = "nSLEEP2";
+GPIO3.associatedPins[5].direction         = "INPUT";
+GPIO3.associatedPins[5].internalResistor  = "PULL_UP";
+GPIO3.associatedPins[5].pin.$assign       = "PB5";
+GPIO3.associatedPins[6].$name             = "nSLEEP3";
+GPIO3.associatedPins[6].direction         = "INPUT";
+GPIO3.associatedPins[6].internalResistor  = "PULL_UP";
+GPIO3.associatedPins[6].pin.$assign       = "PB28";
+GPIO3.associatedPins[7].$name             = "nSLEEP4";
+GPIO3.associatedPins[7].direction         = "INPUT";
+GPIO3.associatedPins[7].internalResistor  = "PULL_UP";
+GPIO3.associatedPins[7].pin.$assign       = "PB31";
+GPIO3.associatedPins[8].$name             = "nFAULT1";
+GPIO3.associatedPins[8].direction         = "INPUT";
+GPIO3.associatedPins[8].internalResistor  = "PULL_UP";
+GPIO3.associatedPins[8].pin.$assign       = "PB6";
+GPIO3.associatedPins[9].$name             = "nFAULT2";
+GPIO3.associatedPins[9].direction         = "INPUT";
+GPIO3.associatedPins[9].internalResistor  = "PULL_UP";
+GPIO3.associatedPins[9].pin.$assign       = "PB7";
+GPIO3.associatedPins[10].$name            = "nFAULT3";
+GPIO3.associatedPins[10].direction        = "INPUT";
+GPIO3.associatedPins[10].internalResistor = "PULL_UP";
+GPIO3.associatedPins[10].pin.$assign      = "PB8";
+GPIO3.associatedPins[11].$name            = "nFAULT4";
+GPIO3.associatedPins[11].direction        = "INPUT";
+GPIO3.associatedPins[11].internalResistor = "PULL_UP";
+GPIO3.associatedPins[11].pin.$assign      = "PB9";
+
+GPIO4.$name                         = "LED";
+GPIO4.associatedPins.create(2);
+GPIO4.associatedPins[0].$name       = "L1";
+GPIO4.associatedPins[0].pin.$assign = "PB19";
+GPIO4.associatedPins[1].$name       = "L2";
+GPIO4.associatedPins[1].pin.$assign = "PC7";
+
+GPIO5.$name                         = "KEYBoard";
+GPIO5.associatedPins.create(8);
+GPIO5.associatedPins[0].$name       = "H1";
+GPIO5.associatedPins[0].pin.$assign = "PB20";
+GPIO5.associatedPins[1].$name       = "H2";
+GPIO5.associatedPins[1].pin.$assign = "PB23";
+GPIO5.associatedPins[2].$name       = "H3";
+GPIO5.associatedPins[2].pin.$assign = "PB24";
+GPIO5.associatedPins[3].$name       = "H4";
+GPIO5.associatedPins[3].pin.$assign = "PB25";
+GPIO5.associatedPins[4].$name       = "V1";
+GPIO5.associatedPins[4].pin.$assign = "PB26";
+GPIO5.associatedPins[5].$name       = "V2";
+GPIO5.associatedPins[5].pin.$assign = "PB27";
+GPIO5.associatedPins[6].$name       = "V3";
+GPIO5.associatedPins[6].pin.$assign = "PC8";
+GPIO5.associatedPins[7].$name       = "V4";
+GPIO5.associatedPins[7].pin.$assign = "PC9";
+
+GPIO6.$name                         = "Other";
+GPIO6.associatedPins[0].$name       = "BINT";
+GPIO6.associatedPins[0].pin.$assign = "PC1";
+
+GPIO7.$name                          = "IMU";
+GPIO7.associatedPins.create(3);
+GPIO7.associatedPins[0].$name        = "INT1";
+GPIO7.associatedPins[0].direction    = "INPUT";
+GPIO7.associatedPins[0].pin.$assign  = "PC2";
+GPIO7.associatedPins[1].$name        = "INT2";
+GPIO7.associatedPins[1].direction    = "INPUT";
+GPIO7.associatedPins[1].pin.$assign  = "PC3";
+GPIO7.associatedPins[2].$name        = "CS";
+GPIO7.associatedPins[2].initialValue = "SET";
+GPIO7.associatedPins[2].pin.$assign  = "PC4";
+
+/*
+ * MCAN0 / CANFD0 总线接口：
+ * - PA12 连接 CAN 收发器 TXD，PA13 连接 CAN 收发器 RXD。
+ * - 当前测试发送经典 CAN 标准数据帧，默认仲裁速率 500 kbit/s；若外部总线为
+ *   250 kbit/s 或 1 Mbit/s，只需要在这里调整 desiredNomRate 后重新生成 SysConfig。
+ * - BSP/CAN/can_bus.c 会在运行期补充“接收所有数据帧到 FIFO0”的滤波和中断使能，
+ *   SysConfig 仍然负责外设、引脚和消息 RAM 初始化。
+ */
+MCAN1.$name                    = "MCAN0";
+MCAN1.fdMode                   = false;
+MCAN1.brsEnable                = false;
+MCAN1.desiredNomRate           = 500;
+MCAN1.rrfe                     = true;
+MCAN1.rrfs                     = true;
+MCAN1.anfe                     = "0";
+MCAN1.anfs                     = "0";
+MCAN1.rxBufElemSize            = "DL_MCAN_ELEM_SIZE_8BYTES";
+MCAN1.rxFIFO0ElemSize          = "DL_MCAN_ELEM_SIZE_8BYTES";
+MCAN1.rxFIFO1ElemSize          = "DL_MCAN_ELEM_SIZE_8BYTES";
+MCAN1.stdFiltType              = "00";
+MCAN1.stdFiltElem              = "001";
+MCAN1.stdFiltID1               = 0;
+MCAN1.stdFiltID2               = 2047;
+MCAN1.lss                      = 1;
+MCAN1.lse                      = 0;
+MCAN1.txBufNum                 = 1;
+MCAN1.txEventFIFOSize          = 0;
+MCAN1.txEventFIFOWaterMark     = 0;
+MCAN1.rxFIFO0waterMark         = 0;
+MCAN1.rxFIFO1size              = 0;
+/*
+ * 消息 RAM 显式分区，避免默认地址在启用发送缓冲、TX Event FIFO 和 RX FIFO 时互相覆盖：
+ * 标准滤波表从 0 开始，TX Buffer 从 16 开始，RX FIFO0 从 96 开始，预留 160 给 RX Buffer。
+ */
+MCAN1.txStartAddr              = 16;
+MCAN1.rxFIFO0startAddr         = 96;
+MCAN1.rxFIFO1startAddr         = 144;
+MCAN1.rxBufStartAddr           = 160;
+MCAN1.peripheral.rxPin.$assign = "PA13";
+MCAN1.peripheral.txPin.$assign = "PA12";
+MCAN1.txPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric6";
+MCAN1.rxPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric7";
+
+PWM1.$name                      = "PWM_0";
+PWM1.peripheral.ccp0Pin.$assign = "PA8";
+PWM1.peripheral.ccp1Pin.$assign = "PA9";
+PWM1.PWM_CHANNEL_0.$name        = "ti_driverlib_pwm_PWMTimerCC0";
+PWM1.PWM_CHANNEL_1.$name        = "ti_driverlib_pwm_PWMTimerCC1";
+PWM1.ccp0PinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric2";
+PWM1.ccp1PinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric3";
+
+PWM2.$name                      = "PWM_1";
+PWM2.peripheral.ccp0Pin.$assign = "PA15";
+PWM2.peripheral.ccp1Pin.$assign = "PA16";
+PWM2.PWM_CHANNEL_0.$name        = "ti_driverlib_pwm_PWMTimerCC2";
+PWM2.PWM_CHANNEL_1.$name        = "ti_driverlib_pwm_PWMTimerCC3";
+PWM2.ccp0PinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric8";
+PWM2.ccp1PinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric9";
+
+/*
+ * 四路电机 EN/IN1 速度 PWM（TIMG14，40 kHz，周期 1000）。
+ * M1~M4 与 C0~C3 一一对应：PA29 / PA30 / PA28 / PB1。
+ */
+PWM3.$name                      = "MOTOR_PWM";
+PWM3.ccIndex                    = [0,1,2,3];
+PWM3.PWM_CHANNEL_0.$name        = "ti_driverlib_pwm_PWMTimerCC4";
+PWM3.PWM_CHANNEL_1.$name        = "ti_driverlib_pwm_PWMTimerCC5";
+PWM3.ccp0PinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric16";
+PWM3.ccp1PinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric17";
+PWM3.peripheral.ccp0Pin.$assign = "PA29";
+PWM3.peripheral.ccp1Pin.$assign = "PA30";
+PWM3.peripheral.ccp2Pin.$assign = "PA28";
+PWM3.peripheral.ccp3Pin.$assign = "PB1";
+PWM3.PWM_CHANNEL_2.$name        = "ti_driverlib_pwm_PWMTimerCC6";
+PWM3.PWM_CHANNEL_3.$name        = "ti_driverlib_pwm_PWMTimerCC7";
+PWM3.ccp2PinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric18";
+PWM3.ccp3PinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric19";
+
+QEI1.$name                              = "QEI_M1";
+QEI1.peripheral.ccp0Pin.$assign         = "PB29";
+QEI1.peripheral.ccp1Pin.$assign         = "PB30";
+QEI1.ccp0PinConfig.hideOutputInversion  = scripting.forceWrite(false);
+QEI1.ccp0PinConfig.onlyInternalResistor = scripting.forceWrite(false);
+QEI1.ccp0PinConfig.passedPeripheralType = scripting.forceWrite("Digital");
+QEI1.ccp0PinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric29";
+QEI1.ccp1PinConfig.hideOutputInversion  = scripting.forceWrite(false);
+QEI1.ccp1PinConfig.onlyInternalResistor = scripting.forceWrite(false);
+QEI1.ccp1PinConfig.passedPeripheralType = scripting.forceWrite("Digital");
+QEI1.ccp1PinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric30";
+
+QEI2.$name                      = "QEI_1";
+QEI2.peripheral.ccp0Pin.$assign = "PC6";
+QEI2.peripheral.ccp1Pin.$assign = "PA22";
+QEI2.ccp0PinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric31";
+QEI2.ccp1PinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric32";
+
+SPI1.$name                              = "SPI_1";
+SPI1.frameFormat                        = "MOTO3";
+SPI1.polarity                           = "1";
+SPI1.phase                              = "1";
+SPI1.targetBitRate                      = 2000000;
+SPI1.sclkPinConfig.direction            = scripting.forceWrite("OUTPUT");
+SPI1.sclkPinConfig.onlyInternalResistor = scripting.forceWrite(false);
+SPI1.sclkPinConfig.passedPeripheralType = scripting.forceWrite("Digital");
+SPI1.sclkPinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric24";
+SPI1.mosiPinConfig.direction            = scripting.forceWrite("OUTPUT");
+SPI1.mosiPinConfig.hideOutputInversion  = scripting.forceWrite(false);
+SPI1.mosiPinConfig.onlyInternalResistor = scripting.forceWrite(false);
+SPI1.mosiPinConfig.passedPeripheralType = scripting.forceWrite("Digital");
+SPI1.mosiPinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric25";
+SPI1.misoPinConfig.onlyInternalResistor = scripting.forceWrite(false);
+SPI1.misoPinConfig.passedPeripheralType = scripting.forceWrite("Digital");
+SPI1.misoPinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric26";
+SPI1.peripheral.$assign                 = "SPI1";
+SPI1.peripheral.sclkPin.$assign         = "PB16";
+SPI1.peripheral.mosiPin.$assign         = "PB15";
+SPI1.peripheral.misoPin.$assign         = "PB14";
+
+SPI2.$name                              = "SPI_0";
+SPI2.frameFormat                        = "MOTO3";
+SPI2.polarity                           = "1";
+SPI2.phase                              = "1";
+SPI2.direction                          = "PICO";
+SPI2.sclkPinConfig.direction            = scripting.forceWrite("OUTPUT");
+SPI2.sclkPinConfig.onlyInternalResistor = scripting.forceWrite(false);
+SPI2.sclkPinConfig.passedPeripheralType = scripting.forceWrite("Digital");
+SPI2.sclkPinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric27";
+SPI2.mosiPinConfig.direction            = scripting.forceWrite("OUTPUT");
+SPI2.mosiPinConfig.hideOutputInversion  = scripting.forceWrite(false);
+SPI2.mosiPinConfig.onlyInternalResistor = scripting.forceWrite(false);
+SPI2.mosiPinConfig.passedPeripheralType = scripting.forceWrite("Digital");
+SPI2.mosiPinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric28";
+SPI2.peripheral.$assign                 = "SPI0";
+SPI2.peripheral.sclkPin.$assign         = "PB18";
+SPI2.peripheral.mosiPin.$assign         = "PB17";
+
+SYSCTL.forceDefaultClkConfig = true;
+SYSCTL.clockTreeEn           = true;
+
+TIMER1.$name              = "TIMER_A1_1MS";
+TIMER1.timerPeriod        = "1 ms";
+TIMER1.timerMode          = "PERIODIC";
+TIMER1.timerClkDiv        = 8;
+TIMER1.interrupts         = ["LOAD"];
+TIMER1.peripheral.$assign = "TIMA1";
+
+UART1.$name                    = "UART_0";
+UART1.targetBaudRate           = 115200;
+UART1.rxFifoThreshold          = "DL_UART_RX_FIFO_LEVEL_ONE_ENTRY";
+UART1.enabledInterrupts        = ["RX"];
+UART1.enableFIFO               = true;
+UART1.peripheral.$assign       = "UART0";
+UART1.peripheral.rxPin.$assign = "PA11";
+UART1.peripheral.txPin.$assign = "PA10";
+UART1.txPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric4";
+UART1.rxPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric5";
+
+UART2.$name                            = "UART_WF";
+UART2.targetBaudRate                   = 115200;
+UART2.rxFifoThreshold                  = "DL_UART_RX_FIFO_LEVEL_ONE_ENTRY";
+UART2.enableFIFO                       = true;
+UART2.peripheral.$assign               = "UART4";
+UART2.peripheral.rxPin.$assign         = "PB11";
+UART2.peripheral.txPin.$assign         = "PB10";
+UART2.txPinConfig.direction            = scripting.forceWrite("OUTPUT");
+UART2.txPinConfig.hideOutputInversion  = scripting.forceWrite(false);
+UART2.txPinConfig.onlyInternalResistor = scripting.forceWrite(false);
+UART2.txPinConfig.passedPeripheralType = scripting.forceWrite("Digital");
+UART2.txPinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric20";
+UART2.rxPinConfig.hideOutputInversion  = scripting.forceWrite(false);
+UART2.rxPinConfig.onlyInternalResistor = scripting.forceWrite(false);
+UART2.rxPinConfig.passedPeripheralType = scripting.forceWrite("Digital");
+UART2.rxPinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric21";
+
+/*
+ * UART3 / UART_BL：HC-05 经典蓝牙模块，出厂 AT 默认 9600 8N1。
+ * MCU PB12=TX→模块 RXD，PB13=RX←模块 TXD。
+ */
+UART3.$name                            = "UART_BL";
+UART3.targetBaudRate                   = 9600;
+UART3.peripheral.$assign               = "UART3";
+UART3.peripheral.rxPin.$assign         = "PB13";
+UART3.peripheral.txPin.$assign         = "PB12";
+UART3.txPinConfig.direction            = scripting.forceWrite("OUTPUT");
+UART3.txPinConfig.hideOutputInversion  = scripting.forceWrite(false);
+UART3.txPinConfig.onlyInternalResistor = scripting.forceWrite(false);
+UART3.txPinConfig.passedPeripheralType = scripting.forceWrite("Digital");
+UART3.txPinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric22";
+UART3.rxPinConfig.hideOutputInversion  = scripting.forceWrite(false);
+UART3.rxPinConfig.onlyInternalResistor = scripting.forceWrite(false);
+UART3.rxPinConfig.passedPeripheralType = scripting.forceWrite("Digital");
+UART3.rxPinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric23";
+
+UART4.$name                            = "UART_6";
+UART4.targetBaudRate                   = 1000000;
+UART4.rxFifoThreshold                  = "DL_UART_RX_FIFO_LEVEL_ONE_ENTRY";
+UART4.enabledInterrupts                = ["RX"];
+UART4.enableFIFO                       = true;
+UART4.peripheral.$assign               = "UART6";
+UART4.peripheral.rxPin.$assign         = "PB21";
+UART4.peripheral.txPin.$assign         = "PB22";
+UART4.txPinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric0";
+UART4.txPinConfig.direction            = scripting.forceWrite("OUTPUT");
+UART4.txPinConfig.hideOutputInversion  = scripting.forceWrite(false);
+UART4.txPinConfig.onlyInternalResistor = scripting.forceWrite(false);
+UART4.txPinConfig.passedPeripheralType = scripting.forceWrite("Digital");
+UART4.rxPinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric1";
+UART4.rxPinConfig.hideOutputInversion  = scripting.forceWrite(false);
+UART4.rxPinConfig.onlyInternalResistor = scripting.forceWrite(false);
+UART4.rxPinConfig.passedPeripheralType = scripting.forceWrite("Digital");
+
+VREF.basicMode                     = "DL_VREF_ENABLE_DISABLE";
+VREF.basicVrefPins                 = "VREF+-";
+VREF.checkVREFReady                = true;
+VREF.basicExtVolt                  = 3.3;
+VREF.vrefPosPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric10";
+VREF.peripheral.$assign            = "VREF";
+VREF.peripheral.vrefPosPin.$assign = "PA23";
+VREF.peripheral.vrefNegPin.$assign = "PA21";
+VREF.vrefNegPinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric11";
+
+const ProjectConfig              = scripting.addModule("/ti/project_config/ProjectConfig", {}, false);
+ProjectConfig.migrationCondition = true;
+
+/**
+ * Pinmux solution for unlocked pins/peripherals. This ensures that minor changes to the automatic solver in a future
+ * version of the tool will not impact the pinmux you originally saw.  These lines can be completely deleted in order to
+ * re-solve from scratch.
+ */
+pinFunction6.peripheral.$suggestSolution           = "SYSCTL";
+pinFunction6.peripheral.lfxInPin.$suggestSolution  = "PA3";
+pinFunction6.peripheral.lfxOutPin.$suggestSolution = "PA4";
+ADC121.peripheral.$suggestSolution                 = "ADC0";
+MCAN1.peripheral.$suggestSolution                  = "CANFD0";
+PWM1.peripheral.$suggestSolution                   = "TIMA0";
+PWM2.peripheral.$suggestSolution                   = "TIMG12";
+PWM3.peripheral.$suggestSolution                   = "TIMG14";
+QEI1.peripheral.$suggestSolution                   = "TIMG9";
+QEI2.peripheral.$suggestSolution                   = "TIMG8";
