@@ -1,0 +1,33 @@
+=== vision_link protocol host tests ===
+[PASS] reference frame accepted
+[PASS] x_cm parsed (actual=3.500)
+[PASS] seq parsed
+[PASS] Jetson timestamp parsed
+[PASS] confidence parsed (actual=90.000)
+[PASS] age is fresh
+[PASS] status.have_frame set
+[PASS] frames_ok == 1
+[PASS] age before timeout
+[PASS] 151 ms -> stale
+[PASS] stale frame reported invalid
+[PASS] Vision_IsFresh false after timeout
+[PASS] new frame restores freshness
+[PASS] second frame x parsed (actual=-1.250)
+[PASS] CRC error counted
+[PASS] bad frame does not overwrite position (actual=3.500)
+[PASS] uncalibrated frame rejected
+[PASS] uncalibrated not fresh
+[PASS] uncalibrated reported invalid
+[PASS] low confidence rejected
+[PASS] out-of-range x rejected
+[PASS] range rejection counted
+[PASS] telemetry enqueued
+[PASS] telemetry frame length = 41
+[PASS] telemetry sync0
+[PASS] telemetry sync1
+[PASS] telemetry version
+[PASS] telemetry type
+[PASS] telemetry payload len
+[PASS] telemetry seq starts at 0
+[PASS] telemetry CRC valid
+=== 31 checks, 0 failures ===

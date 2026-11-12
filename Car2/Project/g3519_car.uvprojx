@@ -509,6 +509,26 @@
               <FileType>1</FileType>
               <FilePath>..\BSP\SPI0_LCD\lcd.c</FilePath>
             </File>
+            <File>
+              <FileName>servo.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\BSP\SERVO\servo.h</FilePath>
+            </File>
+            <File>
+              <FileName>servo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\SERVO\servo.c</FilePath>
+            </File>
+            <File>
+              <FileName>vision_link.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\BSP\VISION\vision_link.h</FilePath>
+            </File>
+            <File>
+              <FileName>vision_link.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSP\VISION\vision_link.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -543,6 +563,26 @@
               <FileName>line_following.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\App\line_following.c</FilePath>
+            </File>
+            <File>
+              <FileName>ball_control.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\App\ball_control.h</FilePath>
+            </File>
+            <File>
+              <FileName>ball_control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\App\ball_control.c</FilePath>
+            </File>
+            <File>
+              <FileName>ball_test.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\User\App\ball_test.h</FilePath>
+            </File>
+            <File>
+              <FileName>ball_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\App\ball_test.c</FilePath>
             </File>
             <File>
               <FileName>ti_msp_dl_config.c</FileName>

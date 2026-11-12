@@ -28,6 +28,8 @@
 #include "GrayTrack/gray_track.h"
 #include "WiFi/wb2_wifi.h"
 #include "Bluetooth/hc05_bt.h"
+#include "SERVO/servo.h"
+#include "VISION/vision_link.h"
 #include "STS3032/sts3032.h"
 #include "CAN/can_bus.h"
 

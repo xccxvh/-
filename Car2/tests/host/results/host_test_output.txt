@@ -1,0 +1,43 @@
+=== G3519 ball control host tests ===
+[PASS] servo init ready
+[PASS] servo timer started
+[PASS] servo period = 16000 ticks (50 Hz)
+[PASS] neutral 104 deg -> ~1655 us
+[PASS] slew limited to 1.0 deg per call after long gap (actual=1.0000 expect=1.0000)
+[PASS] servo reaches +2.0 deg (actual=2.0000 expect=2.0000)
+[PASS] beam +2 deg -> ~1677 us
+[PASS] servo returns to neutral (actual=0.0000 expect=0.0000)
+[PASS] beam hard limit 2.5 deg (actual=2.5000 expect=2.5000)
+[PASS] enable AUTO with fresh vision
+[PASS] x=-2 cm -> +1.2 deg (accelerate +x) (actual=1.2000 expect=1.2000)
+[PASS] x=+2 cm -> -1.2 deg (accelerate -x) (actual=-1.2000 expect=-1.2000)
+[PASS] x=0, v=0 -> level (actual=0.0000 expect=0.0000)
+[PASS] target +5, x=+3 -> +1.2 deg (actual=1.2000 expect=1.2000)
+[PASS] PD output clamped to +2.0 deg (actual=2.0000 expect=2.0000)
+[PASS] AUTO before invalid frame
+[PASS] invalid frame -> VISION_LOST immediately
+[PASS] VISION_LOST returns beam to neutral with slew limit (actual=0.0000 expect=0.0000)
+[PASS] vision recovery does not auto-resume AUTO
+[PASS] AUTO before timeout
+[PASS] 151 ms without frame -> VISION_LOST
+[PASS] 10 cm jump rejected
+[PASS] position unchanged after jump (actual=0.0000 expect=0.0000)
+[PASS] no velocity spike after jump (actual=0.0000 expect=0.0000)
+[PASS] normal frame accepted after jump (actual=0.0500 expect=0.0500)
+[PASS] velocity low-pass filtered
+[PASS] duplicate seq ignored (actual=0.0000 expect=0.0000)
+[PASS] manual +1.0 deg reached via periodic re-send (actual=1.0000 expect=1.0000)
+[PASS] manual -1.0 deg reached (actual=-1.0000 expect=-1.0000)
+[PASS] AUTO enabled for simulation
+[SIM] center hold: x=0.000 cm v=0.000 cm/s settle=1155 ms max|x|=5.000 cm
+[PASS] closed loop settles within +/-1 cm at 0 cm
+[PASS] settle time <= 5 s for 0 cm
+[PASS] overshoot bounded
+[SIM] target +5 cm: x=5.000 cm v=-0.000 cm/s settle=1155 ms max|x|=5.082 cm
+[PASS] closed loop settles within +/-1 cm at +5 cm
+[PASS] settle time <= 5 s for +5 cm
+[SIM] target -5 cm: x=-5.000 cm v=0.000 cm/s settle=1485 ms max|x|=5.147 cm
+[PASS] closed loop settles within +/-1 cm at -5 cm
+[PASS] settle time <= 5 s for -5 cm
+[SIM] logged step response: settle=1155 ms final_x=0.001 cm max|x|=5.000 cm
+=== 37 checks, 0 failures ===

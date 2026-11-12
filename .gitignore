@@ -28,3 +28,7 @@ JLinkSettings.ini
 tmp/
 Thumbs.db
 desktop.ini
+
+# Python 工具运行缓存
+__pycache__/
+*.pyc

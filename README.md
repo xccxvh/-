@@ -49,3 +49,16 @@
 3. 引脚以 `User/config.syscfg` 和生成的 `ti_msp_dl_config.h` 为准；后续增加舵机、视觉串口等外设时不要与已占用引脚冲突。
 4. 所有源码/头文件统一使用 UTF-8 编码，修改旧文件时一并整理中文注释（见 `AGENTS.md`）。
 5. `Output/` 为编译产物，已在 `.gitignore` 中排除，不需要提交。
+
+### 滚球自动稳球（Car2 工程，2026-11 新增）
+
+`Car2/` 是最终上车工程，在循迹之外新增了静态滚球闭环：
+
+- 舵机：PA9 / TIMA0 CCP1，50 Hz，零位 104°；
+- 视觉：UART4（PB10/PB11，115200），二进制位置帧 + 遥测帧；
+- 控制：PD（Kp=0.60 °/cm，Kd=0.30 °/(cm/s)），±2° 限幅、20°/s 速率限制；
+- 安全：IDLE/MANUAL/AUTO/VISION_LOST/FAULT 状态机，视觉 150 ms 超时即退出闭环；
+- 循迹与滚球通过 `User/main.c` 的 `CAR_APP_SELECT` 宏二选一，默认仍是循迹。
+
+完整说明、标定表和测试步骤见 [`Car2/docs/BALL_CONTROL.md`](Car2/docs/BALL_CONTROL.md)。
+主机端逻辑测试：`sh Car2/tests/host/run_tests.sh`（无硬件，gcc）。
