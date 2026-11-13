@@ -1,0 +1,43 @@
+{
+  "experimental": true,
+  "reference_image": "ruler_reference_20261113.png",
+  "reference_sha256": "7b22d64ec281f39ab6022a8b611dca6e04872507df96378f132e4a7c1f50614c",
+  "detector_sha256": "3e28f8caeee67b9a55a7d1004e8ed725fd82e0852057fe91efb92fb7456350bd",
+  "reference_algorithm_sha256": "2b5083d6de8130a0b21c06386ce420aa732019c2fda34bc6999e2125904b1aad",
+  "algorithm_sha256": "23e1835f799b64ab48add54dc67e88f975ef6100ca425ee3e744c7d35b6c3bcf",
+  "boxes": [
+    [
+      365,
+      263,
+      80,
+      24
+    ],
+    [
+      565,
+      263,
+      80,
+      24
+    ],
+    [
+      765,
+      268,
+      80,
+      24
+    ]
+  ],
+  "model": {
+    "type": "piecewise",
+    "xs": [
+      313.79403445081806,
+      586.818672118219,
+      897.6203717410572
+    ],
+    "ys": [
+      -5,
+      0,
+      5
+    ]
+  },
+  "validation_report": "test_results/reference_dynamic_20261113/reference_final_mapping.json",
+  "limits": "Preview only, no UART, no extrapolation, small tested image motion; camera and ruler must match this reference."
+}

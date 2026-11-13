@@ -1,0 +1,63 @@
+{
+  "version": 2,
+  "coordinate": "image_x",
+  "points": [
+    {
+      "x_cm": 0.0,
+      "x_px": 603.2939025982389,
+      "evidence": {
+        "video": "/home/jetson/ball_vision_candidate_20261112_2015/recordings/raw_dark_zero12_20260324_155739_1280x720.avi",
+        "sha256": "4854daf0a9314b82619ff3b79dfa3dca9321ccac62e972b815de09bddda03800",
+        "start_frame": 51,
+        "end_frame": 56,
+        "known_position_confirmed": true,
+        "samples": [
+          {
+            "frame": 51,
+            "x_px": 603.4245823690072,
+            "rail_slope": 0.025754505031889165,
+            "rail_intercept": 219.01861834969407
+          },
+          {
+            "frame": 52,
+            "x_px": 603.201198382399,
+            "rail_slope": 0.025853374709566182,
+            "rail_intercept": 218.91755959282176
+          },
+          {
+            "frame": 53,
+            "x_px": 603.4433300199423,
+            "rail_slope": 0.02585868294105379,
+            "rail_intercept": 218.92974938588512
+          },
+          {
+            "frame": 54,
+            "x_px": 603.2632693486344,
+            "rail_slope": 0.025819164444800154,
+            "rail_intercept": 218.96338430190568
+          },
+          {
+            "frame": 55,
+            "x_px": 603.3245358478434,
+            "rail_slope": 0.025779950873320287,
+            "rail_intercept": 218.99498074639862
+          },
+          {
+            "frame": 56,
+            "x_px": 603.2108723269961,
+            "rail_slope": 0.025994925863890832,
+            "rail_intercept": 218.80104335295115
+          }
+        ],
+        "rail_slope": 0.025836269577183168,
+        "rail_intercept": 218.9465668438954
+      }
+    }
+  ],
+  "model": null,
+  "stats": {},
+  "resolution": [
+    1280,
+    720
+  ]
+}

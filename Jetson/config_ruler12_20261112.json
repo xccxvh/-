@@ -1,0 +1,62 @@
+{
+  "camera": {
+    "device": "/dev/video0",
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "fourcc": "MJPG",
+    "buffer_size": 8
+  },
+  "rail": {
+    "y_band": [
+      0.25,
+      0.39
+    ],
+    "x_margin": 0.12,
+    "grad_threshold": 45,
+    "slope_limit": 0.35,
+    "ransac_iters": 300,
+    "ransac_tol": 3.0,
+    "refresh_frames": 3,
+    "min_inlier_ratio": 0.25,
+    "expected_y_ratio": 0.32,
+    "max_dev_ratio": 0.06,
+    "track_window_ratio": 0.05
+  },
+  "ball": {
+    "use_color": true,
+    "use_geometry": true,
+    "blue_minus_red": 30,
+    "blue_min": 140,
+    "envelope_threshold": 100,
+    "band_above_ratio": 0.05,
+    "band_below_ratio": 0.012,
+    "dev_threshold_ratio": 0.008,
+    "min_width_ratio": 0.018,
+    "max_width_ratio": 0.075,
+    "min_height_ratio": 0.004,
+    "max_height_ratio": 0.035,
+    "min_aspect": 1.3,
+    "max_aspect": 8.0,
+    "min_area_ratio": 0.00015,
+    "typical_width_ratio": 0.038,
+    "typical_height_ratio": 0.018,
+    "color_only_scale": 0.5,
+    "x_margin": 0.12
+  },
+  "tracking": {
+    "max_jump_ratio": 0.12,
+    "uncertain_frames": 4,
+    "lost_frames": 15,
+    "velocity_alpha": 0.5,
+    "confidence_threshold": 0.55,
+    "acquire_frames": 5
+  },
+  "calibration": {
+    "file": "calibration_ruler12_20261112.json"
+  },
+  "output": {
+    "recordings_dir": "recordings",
+    "logs_dir": "logs"
+  }
+}

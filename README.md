@@ -62,3 +62,8 @@
 
 完整说明、标定表和测试步骤见 [`Car2/docs/BALL_CONTROL.md`](Car2/docs/BALL_CONTROL.md)。
 主机端逻辑测试：`sh Car2/tests/host/run_tests.sh`（无硬件，gcc）。
+
+
+### Jetson Nano 视觉测量
+
+视觉代码、配置及回归测试位于 [`Jetson/`](Jetson/README.md)。当前新机位标定和漏检/误锁修复仍在进行，尚未与 `Car2/` 二进制串口协议对齐，不能直接用于滚球闭环。详见该目录当前状态说明。
