@@ -20,6 +20,9 @@ class RailLine(object):
         self.raw_intercept = self.intercept
         self.valid = bool(valid)
         self.confidence = float(confidence)
+        self.geometry_valid = bool(valid)
+        self.identity_valid = False
+        self.reason = "legacy_geometry"
 
     def y_at(self, x):
         return self.slope * x + self.intercept
@@ -31,6 +34,10 @@ class RailLine(object):
 class RailDetector(object):
     def __init__(self, cfg, width, height):
         self.cfg = cfg
+        self.upper_reference = None
+        if cfg.get("upper_reference", {}).get("enabled", False):
+            from local_vision import UpperEdgeReference
+            self.upper_reference = UpperEdgeReference(cfg["upper_reference"])
         self.W = int(width)
         self.H = int(height)
         self.y0_ratio, self.y1_ratio = cfg.get("y_band", [0.33, 0.68])
@@ -70,6 +77,20 @@ class RailDetector(object):
 
     def detect(self, gray, force=False):
         """返回 RailLine。gray 为单通道灰度图。"""
+        if self.upper_reference is not None:
+            evidence = self.upper_reference.locate(gray)
+            if evidence is None:
+                line = self._invalidate()
+                line.reason = self.upper_reference.reason
+                line.identity_valid = line.reason == 'upper_edge_geometry'
+                return line
+            line = RailLine(evidence.pop('slope'), evidence.pop('intercept'), True,
+                            evidence.pop('confidence'))
+            for key, value in evidence.items():setattr(line, key, value)
+            line.identity_valid = True
+            line.reason = 'confirmed_upper_edge'
+            self.last = line
+            return line
         self.counter += 1
         if (self.last is not None and not force and
                 (self.counter % self.refresh) != 0):

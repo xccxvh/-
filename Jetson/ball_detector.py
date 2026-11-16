@@ -39,6 +39,11 @@ class BallCandidate(object):
 class BallDetector(object):
     def __init__(self, cfg, width, height):
         self.cfg = cfg
+        self.mode = cfg.get('mode', 'legacy')
+        from local_vision import PhysicalSearch
+        self.search = PhysicalSearch(cfg.get('ball_search', {}))
+        self.last_reason = 'not_updated'
+        self.last_roi = None
         self.W = int(width)
         self.H = int(height)
         self.use_color = bool(cfg.get("use_color", True))
@@ -270,6 +275,22 @@ class BallDetector(object):
 
     def detect(self, frame, gray, rail):
         """返回按置信度降序排列的候选列表。"""
+        self.last_roi = None
+        self.last_reason = 'rail_invalid'
+        if not rail.valid:
+            return []
+        bounds = self.search.bounds(rail) if self.search.enabled else (0., float(self.W-1))
+        if bounds is None:
+            self.last_reason = 'roi_reference_invalid'
+            return []
+        self.last_roi = bounds
+        if self.mode == 'relative_cap':
+            if not getattr(rail, 'identity_valid', False):
+                self.last_reason = 'rail_identity_invalid'
+                return []
+            from local_vision import relative_caps
+            cands, self.last_reason = relative_caps(frame, rail, self.cfg.get('relative_cap', {}), bounds, BallCandidate)
+            return cands
         cands = []
         if not rail.valid:
             return cands
@@ -278,6 +299,10 @@ class BallDetector(object):
         if y1 - y0 < 8:
             return cands
         band = self._band(rail, y0, y1)
+        if self.search.enabled:
+            # 在分割/中位基线/恢复判断之前隔离ROI，外侧反光不能阻断内部恢复。
+            xs = np.arange(self.W)
+            band &= (xs[None, :] >= bounds[0]) & (xs[None, :] <= bounds[1])
         color = (self._color_candidates(frame, band, rail, y0, y1)
                  if self.use_color else [])
         geom = (self._geom_candidates(gray, band, rail, y0, y1)
@@ -318,4 +343,7 @@ class BallDetector(object):
             if c.method == "color":
                 c.confidence *= self.color_only_scale
         cands.sort(key=lambda c: c.confidence, reverse=True)
+        if self.search.enabled:
+            cands = [c for c in cands if bounds[0] < c.x-c.width/2 and c.x+c.width/2 < bounds[1]]
+        self.last_reason = 'candidates' if cands else 'no_candidates'
         return cands

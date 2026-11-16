@@ -1,0 +1,32 @@
+{
+  "baseline": "41d78b0",
+  "source_video_sha256": "1b0f4f9df73245b73dae25248f426fb20049a7427545abaa28a314bdf817d2bb",
+  "code_sha256": {
+    "rail_detector.py": "6192f89e384db421b9b1edd800c43f63b075f902f54422e639015a663b63d792",
+    "capture_raw.py": "967431fb9d93199b1c74d6ea9d3f83b1e0ce2f58ba6bd2af6ee9f3d8b6c25a9c",
+    "evaluate_ruler_reference.py": "d96671a61f4deb75232b2d986488abe226d1792987abaf93d57b7cfff925e0f4",
+    "calibrate.py": "0e288f6ffe8cd59737170442a35077b856b857edf5fc9b09235a1944f4b86d57",
+    "analyze_track.py": "53baf8766071c2407b0037cd12d148af104c310fdbbf2c7567d8f9016cfc8789",
+    "position_feedback.py": "ed32d6d7e273685c9c1f976b00800c089a281b8b28dac8a439212e69af687c2d",
+    "measurement_contract.py": "9fb981b017371115e09344b80cb658aa6bf7340ddb72942427f03d5732f5dc81",
+    "camera.py": "eeeb25c9db3bd32b6a1264a413e039bbcd88a0b3ecead26d611787eb255b6079",
+    "recording_schedule.py": "6d37b62cb206ac5d7ccc2c1cce5fc28000be1bfefba65acfcf092e359a52f1a6",
+    "main.py": "f03eb6cf81ae42cabd64c2f88ce3ad44d42e5033c80dc4bc8f3e60d376f18860",
+    "local_vision.py": "6cd7b80d99de815c24bdaa5d435b9b0aec13f8df104fab85aa5818ace6444f31",
+    "calibration.py": "6c1563dc7214aea3e58bac16c70536a37273d4a7164183031b5f6734ddfa5ff8",
+    "evaluate_local_roi.py": "0f2c0d87c3929c27d2198f515be125178e53102564ff1e418fb0fa868190c3d7",
+    "video_writer.py": "76dae5dc6ed740e732c60cf23fd971ccf4058283b20a7d9df455ec61b9c8455a",
+    "visualization.py": "8bcd9a6b3d121c71482a6377d51cfbe5da64e635bda00f7a2730d4675528fd92",
+    "ball_detector.py": "b489e6043cd1bb9f5aece2403cae6b264b4ae0b888d857d0cc9e5681be0d5e2a",
+    "reference_preview.py": "62b19f6e228f4ecae5382e0f4e1a77a6add1cd77189ba847536e1f7a8d122d72",
+    "ball_tracker.py": "e0e1ae2e840692478fd73e8ee8f0d0c4fe7beabf05c2ca9efd8ec5303ce54309",
+    "ruler_reference.py": "2b5083d6de8130a0b21c06386ce420aa732019c2fda34bc6999e2125904b1aad"
+  },
+  "config_sha256": "f6a4bc0f99d78129b5fd9d2389c16d679b1c4decbf65a2700e45f94d7d690ccc",
+  "manual_labels_sha256": "4a2cd8dedf78a311669e0d23e7f234d034e8e7a698a880ba3323846b50e2cb7f",
+  "actual_host": {
+    "opencv": "4.8.1",
+    "numpy": "1.24.4"
+  },
+  "runtime_target_not_verified": "Python3.6.9/OpenCV4.1.1/NumPy1.19.5"
+}

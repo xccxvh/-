@@ -118,7 +118,10 @@ def main():
         W, H = source.width, source.height
 
         rail_det = RailDetector(cfg["rail"], W, H)
-        ball_det = BallDetector(cfg["ball"], W, H)
+        ball_cfg = dict(cfg["ball"])
+        if "ball_search" in cfg:
+            ball_cfg["ball_search"] = cfg["ball_search"]
+        ball_det = BallDetector(ball_cfg, W, H)
         tracker = BallTracker(cfg["tracking"], W, H)
 
         # 标定只在"已拟合且采集分辨率与当前一致"时才可用。相机移动、变焦
@@ -166,6 +169,8 @@ def main():
                 "rail_slope", "rail_intercept", "rail_valid", "pose_ok",
                 "capture_monotonic_ms", "feedback_valid", "feedback_reason",
                 "cm_valid", "cm_status", "reference_x_px", "reference_ms",
+                "rail_geometry_valid", "rail_identity_valid", "rail_reason",
+                "roi_min_px", "roi_max_px", "candidate_count", "detector_reason", "tracker_reason",
             ])
 
         print("source: %s  %dx%d  fps=%.1f" % (
@@ -314,6 +319,11 @@ def main():
                         int(x_cm is not None), cm_status,
                         "" if preview is None or preview.reference_x_px is None else "%.4f" % preview.reference_x_px,
                         "%.3f" % reference_ms,
+                        int(getattr(rail, 'geometry_valid', rail.valid)),
+                        int(getattr(rail, 'identity_valid', False)), getattr(rail, 'reason', ''),
+                        '' if getattr(ball_det, 'last_roi', None) is None else '%.2f' % ball_det.last_roi[0],
+                        '' if getattr(ball_det, 'last_roi', None) is None else '%.2f' % ball_det.last_roi[1],
+                        len(candidates), ball_det.last_reason, out.get('reason', ''),
                     ])
 
                 frame_idx += 1
