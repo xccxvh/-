@@ -1,0 +1,40 @@
+桌面/Nano v2回放差异：只读文件诊断
+结论：在所选六帧中，PNG之前的录像解码输出已经不同；固定同一无损PNG后两平台BGR、GRAY、全幅Lab与detector实际Lab裁块全部逐元素相同，候选接受/拒绝及诊断reason一致。未找到所选样本支持“OpenCV颜色转换导致差异”的证据。
+不能据此宣称所有35帧均已逐帧定位，或认定具体FFmpeg/JPEG实现的内部根因。
+
+输入与方法：
+原1043帧AVI两平台SHA256相同：1b0f4f9df73245b73dae25248f426fb20049a7427545abaa28a314bdf817d2bb
+检测相关六个源码、配置和参考PNG的SHA一致。原CSV计数桌面666、Nano641；valid不同35帧（桌面独有30，Nano独有5），rail_valid不同0帧。
+顺序解码到所选帧，不seek。每平台保存56/286/505/714/886/887原尺寸PNG；交叉让两平台处理两组共12张相同文件。
+进一步固定桌面保存的gray、rail数值和Lab裁块运行三组对照；36项跨平台候选/诊断判定比较均一致。无摄像头、无UART、无生产修改、无性能采样。
+
+PNG来源决定候选结果（两平台运行结果相同）：
+frame | 桌面解码PNG | Nano解码PNG | 原回放valid（桌面/Nano）
+56 | candidates | no_cap | 1/0
+286 | no_cap | candidates | 0/1
+505 | no_cap | candidates | 0/1
+714 | no_cap | candidates | 0/1
+886 | candidates | no_cap | 1/0
+887 | candidates | candidates | 1/0
+
+56/886：桌面来源候选accepted；Nano来源轮廓arc_shoulders拒绝。286/505/714方向相反。
+887两种来源都有候选：原Nano CSV为acquiring（桌面tracked），符合先前失检引发重新积累；本次没有对孤立帧伪造完整tracker历史。原887-890 acquiring证据保留在all_valid_differences.json。
+
+解码BGR差异（每个通道分量统计，不是像素数）：
+56: 不同分量2039401，max=47，mean_abs=1.166241
+286: 不同分量2081818，max=54，mean_abs=1.150722
+505: 不同分量2011331，max=49，mean_abs=1.144960
+714: 不同分量2011351，max=54，mean_abs=1.154764
+886: 不同分量2009294，max=42，mean_abs=1.146960
+887: 不同分量2012905，max=47，mean_abs=1.151937
+
+固定同一PNG：参考灰度图也完全一致。候选中心数值并非所有浮点bitwise相同，最大差1.14e-13 px；应与图像数组完全一致和判定一致分开表述。
+浮点轨道/匹配计算仍可能有极小平台差异，完整数值留在各probe的result.json与*_rail.json；本次未改变任何阈值。
+
+证据索引：
+desktop_decode/、nano_decode/：顺序解码PNG及视频/像素SHA。
+desktop_probe/、nano_probe/：共用PNG的gray/Lab PNG、NPZ实际裁块、候选及全部拒绝诊断。
+desktop_control/、nano_control/：固定gray/rail/Lab的隔离对照。
+all_valid_differences.json：完整35帧两侧CSV行，包含所有拒绝和acquire证据。
+comparison.json：机器可读跨平台比较；各ZIP与stderr保留原始传输证据。
+diagnose.py、run_diagnosis.py、compare_results.py：独立复现脚本；重跑使用新目录，现有证据不覆盖。

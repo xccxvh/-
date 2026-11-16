@@ -1,0 +1,184 @@
+{
+  "status": "complete",
+  "errors": [],
+  "mode": "A",
+  "requested_duration_s": 20.0,
+  "elapsed_s": 20.03012499200031,
+  "cleanup_s": 0.034193385999969905,
+  "duration_overrun_s": 0.030124992000310158,
+  "config": "/home/jetson/ball_vision_geometry_20261116_v2/config_geometry_refocused_20261116.json",
+  "config_sha256": "ebe2da89c9986e601ba022b5db38c0b634df12326ff4ce7184dbb6c0d024d1ef",
+  "capture": {
+    "frames": 591,
+    "elapsed_s": 20.03012499200031,
+    "fps": 29.505557266169596,
+    "interval_fps": 29.804257080289382,
+    "first_return_s": 7190.118611422,
+    "last_return_s": 7209.914441206
+  },
+  "camera_reported_fps": 30.0,
+  "camera_format": {
+    "expected": {
+      "width": 1280,
+      "height": 720,
+      "fourcc": "MJPG"
+    },
+    "configured": {
+      "width": 1280,
+      "height": 720,
+      "fourcc": "MJPG"
+    },
+    "actual": {
+      "width": 1280,
+      "height": 720,
+      "fourcc": "MJPG"
+    },
+    "verified": true
+  },
+  "source_sha256": {
+    "benchmark_live.py": "07d37086aa00eb1bbca56236536d201b35fedaae077cab869001e2ffe23d94ea",
+    "rail_detector.py": "f4c246b96236e177e61e5e2e1d9f90bf2c831728ffefb867a50829b31ed32a1d",
+    "ball_detector.py": "18ba47aec24a60166ea309acf7626a7641f2c38068e1771e80a6007b506499f0",
+    "ball_tracker.py": "e0e1ae2e840692478fd73e8ee8f0d0c4fe7beabf05c2ca9efd8ec5303ce54309",
+    "local_vision.py": "fb7164b24bdf94289c6083f641890e6eb6ccdf6a992695313a6c74b116f89f9f",
+    "camera.py": "eeeb25c9db3bd32b6a1264a413e039bbcd88a0b3ecead26d611787eb255b6079",
+    "video_writer.py": "76dae5dc6ed740e732c60cf23fd971ccf4058283b20a7d9df455ec61b9c8455a",
+    "visualization.py": "8bcd9a6b3d121c71482a6377d51cfbe5da64e635bda00f7a2730d4675528fd92",
+    "ruler_reference.py": "ec27a012d48613317473b1f1724b5b4f9e391c0271c8091facac2d42cca44f30",
+    "measurement_contract.py": "364cd86577dbda79985eb99cb60af1aafd008e2f5ac6af6b851bc30af803f2a3",
+    "camera_geometry.py": "68c1350b211cafcbd2280a9e781d38612f7132d2c9d8855a823e1c6863212fc0",
+    "rail_coordinates.py": "6130239d219d75125bced70b59aaa6f814683d644a92cd5cea2de6cea8c2ac6b",
+    "rail_calibration.py": "181e17306413b677bd5f8e62babb50cb4d66cbccdfde0c09fcb0252fed4818c6"
+  },
+  "source_sha256_after": {
+    "benchmark_live.py": "07d37086aa00eb1bbca56236536d201b35fedaae077cab869001e2ffe23d94ea",
+    "rail_detector.py": "f4c246b96236e177e61e5e2e1d9f90bf2c831728ffefb867a50829b31ed32a1d",
+    "ball_detector.py": "18ba47aec24a60166ea309acf7626a7641f2c38068e1771e80a6007b506499f0",
+    "ball_tracker.py": "e0e1ae2e840692478fd73e8ee8f0d0c4fe7beabf05c2ca9efd8ec5303ce54309",
+    "local_vision.py": "fb7164b24bdf94289c6083f641890e6eb6ccdf6a992695313a6c74b116f89f9f",
+    "camera.py": "eeeb25c9db3bd32b6a1264a413e039bbcd88a0b3ecead26d611787eb255b6079",
+    "video_writer.py": "76dae5dc6ed740e732c60cf23fd971ccf4058283b20a7d9df455ec61b9c8455a",
+    "visualization.py": "8bcd9a6b3d121c71482a6377d51cfbe5da64e635bda00f7a2730d4675528fd92",
+    "ruler_reference.py": "ec27a012d48613317473b1f1724b5b4f9e391c0271c8091facac2d42cca44f30",
+    "measurement_contract.py": "364cd86577dbda79985eb99cb60af1aafd008e2f5ac6af6b851bc30af803f2a3",
+    "camera_geometry.py": "68c1350b211cafcbd2280a9e781d38612f7132d2c9d8855a823e1c6863212fc0",
+    "rail_coordinates.py": "6130239d219d75125bced70b59aaa6f814683d644a92cd5cea2de6cea8c2ac6b",
+    "rail_calibration.py": "181e17306413b677bd5f8e62babb50cb4d66cbccdfde0c09fcb0252fed4818c6"
+  },
+  "sources_unchanged": true,
+  "processed_frames": 489,
+  "processing_fps": 24.41322758571393,
+  "algo_ms": {
+    "count": 489,
+    "max": 430.64385400066385,
+    "mean": 39.81298893455024,
+    "p95": 39.77240559997881
+  },
+  "capture_return_to_output_ms": {
+    "count": 489,
+    "max": 431.0527090001415,
+    "mean": 58.246313464196035,
+    "p95": 73.65490600022895
+  },
+  "process_cpu_pct": 248.41395207405017,
+  "encoder_cpu_s": null,
+  "total_cpu_including_setup_cleanup_pct": 246.4614113408342,
+  "process_rss_peak_mib": 88.73828125,
+  "encoder_rss_peak_mib": null,
+  "display_verified": false,
+  "uart_enabled": false,
+  "timestamp_verified": false,
+  "cm_valid": false,
+  "pixel_valid_frames": 483,
+  "reference_valid_frames": 489,
+  "cm_valid_frames": 0,
+  "valid_measurements": {
+    "pixel": {
+      "valid_frames": 483,
+      "interval_ms": {
+        "count": 482,
+        "max": 71.18999999966036,
+        "mean": 39.75658831120324,
+        "p95": 68.2797344501978
+      },
+      "leading_invalid_run_frames": 5,
+      "trailing_invalid_run_frames": 0
+    },
+    "reference": {
+      "valid_frames": 489,
+      "interval_ms": {
+        "count": 488,
+        "max": 399.86369800044486,
+        "mean": 40.43212184836223,
+        "p95": 68.33050524974169
+      },
+      "leading_invalid_run_frames": 0,
+      "trailing_invalid_run_frames": 0
+    },
+    "cm": {
+      "valid_frames": 0,
+      "interval_ms": null,
+      "leading_invalid_run_frames": 489,
+      "trailing_invalid_run_frames": 489
+    }
+  },
+  "geometry_ms": {
+    "count": 489,
+    "max": 0.050937999731104355,
+    "mean": 0.013033779107924224,
+    "p95": 0.014489999921352133
+  },
+  "reference_match_ms": {
+    "count": 489,
+    "max": 20.509792000666494,
+    "mean": 17.35707405110209,
+    "p95": 17.766448199472507
+  },
+  "coordinate_ms": {
+    "count": 489,
+    "max": 0.6105729999035248,
+    "mean": 0.399808795524643,
+    "p95": 0.4429580003488808
+  },
+  "camera_geometry": {
+    "mode": "raw",
+    "resolution": [
+      1280,
+      720
+    ],
+    "camera_id": "icspring-usb-camera",
+    "focus_id": "manual-refocused-20261116-evening",
+    "intrinsics_sha256": null,
+    "correction_model": "none",
+    "projection": "identity"
+  },
+  "rail_binding_id": "87a41441cbe618eaba5bf4611bf4c5fff9b55c73469f318a0112f41b4241a4b2",
+  "recording": {
+    "width": null,
+    "height": null,
+    "container_fps": null,
+    "enabled": false,
+    "complete": false,
+    "frames": 0,
+    "written": 0,
+    "dropped": 0
+  },
+  "runtime": {
+    "python": "3.6.9 (default, Mar 10 2023, 16:46:00) \n[GCC 8.4.0]",
+    "opencv": "4.1.1",
+    "numpy": "1.19.5"
+  },
+  "semantics": {
+    "capture_fps": "successful cap.read count / measured loop elapsed seconds, including overwritten frames",
+    "processing_fps": "completed CSV rows / same elapsed seconds, excludes setup/cleanup",
+    "latency": "Camera.last_ts (post-read, not exposure) to output call return; excludes CSV/resource sample; not display presentation or encoding completion",
+    "algo": "geometry + grayscale + rail + candidates + tracker + coordinates; milliseconds",
+    "reference_match_ms": "entire rail.detect call, including reference matching; milliseconds",
+    "valid_intervals": "successive valid post-read timestamps, milliseconds; leading/trailing invalid runs excluded; fewer than two valid observations => null",
+    "boundary_invalid_runs": "processed frame counts; when all invalid both boundary runs cover the same entire sequence, do not add them",
+    "cpu": "100% = one logical core; process includes all its threads, excludes ffmpeg; encoder_cpu_s includes final drain after child reap",
+    "rss": "sampled resident memory peak in MiB (1024^2 bytes), parent and ffmpeg separate; not allocation total",
+    "recording": "frames accepted; written delivered to ffmpeg, not individually confirmed encoded; trust complete only after successful release; CFR is not actual capture FPS",
+    "duration": "checked between frames; blocking Camera.read or processing can overrun; actual elapsed and overrun reported"
+  }
+}
