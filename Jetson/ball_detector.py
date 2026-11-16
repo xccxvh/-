@@ -44,6 +44,7 @@ class BallDetector(object):
         self.search = PhysicalSearch(cfg.get('ball_search', {}))
         self.last_reason = 'not_updated'
         self.last_roi = None
+        self.last_diagnostics = []
         self.W = int(width)
         self.H = int(height)
         self.use_color = bool(cfg.get("use_color", True))
@@ -276,6 +277,7 @@ class BallDetector(object):
     def detect(self, frame, gray, rail):
         """返回按置信度降序排列的候选列表。"""
         self.last_roi = None
+        self.last_diagnostics = []
         self.last_reason = 'rail_invalid'
         if not rail.valid:
             return []
@@ -289,7 +291,7 @@ class BallDetector(object):
                 self.last_reason = 'rail_identity_invalid'
                 return []
             from local_vision import relative_caps
-            cands, self.last_reason = relative_caps(frame, rail, self.cfg.get('relative_cap', {}), bounds, BallCandidate)
+            cands, self.last_reason = relative_caps(frame, rail, self.cfg.get('relative_cap', {}), bounds, BallCandidate, self.last_diagnostics)
             return cands
         cands = []
         if not rail.valid:

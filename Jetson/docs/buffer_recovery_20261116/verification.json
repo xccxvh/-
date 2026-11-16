@@ -1,0 +1,22 @@
+{
+  "baseline": "cb05552c2c5e0eff64ffa6e01279d8da3d5c63b2",
+  "coordinate_version": "relative-cap-v1",
+  "new_valid_frames": 666,
+  "new_source_sha256": {
+    "local_vision.py": "c968fc180802a7f2d9e84d25b8c95ada220bbee04b87feea8d71ee62392232f6",
+    "rail_detector.py": "b74ccf0eab9d4d4059874006327ef967294e00e127b557758b89ead119880f14",
+    "ball_detector.py": "18ba47aec24a60166ea309acf7626a7641f2c38068e1771e80a6007b506499f0",
+    "ball_tracker.py": "e0e1ae2e840692478fd73e8ee8f0d0c4fe7beabf05c2ca9efd8ec5303ce54309",
+    "main.py": "1e51594d49620ec67f8d4c295f246a50ed1fc8c3a9176f8d9513a5326320ece5",
+    "config_local_roi_20261116.json": "9a9afb95147562bd96d8b22e7128354a023b1c952ec976a3d4ba8c56270d564f",
+    "evaluate_buffer_recovery.py": "2b6a3a254bd0753dd15ae862657fe991862684141fbd426cae4b91ee9f03ff6f",
+    "benchmark_live.py": "da322b69039d1e3d597ab80ea75330c8ecc01c1f83662f07e6ebca9da14cd22c"
+  },
+  "test_count": 170,
+  "python36_grammar_only": true,
+  "nano_tests": "not_run_user_board_disconnected",
+  "independent_new_video": "not_recorded",
+  "longest_labeled_in_search_miss_frames": 7,
+  "longest_labeled_in_search_miss_ms": 234.8993288590604,
+  "main_evaluator_equivalence": "1043 rows equal, main x rounding within0.005px; all cm/UART invalid"
+}

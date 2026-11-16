@@ -1,0 +1,106 @@
+{
+  "219": {
+    "roi": [
+      227.92896914878884,
+      1036.933775084718
+    ],
+    "candidates": [],
+    "components": [
+      {
+        "line": 131,
+        "code": "if any(len(side)<6 or np.mean(side)<.6 for side in shoulders):continue",
+        "x": 234,
+        "w": 32,
+        "h": 9,
+        "area": 148
+      }
+    ]
+  },
+  "220": {
+    "roi": [
+      227.92895025257937,
+      1036.9358316221765
+    ],
+    "candidates": [],
+    "components": [
+      {
+        "line": 131,
+        "code": "if any(len(side)<6 or np.mean(side)<.6 for side in shoulders):continue",
+        "x": 228,
+        "w": 20,
+        "h": 9,
+        "area": 125
+      }
+    ]
+  },
+  "360": {
+    "roi": [
+      208.90766682203565,
+      1016.0550918985654
+    ],
+    "candidates": [],
+    "components": [
+      {
+        "line": 147,
+        "code": "if np.max(first)-shoulder<1.5:continue",
+        "x": 240,
+        "w": 28,
+        "h": 6,
+        "area": 95
+      }
+    ]
+  },
+  "640": {
+    "roi": [
+      228.0,
+      1037.0
+    ],
+    "candidates": [],
+    "components": [
+      {
+        "line": 131,
+        "code": "if any(len(side)<6 or np.mean(side)<.6 for side in shoulders):continue",
+        "x": 228,
+        "w": 24,
+        "h": 8,
+        "area": 107
+      }
+    ]
+  },
+  "780": {
+    "roi": [
+      207.49368866605369,
+      1012.8905657525099
+    ],
+    "candidates": [
+      289.7586220008859
+    ],
+    "components": [
+      {
+        "line": 153,
+        "code": "out.append(candidate_type(cx,w,float(first.max()),confidence,'relative_cap',",
+        "x": 276,
+        "w": 28,
+        "h": 6,
+        "area": 121
+      }
+    ]
+  },
+  "880": {
+    "roi": [
+      210.1574621131001,
+      1017.337294188786
+    ],
+    "candidates": [],
+    "components": [
+      {
+        "line": 131,
+        "code": "if any(len(side)<6 or np.mean(side)<.6 for side in shoulders):continue",
+        "x": 215,
+        "w": 31,
+        "h": 8,
+        "area": 137
+      }
+    ]
+  }
+}

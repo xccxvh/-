@@ -70,7 +70,8 @@
       ],
       "search_x": 45,
       "search_y": 45,
-      "max_edge_adjust_px": 5
+      "max_edge_adjust_px": 5,
+      "support_margin_px": 80
     }
   },
   "ball": {
@@ -147,6 +148,7 @@
       ]
     ],
     "purpose": "manual_ruler_roi_only_not_cm_calibration",
-    "reference_note": "Frame0 manually visually read ruler ticks; +/-3px approximate. ROI only, NOT calibrated cm output."
+    "reference_note": "Frame0 manually visually read ruler ticks; +/-3px approximate. ROI only, NOT calibrated cm output.",
+    "support_note": "Search bounds constrain the measured center; complete contour evidence uses a bounded pixel halo. No outside center is accepted."
   }
 }

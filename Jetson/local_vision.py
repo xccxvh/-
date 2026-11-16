@@ -34,7 +34,7 @@ class PhysicalSearch(object):
     def bounds(self, rail):
         if not self.enabled:
             return None
-        if not getattr(rail, 'identity_valid', False):
+        if not rail.valid or not getattr(rail, 'identity_valid', False):
             return None
         x = np.interp([self.low,self.high],self.anchors[:,0],self.anchors[:,1])
         y = np.interp(x,rail.reference_profile[:,0],rail.reference_profile[:,1])
@@ -59,6 +59,9 @@ class UpperEdgeReference(object):
             raise ValueError('invalid upper edge anchors')
         self.reason='not_updated'
         self.max_adjust=float(cfg.get('max_edge_adjust_px',5))
+        self.support_margin=int(cfg.get('support_margin_px',80))
+        if not 0<=self.support_margin<=256:
+            raise ValueError('support margin must be between 0 and 256 pixels')
 
     def locate(self, gray):
         info=self.matcher.update(gray)
@@ -68,6 +71,11 @@ class UpperEdgeReference(object):
         points=self.profile.dot(np.linalg.inv(inv).T)+translation
         W=gray.shape[1];xs=np.arange(W,dtype=float)
         expected=np.interp(xs,points[:,0],points[:,1])
+        # 只为球冠两侧的实测边缘提供有限取证余量，不外推厘米搜索范围。
+        margin=int(self.support_margin)
+        for a,b,mask in [(points[0],points[1],xs<points[0,0]),
+                         (points[-2],points[-1],xs>points[-1,0])]:
+            expected[mask]=a[1]+(xs[mask]-a[0])*(b[1]-a[1])/(b[0]-a[0])
         # 上缘细化只接受亮纸尺进入处的正梯度；多列证据支持才确认几何。
         lo=max(1,int(expected.min()-self.max_adjust-2));hi=min(gray.shape[0]-1,int(expected.max()+self.max_adjust+3))
         if hi-lo<3:
@@ -79,27 +87,32 @@ class UpperEdgeReference(object):
         grad=np.where(allow,grad,-1e6)
         arg=grad.argmax(axis=0);edge=arg+lo;strength=grad.max(axis=0)
         domain=(xs>=points[0,0])&(xs<=points[-1,0]);good=domain&(strength>35)
+        support=(xs>=points[0,0]-margin)&(xs<=points[-1,0]+margin)&(strength>35)
         if good.sum()<.55*domain.sum():
             self.reason='upper_edge_geometry';return None
-        # 不让钢珠凸起改变纸尺基线；对梯度微调做宽窗口中值，保留纸尺曲线。
+        # 不让钢珠凸起改变纸尺基线：151列中值窗大于两倍65像素最大球冠宽度。
+        # 原51列窗口会让宽浅球冠占多数，使基线爬到球顶并将轮廓切成两个假候选。
+        # 参考纸尺曲线仍保留，只抑制局部梯度修正中的球体遮挡。
         correction=np.clip(edge-expected,-self.max_adjust,self.max_adjust).astype(np.float32)
-        correction[~good]=0
-        correction=(cv2.medianBlur(np.clip(128+4*correction,0,255).astype(np.uint8).reshape(1,-1),51).ravel().astype(float)-128)/4.
+        correction[~support]=0
+        correction=(cv2.medianBlur(np.clip(128+4*correction,0,255).astype(np.uint8).reshape(1,-1),151).ravel().astype(float)-128)/4.
         edge=expected+correction
         slope,intercept=np.polyfit(xs[good],edge[good],1)
         self.reason='ok'
         return dict(slope=float(slope),intercept=float(intercept),confidence=float(good.sum()/domain.sum()),
-                    edge_profile=edge,edge_support=good,reference_inverse=inv,reference_translation=translation,
+                    edge_profile=edge,edge_support=support,reference_inverse=inv,reference_translation=translation,
                     reference_profile=self.profile,registration=info)
 
 
-def relative_caps(frame, rail, cfg, x_limits, candidate_type):
+def relative_caps(frame, rail, cfg, x_limits, candidate_type, diagnostics=None):
     """按列估计背景Lab，提取与背景有差异且连接上缘的浅球顶；返回新坐标版本。"""
     H,W=frame.shape[:2]
     edge=getattr(rail,'edge_profile',rail.slope*np.arange(W)+rail.intercept)
     support=getattr(rail, 'edge_support', None)
     if support is None:return [],'local_geometry_unavailable'
-    left=max(0,int(np.ceil(x_limits[0])));right=min(W,int(np.floor(x_limits[1]))+1)
+    # 搜索区限制测量中心；取证区包含完整球冠，禁止裁剪后伪造中心。
+    halo=int(np.ceil(float(cfg.get('max_width_px',65))))+2
+    left=max(0,int(np.ceil(x_limits[0]))-halo);right=min(W,int(np.floor(x_limits[1]))+1+halo)
     if right-left<12:return [],'roi_empty'
     top=max(0,int(np.floor(edge[left:right].min()-48)));bottom=min(H,int(np.ceil(edge[left:right].max()+3)))
     if bottom-top<48:return [],'roi_clipped'
@@ -122,31 +135,55 @@ def relative_caps(frame, rail, cfg, x_limits, candidate_type):
     out=[]
     for label in range(1,n):
         x,y,w,h,area=[int(v) for v in stats[label]]
-        if not float(cfg.get('min_width_px',12))<=w<=float(cfg.get('max_width_px',65)):continue
-        if not 3<=h<=float(cfg.get('max_height_px',28)) or not 1.2<=w/max(h,1)<=16:continue
+        record={'left_px':x+left,'right_px':x+left+w-1,'width':w,'height':h,'area':area,
+                'reason':'accepted','center_px':None,
+                'footprint_in_search':bool(x+left>=x_limits[0] and x+left+w-1<=x_limits[1])}
+        if diagnostics is not None:diagnostics.append(record)
+        if not float(cfg.get('min_width_px',12))<=w<=float(cfg.get('max_width_px',65)):
+            record['reason']='width';continue
+        if not 3<=h<=float(cfg.get('max_height_px',28)) or not 1.2<=w/max(h,1)<=16:
+            record['reason']='height_aspect';continue
         # 球体遮挡中间上缘是正常现象，但两侧必须各有当前帧的真实边缘支持。
         # 防止把模板预测的高度当作已观测几何，接受悬空亮斑。
         a,b=x+left,x+left+w
         shoulders=[support[max(0,a-12):max(0,a-2)],support[min(W,b+2):min(W,b+12)]]
-        if any(len(side)<6 or np.mean(side)<.6 for side in shoulders):continue
+        if any(len(side)<6 or np.mean(side)<.6 for side in shoulders):
+            record['reason']='edge_support';continue
         component=labels[y:y+h,x:x+w]==label
         py,px=np.where(component);xx=px+x;yy=py+y
         dd=baseline[xx]-yy
-        if dd.max()>=float(cfg.get('max_height_px',28))-1 or dd.min()>float(cfg.get('rim_exclusion_px',3))+3:continue
-        if area<float(cfg.get('min_area_px',40)) or area/(w*h)<.35:continue
+        if dd.max()>=float(cfg.get('max_height_px',28))-1 or dd.min()>float(cfg.get('rim_exclusion_px',3))+3:
+            record['reason']='vertical_truncation_or_detached';continue
+        if area<float(cfg.get('min_area_px',40)) or area/(w*h)<.35:
+            record['reason']='area_fill';continue
         first=np.full(w,np.nan)
         for col in range(w):
             v=py[px==col]
             if len(v):first[col]=baseline[x+col]-(y+v.min())
-        if not np.isfinite(first).all():continue
+        if not np.isfinite(first).all():
+            record['reason']='incomplete_columns';continue
+        record['terminal_depth_px']=[float(first[0]),float(first[-1])]
         # 圆弧必须有内部顶点、两侧回落；平纸尺亮边不能仅因面积足够就通过。
         axis=np.linspace(-1,1,w);q=np.polyfit(axis,first,2)
-        if q[0]>=-1.5 or abs(-q[1]/(2*q[0]))>.7:continue
-        if np.median(np.abs(np.polyval(q,axis)-first))>2.0:continue
+        if q[0]>=-1.5 or abs(-q[1]/(2*q[0]))>.7:
+            record['reason']='arc_shape';continue
+        if np.median(np.abs(np.polyval(q,axis)-first))>2.0:
+            record['reason']='arc_residual';continue
         shoulder=max(np.mean(first[:max(2,w//5)]),np.mean(first[-max(2,w//5):]))
-        if np.max(first)-shoulder<1.5:continue
+        if np.max(first)-shoulder<1.5:
+            record['reason']='arc_shoulders';continue
         weights=np.maximum(first-1,0);cx=float(np.sum((np.arange(w)+x+left)*weights)/weights.sum())
-        if x+left<=left or x+w+left>=right:continue
+        if x+left<=left or x+w+left>=right:
+            record['reason']='extraction_clipped';continue
+        record['center_px']=cx
+        # 残弧的加权中心可能向未遮挡侧偏移；边界接受还需拟合弧顶与加权中心的范围一致性。
+        # 弧顶只作范围一致性门控，不代替relative-cap-v1的原测量坐标，也不钳位。
+        apex=float(left+x+(1-q[1]/(2*q[0]))*(w-1)/2.)
+        record['fitted_apex_px']=apex
+        if not x_limits[0]<=apex<=x_limits[1]:
+            record['reason']='arc_apex_outside_search';continue
+        if not x_limits[0]<=cx<=x_limits[1]:
+            record['reason']='center_outside_search';continue
         cy=float(np.sum((edge[np.arange(w)+x+left]-first)*weights)/weights.sum())
         appearance=float(np.median(distance[yy,xx]))
         confidence=min(.95,.65+.15*min(1.,-q[0]/5)+.1*min(1.,area/200.))

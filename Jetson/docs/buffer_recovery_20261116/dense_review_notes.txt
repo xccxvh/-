@@ -1,0 +1,50 @@
+独立代理连续视觉审计（不是人工独立真值；非盲审）。
+原视频顺序解码1043帧；五个±8帧窗口共85帧逐帧检查，未改仓库源码。
+坐标容差：中心±6px，球冠左右端±5px，当帧尺子5/7cm长刻线±3px；过界保守合并容差为9/8px。
+原图中85帧均可辨认完整的可见球冠左右端；球身下部均被尺子遮挡。完整球冠不等于整球可见，也不等于ROI内完整。
+区域只按当帧视觉尺子5cm/7cm左边界审核；不能把事件直接当作算法动态ROI或gooddomain精确过界帧。
+
+样本220，连续窗口212..228，exit_left：x=233，球冠[215,249]；搜索区球冠名义=partial，考虑容差=partial，左端相对5cm余量=-13px。
+  search / x_px: 首个新侧名义帧221，容差允许首帧范围[220, 221]
+  search / cap_left_px: 首个新侧名义帧220，容差允许首帧范围[219, 220]
+  search / cap_right_px: 首个新侧名义帧222，容差允许首帧范围[221, 222]
+  core / x_px: 首个新侧名义帧216，容差允许首帧范围[216, 216]
+  core / cap_left_px: 首个新侧名义帧215，容差允许首帧范围[215, 216]
+  core / cap_right_px: 首个新侧名义帧217，容差允许首帧范围[217, 217]
+  图片：window_220_clean.png / window_220_cap_zoom.png / window_220_annotated.png
+样本360，连续窗口352..368，enter_from_left：x=249，球冠[233,268]；搜索区球冠名义=full，考虑容差=full，左端相对5cm余量=20px。
+  search / x_px: 首个新侧名义帧358，容差允许首帧范围[358, 359]
+  search / cap_left_px: 首个新侧名义帧359，容差允许首帧范围[359, 360]
+  search / cap_right_px: 首个新侧名义帧357，容差允许首帧范围[356, 358]
+  core / x_px: 首个新侧名义帧363，容差允许首帧范围[363, 364]
+  core / cap_left_px: 首个新侧名义帧364，容差允许首帧范围[364, 364]
+  core / cap_right_px: 首个新侧名义帧362，容差允许首帧范围[362, 363]
+  图片：window_360_clean.png / window_360_cap_zoom.png / window_360_annotated.png
+样本640，连续窗口632..648，exit_left：x=238，球冠[222,257]；搜索区球冠名义=partial，考虑容差=boundary_uncertain，左端相对5cm余量=-6px。
+  search / x_px: 首个新侧名义帧641，容差允许首帧范围[641, 642]
+  search / cap_left_px: 首个新侧名义帧640，容差允许首帧范围[639, 641]
+  search / cap_right_px: 首个新侧名义帧642，容差允许首帧范围[642, 643]
+  core / x_px: 首个新侧名义帧636，容差允许首帧范围[636, 636]
+  core / cap_left_px: 首个新侧名义帧635，容差允许首帧范围[635, 636]
+  core / cap_right_px: 首个新侧名义帧637，容差允许首帧范围[637, 637]
+  图片：window_640_clean.png / window_640_cap_zoom.png / window_640_annotated.png
+样本780，连续窗口772..788，enter_from_left：x=289，球冠[272,307]；搜索区球冠名义=full，考虑容差=full，左端相对5cm余量=60px。
+  search / x_px: 首个新侧名义帧776，容差允许首帧范围[775, 777]
+  search / cap_left_px: 首个新侧名义帧777，容差允许首帧范围[776, 778]
+  search / cap_right_px: 首个新侧名义帧775，容差允许首帧范围[774, 776]
+  core / x_px: 首个新侧名义帧781，容差允许首帧范围[781, 782]
+  core / cap_left_px: 首个新侧名义帧782，容差允许首帧范围[781, 782]
+  core / cap_right_px: 首个新侧名义帧780，容差允许首帧范围[780, 781]
+  图片：window_780_clean.png / window_780_cap_zoom.png / window_780_annotated.png
+样本880，连续窗口872..888，enter_from_left：x=232，球冠[215,251]；搜索区球冠名义=full，考虑容差=boundary_uncertain，左端相对5cm余量=2px。
+  search / x_px: 首个新侧名义帧879，容差允许首帧范围[878, 880]
+  search / cap_left_px: 首个新侧名义帧880，容差允许首帧范围[880, 881]
+  search / cap_right_px: 首个新侧名义帧878，容差允许首帧范围[877, 879]
+  core / x_px: 首个新侧名义帧884，容差允许首帧范围[884, 885]
+  core / cap_left_px: 首个新侧名义帧885，容差允许首帧范围[885, 886]
+  core / cap_right_px: 首个新侧名义帧883，容差允许首帧范围[883, 884]
+  图片：window_880_clean.png / window_880_cap_zoom.png / window_880_annotated.png
+
+220：明确有部分球冠在搜索区外。640：名义部分越界，但球冠左端容差覆盖边界。880：名义完整入区，但仅2px左侧余量，完整/部分不能可靠区分。360与780：完整球冠在搜索区内。
+没有测量shoulderfall或算法所需肩部支持长度，也没有用用户给定拒绝原因反推视觉坐标；上述结果不能单独验证某条算法拒绝原因。
+dense_labels.json含所有85帧、逐帧刻线、球冠范围、中心区间、原图路径和30个边界事件。

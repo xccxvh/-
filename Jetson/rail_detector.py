@@ -13,16 +13,26 @@ import numpy as np
 
 
 class RailLine(object):
-    def __init__(self, slope, intercept, valid=False, confidence=0.0):
+    def __init__(self, slope, intercept, valid=False, confidence=0.0,
+                 validity_policy="legacy_geometry"):
         self.slope = float(slope)
         self.intercept = float(intercept)
         self.raw_slope = self.slope
         self.raw_intercept = self.intercept
-        self.valid = bool(valid)
         self.confidence = float(confidence)
+        # valid 构造参数沿用旧接口，表示几何判定；身份只能由参考路径确认。
         self.geometry_valid = bool(valid)
+        self.validity_policy = validity_policy
         self.identity_valid = False
         self.reason = "legacy_geometry"
+
+    @property
+    def valid(self):
+        # 旧算法没有身份观测，显式保留仅几何策略，绝不伪造 identity_valid。
+        # 参考路径每次读取都计算合取，防止几何或身份失效后沿用旧有效快照。
+        if self.validity_policy == "legacy_geometry":
+            return bool(self.geometry_valid)
+        return bool(self.geometry_valid and self.identity_valid)
 
     def y_at(self, x):
         return self.slope * x + self.intercept
@@ -60,7 +70,9 @@ class RailDetector(object):
         return self._fallback()
 
     def _fallback(self):
-        return RailLine(0.0, self.H * 0.5, False, 0.0)
+        # 失败结果仍保留所在路径的策略；不退回可绕过身份校验的旧模式。
+        policy = "reference_identity" if self.upper_reference is not None else "legacy_geometry"
+        return RailLine(0.0, self.H * 0.5, False, 0.0, validity_policy=policy)
 
     def _search_region(self):
         """跟踪阶段只在上一条轨道线附近搜索, 避免跳到桌面/箱子边缘。"""
@@ -82,10 +94,12 @@ class RailDetector(object):
             if evidence is None:
                 line = self._invalidate()
                 line.reason = self.upper_reference.reason
-                line.identity_valid = line.reason == 'upper_edge_geometry'
+                # 纸尺纹理匹配不等于轨道上缘身份成立：没有可用上缘几何时，
+                # fallback 不携带参考变换/轮廓，身份必须为假；reason 保留具体原因。
+                line.identity_valid = False
                 return line
             line = RailLine(evidence.pop('slope'), evidence.pop('intercept'), True,
-                            evidence.pop('confidence'))
+                            evidence.pop('confidence'), validity_policy='reference_identity')
             for key, value in evidence.items():setattr(line, key, value)
             line.identity_valid = True
             line.reason = 'confirmed_upper_edge'

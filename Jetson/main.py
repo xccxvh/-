@@ -171,6 +171,7 @@ def main():
                 "cm_valid", "cm_status", "reference_x_px", "reference_ms",
                 "rail_geometry_valid", "rail_identity_valid", "rail_reason",
                 "roi_min_px", "roi_max_px", "candidate_count", "detector_reason", "tracker_reason",
+                "rail_validity_policy", "candidate_diagnostics",
             ])
 
         print("source: %s  %dx%d  fps=%.1f" % (
@@ -324,6 +325,8 @@ def main():
                         '' if getattr(ball_det, 'last_roi', None) is None else '%.2f' % ball_det.last_roi[0],
                         '' if getattr(ball_det, 'last_roi', None) is None else '%.2f' % ball_det.last_roi[1],
                         len(candidates), ball_det.last_reason, out.get('reason', ''),
+                        getattr(rail, 'validity_policy', 'legacy_geometry'),
+                        json.dumps(getattr(ball_det, 'last_diagnostics', []), separators=(',', ':')),
                     ])
 
                 frame_idx += 1

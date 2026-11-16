@@ -79,7 +79,7 @@ class LocalVisionTests(unittest.TestCase):
         rail.reference_inverse=np.eye(2);rail.reference_translation=np.zeros(2)
         rail.reference_profile=np.array([[0,200],[640,200]])
         d=BallDetector({'mode':'relative_cap','ball_search':cfg},640,360)
-        for x,expected in [(320,True),(415,True),(430,False),(500,False)]:
+        for x,expected in [(320,True),(415,True),(430,True),(500,False)]:
             im=np.full((360,640,3),(190,110,40),dtype=np.uint8);im[200:220]=210
             cv2.ellipse(im,(x,201),(21,9),0,180,360,(170,170,170),-1)
             cs=d.detect(im,cv2.cvtColor(im,cv2.COLOR_BGR2GRAY),rail)

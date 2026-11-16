@@ -1,0 +1,30 @@
+Nano待验清单（本文件是执行步骤，不是实测结果）
+
+用户已说明Nano暂未连接。本轮不尝试连接，也不声称Python3.6运行、板端FPS或新录像通过。
+重新接入后保持现有旧工程不动，复制当前Jetson源码、assets和tests到一个全新的目录：
+~/ball_vision_local_roi_v2/；如果目录已存在，使用带时间后缀的新目录，不覆盖。
+不升级系统、JetPack、OpenCV、NumPy。核对源文件SHA和原始视频SHA。
+
+环境记录：
+OPENBLAS_CORETYPE=ARMV8 python3 -c 'import sys,cv2,numpy; print(sys.version); print(cv2.__version__,numpy.__version__)'
+在新目录执行：
+PYTHONDONTWRITEBYTECODE=1 OPENBLAS_CORETYPE=ARMV8 python3 -m unittest discover -s tests -q
+保存完整输出、实际测试数、错误；不得引用电脑端测试数当作Nano结果。
+
+录像回放使用 evaluate_buffer_recovery.py，--fps 29.8 --expected-frames 1043。
+该AVI容器FPS错误，必须顺序解码；以实际1043帧为准。
+CSV需与电脑端逐帧比对x/valid/state/candidates/ROI/rail flags/reasons。
+不能只比较valid总量；浮点误差须单列最大值和是否改变任何判定。
+
+实时benchmark_live.py使用--mode A/B/C，目标1280x720 MJPG 30FPS。
+A无显示无录像，B实际显示无录像，C无显示有异步标注录像；每项建议30秒。
+B没有真实DISPLAY时标为未验证，不用空绘图或虚拟显示冒充实际显示测试。
+记录算法和capture-return-to-output均值/P95、实际采集/处理FPS、录像提交/丢帧、CPU/RSS。
+采集返回到输出不等于曝光到输出；Camera当前没有已验证的传感器时间戳。
+C必须注明录像分辨率/帧率，不把降采样录像的性能称为全分辨率30FPS录像能力。
+
+在新录像前核对参考图机位；变化则停止有效检测并重新确认纸尺参考，不放宽身份门限。
+本轮relative-cap-v1未正式厘米标定，x_cm保持空，不启用serial/uart-enable-valid。
+冻结算法配置SHA后分别采集：核心左右滚动、缓冲返回、无球反光、小幅人工倾斜。
+需要用户手动放置/移动钢珠；本任务不控制舵机。
+新录像不得再用于选参后称作独立验证；所有失败片段及CSV均保留。

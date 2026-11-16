@@ -60,9 +60,11 @@ class TimingTests(unittest.TestCase):
         rail=MagicMock();rail.detect.side_effect=[RailLine(0,300,v,.9) for v in [True,False,True,True]]
         with tempfile.TemporaryDirectory() as d:
             cfg=json.loads((Path(main.BASE)/'config.json').read_text());cfg['output']={'logs_dir':d,'recordings_dir':d}
-            with patch.object(sys,'argv',['main.py','--csv','--reference-preview','dummy']),patch.object(main,'load_config',return_value=cfg),patch.object(main,'Camera',return_value=source),patch.object(main,'ReferencePreview',return_value=p),patch.object(main,'BallTracker',return_value=tracker),patch.object(main,'RailDetector',return_value=rail),patch.object(main,'BallDetector'):
+            with patch.object(sys,'argv',['main.py','--csv','--reference-preview','dummy']),patch.object(main,'load_config',return_value=cfg),patch.object(main,'Camera',return_value=source),patch.object(main,'ReferencePreview',return_value=p),patch.object(main,'BallTracker',return_value=tracker),patch.object(main,'RailDetector',return_value=rail),patch.object(main,'BallDetector', **{'return_value.last_diagnostics': []}):
                 main.main()
             with next(Path(d).glob('*.csv')).open() as f:rows=list(csv.DictReader(f))
+        # 旧预览时序测试的替身必须遵守新增日志接口：候选诊断是可序列化列表。
+        self.assertTrue(all(json.loads(r['candidate_diagnostics']) == [] for r in rows))
         self.assertEqual([r['cm_status'] for r in rows],['ok_preview','rail','vision','vision'])
         self.assertEqual(rows[0]['cm_valid'],'1')
         for r in rows[1:]:

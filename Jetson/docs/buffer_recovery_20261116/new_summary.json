@@ -1,0 +1,932 @@
+{
+  "regions": {
+    "core": {
+      "labeled_frames": 27,
+      "assessments": {
+        "correct": 25,
+        "miss": 2
+      },
+      "miss_runs": [
+        {
+          "start_frame": 884,
+          "end_frame": 885,
+          "frames": 2
+        }
+      ],
+      "longest_miss_frames": 2
+    },
+    "buffer": {
+      "labeled_frames": 25,
+      "assessments": {
+        "correct": 12,
+        "miss": 13
+      },
+      "miss_runs": [
+        {
+          "start_frame": 358,
+          "end_frame": 361,
+          "frames": 4
+        },
+        {
+          "start_frame": 776,
+          "end_frame": 779,
+          "frames": 4
+        },
+        {
+          "start_frame": 879,
+          "end_frame": 883,
+          "frames": 5
+        }
+      ],
+      "longest_miss_frames": 5
+    },
+    "outside": {
+      "labeled_frames": 33,
+      "assessments": {
+        "outside_rejected": 33
+      },
+      "miss_runs": [],
+      "longest_miss_frames": 0
+    },
+    "boundary_unknown": {
+      "labeled_frames": 0,
+      "assessments": {},
+      "miss_runs": [],
+      "longest_miss_frames": 0
+    },
+    "reference_unknown": {
+      "labeled_frames": 0,
+      "assessments": {},
+      "miss_runs": [],
+      "longest_miss_frames": 0
+    },
+    "visibility_unknown": {
+      "labeled_frames": 0,
+      "assessments": {},
+      "miss_runs": [],
+      "longest_miss_frames": 0
+    }
+  },
+  "labeled_frames": 85,
+  "continuous_label_windows": [
+    {
+      "start_frame": 212,
+      "end_frame": 228,
+      "frames": 17
+    },
+    {
+      "start_frame": 352,
+      "end_frame": 368,
+      "frames": 17
+    },
+    {
+      "start_frame": 632,
+      "end_frame": 648,
+      "frames": 17
+    },
+    {
+      "start_frame": 772,
+      "end_frame": 788,
+      "frames": 17
+    },
+    {
+      "start_frame": 872,
+      "end_frame": 888,
+      "frames": 17
+    }
+  ],
+  "reentry_events": [
+    {
+      "outside_frame": 357,
+      "entry_frame": 358,
+      "core_frame": 363,
+      "first_correct_frame": 362,
+      "core_first_correct_frame": 363,
+      "last_observed_frame": 368,
+      "censored": false,
+      "delay_frames": 4,
+      "delay_s": 0.1342281879194631,
+      "core_censored": false,
+      "delay_from_core_frames": 0,
+      "delay_from_core_s": 0.0
+    },
+    {
+      "outside_frame": 775,
+      "entry_frame": 776,
+      "core_frame": 781,
+      "first_correct_frame": 780,
+      "core_first_correct_frame": 781,
+      "last_observed_frame": 788,
+      "censored": false,
+      "delay_frames": 4,
+      "delay_s": 0.1342281879194631,
+      "core_censored": false,
+      "delay_from_core_frames": 0,
+      "delay_from_core_s": 0.0
+    },
+    {
+      "outside_frame": 878,
+      "entry_frame": 879,
+      "core_frame": 884,
+      "first_correct_frame": 886,
+      "core_first_correct_frame": 886,
+      "last_observed_frame": 888,
+      "censored": false,
+      "delay_frames": 7,
+      "delay_s": 0.2348993288590604,
+      "core_censored": false,
+      "delay_from_core_frames": 2,
+      "delay_from_core_s": 0.06711409395973154
+    }
+  ],
+  "frames": 1043,
+  "media_fps": 29.8,
+  "encoded_frames": 1043,
+  "unlabeled_frames": 958,
+  "disclaimer": "人工视觉估计/独立agent视觉审阅，非human independent ground truth；不代表全视频准确率。",
+  "labels_scope": "separate_agent_visual_audit_not_human_independent_ground_truth",
+  "tolerance_sensitivity": {
+    "regions": {
+      "core": {
+        "labeled_frames": 24,
+        "assessments": {
+          "correct": 23,
+          "miss": 1
+        },
+        "miss_runs": [
+          {
+            "start_frame": 885,
+            "end_frame": 885,
+            "frames": 1
+          }
+        ],
+        "longest_miss_frames": 1
+      },
+      "buffer": {
+        "labeled_frames": 21,
+        "assessments": {
+          "correct": 11,
+          "miss": 10
+        },
+        "miss_runs": [
+          {
+            "start_frame": 359,
+            "end_frame": 361,
+            "frames": 3
+          },
+          {
+            "start_frame": 777,
+            "end_frame": 779,
+            "frames": 3
+          },
+          {
+            "start_frame": 880,
+            "end_frame": 883,
+            "frames": 4
+          }
+        ],
+        "longest_miss_frames": 4
+      },
+      "outside": {
+        "labeled_frames": 30,
+        "assessments": {
+          "outside_rejected": 30
+        },
+        "miss_runs": [],
+        "longest_miss_frames": 0
+      },
+      "boundary_unknown": {
+        "labeled_frames": 10,
+        "assessments": {
+          "correct": 3,
+          "miss": 7
+        },
+        "miss_runs": [
+          {
+            "start_frame": 358,
+            "end_frame": 358,
+            "frames": 1
+          },
+          {
+            "start_frame": 641,
+            "end_frame": 641,
+            "frames": 1
+          },
+          {
+            "start_frame": 775,
+            "end_frame": 776,
+            "frames": 2
+          },
+          {
+            "start_frame": 878,
+            "end_frame": 879,
+            "frames": 2
+          },
+          {
+            "start_frame": 884,
+            "end_frame": 884,
+            "frames": 1
+          }
+        ],
+        "longest_miss_frames": 2
+      },
+      "reference_unknown": {
+        "labeled_frames": 0,
+        "assessments": {},
+        "miss_runs": [],
+        "longest_miss_frames": 0
+      },
+      "visibility_unknown": {
+        "labeled_frames": 0,
+        "assessments": {},
+        "miss_runs": [],
+        "longest_miss_frames": 0
+      }
+    },
+    "labeled_frames": 85,
+    "continuous_label_windows": [
+      {
+        "start_frame": 212,
+        "end_frame": 228,
+        "frames": 17
+      },
+      {
+        "start_frame": 352,
+        "end_frame": 368,
+        "frames": 17
+      },
+      {
+        "start_frame": 632,
+        "end_frame": 648,
+        "frames": 17
+      },
+      {
+        "start_frame": 772,
+        "end_frame": 788,
+        "frames": 17
+      },
+      {
+        "start_frame": 872,
+        "end_frame": 888,
+        "frames": 17
+      }
+    ],
+    "reentry_events": []
+  },
+  "source_manifest": {
+    "/home/user/h_contest_vision_repository/Jetson/ball_detector.py": "18ba47aec24a60166ea309acf7626a7641f2c38068e1771e80a6007b506499f0",
+    "/home/user/h_contest_vision_repository/Jetson/ball_tracker.py": "e0e1ae2e840692478fd73e8ee8f0d0c4fe7beabf05c2ca9efd8ec5303ce54309",
+    "/home/user/h_contest_vision_repository/Jetson/evaluate_buffer_recovery.py": "2b6a3a254bd0753dd15ae862657fe991862684141fbd426cae4b91ee9f03ff6f",
+    "/home/user/h_contest_vision_repository/Jetson/measurement_contract.py": "9fb981b017371115e09344b80cb658aa6bf7340ddb72942427f03d5732f5dc81",
+    "/home/user/h_contest_vision_repository/Jetson/rail_detector.py": "b74ccf0eab9d4d4059874006327ef967294e00e127b557758b89ead119880f14",
+    "/home/user/h_contest_vision_repository/Jetson/local_vision.py": "c968fc180802a7f2d9e84d25b8c95ada220bbee04b87feea8d71ee62392232f6",
+    "/home/user/h_contest_vision_repository/Jetson/ruler_reference.py": "2b5083d6de8130a0b21c06386ce420aa732019c2fda34bc6999e2125904b1aad"
+  },
+  "input_sha256": {
+    "video": "1b0f4f9df73245b73dae25248f426fb20049a7427545abaa28a314bdf817d2bb",
+    "config": "9a9afb95147562bd96d8b22e7128354a023b1c952ec976a3d4ba8c56270d564f",
+    "labels": "572d89106ea82f50346667be424116497ac35767a45cd6bdcd4d8d860e15df73"
+  },
+  "source_video": "/home/user/桌面/jetson_nano/raw_rolling_20261116_35s.avi",
+  "config_path": "/home/user/h_contest_vision_repository/Jetson/config_local_roi_20261116.json",
+  "labels_path": "/home/user/桌面/jetson_nano/3/manual_review/dense_labels.json",
+  "label_windows": [
+    {
+      "sample_frame": 220,
+      "start_frame": 212,
+      "end_frame": 228,
+      "direction": "exit_left",
+      "expanded": false,
+      "coverage_note": "Window brackets this local left-edge passage through both search and core boundaries, including cap leading/trailing edge passages. Does not claim entire oscillation or both travel directions.",
+      "sample_cap_visibility_original": "complete_visible_cap",
+      "sample_cap_in_search": {
+        "nominal": "partial",
+        "with_tolerance": "partial",
+        "left_clearance_px": -13,
+        "right_clearance_px": 21
+      },
+      "sample_cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -103,
+        "right_clearance_px": -69
+      },
+      "events": [
+        {
+          "boundary": "search",
+          "metric": "x_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 221,
+          "nominal_crossing_bracket": [
+            220,
+            221
+          ],
+          "possible_first_frame_range": [
+            220,
+            221
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_left_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 220,
+          "nominal_crossing_bracket": [
+            219,
+            220
+          ],
+          "possible_first_frame_range": [
+            219,
+            220
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_right_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 222,
+          "nominal_crossing_bracket": [
+            221,
+            222
+          ],
+          "possible_first_frame_range": [
+            221,
+            222
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "x_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 216,
+          "nominal_crossing_bracket": [
+            215,
+            216
+          ],
+          "possible_first_frame_range": [
+            216,
+            216
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_left_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 215,
+          "nominal_crossing_bracket": [
+            214,
+            215
+          ],
+          "possible_first_frame_range": [
+            215,
+            216
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_right_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 217,
+          "nominal_crossing_bracket": [
+            216,
+            217
+          ],
+          "possible_first_frame_range": [
+            217,
+            217
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        }
+      ]
+    },
+    {
+      "sample_frame": 360,
+      "start_frame": 352,
+      "end_frame": 368,
+      "direction": "enter_from_left",
+      "expanded": false,
+      "coverage_note": "Window brackets this local left-edge passage through both search and core boundaries, including cap leading/trailing edge passages. Does not claim entire oscillation or both travel directions.",
+      "sample_cap_visibility_original": "complete_visible_cap",
+      "sample_cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 20,
+        "right_clearance_px": 55
+      },
+      "sample_cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -69,
+        "right_clearance_px": -34
+      },
+      "events": [
+        {
+          "boundary": "search",
+          "metric": "x_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 358,
+          "nominal_crossing_bracket": [
+            357,
+            358
+          ],
+          "possible_first_frame_range": [
+            358,
+            359
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_left_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 359,
+          "nominal_crossing_bracket": [
+            358,
+            359
+          ],
+          "possible_first_frame_range": [
+            359,
+            360
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_right_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 357,
+          "nominal_crossing_bracket": [
+            356,
+            357
+          ],
+          "possible_first_frame_range": [
+            356,
+            358
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "x_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 363,
+          "nominal_crossing_bracket": [
+            362,
+            363
+          ],
+          "possible_first_frame_range": [
+            363,
+            364
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_left_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 364,
+          "nominal_crossing_bracket": [
+            363,
+            364
+          ],
+          "possible_first_frame_range": [
+            364,
+            364
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_right_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 362,
+          "nominal_crossing_bracket": [
+            361,
+            362
+          ],
+          "possible_first_frame_range": [
+            362,
+            363
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        }
+      ]
+    },
+    {
+      "sample_frame": 640,
+      "start_frame": 632,
+      "end_frame": 648,
+      "direction": "exit_left",
+      "expanded": false,
+      "coverage_note": "Window brackets this local left-edge passage through both search and core boundaries, including cap leading/trailing edge passages. Does not claim entire oscillation or both travel directions.",
+      "sample_cap_visibility_original": "complete_visible_cap",
+      "sample_cap_in_search": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -6,
+        "right_clearance_px": 29
+      },
+      "sample_cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -96,
+        "right_clearance_px": -61
+      },
+      "events": [
+        {
+          "boundary": "search",
+          "metric": "x_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 641,
+          "nominal_crossing_bracket": [
+            640,
+            641
+          ],
+          "possible_first_frame_range": [
+            641,
+            642
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_left_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 640,
+          "nominal_crossing_bracket": [
+            639,
+            640
+          ],
+          "possible_first_frame_range": [
+            639,
+            641
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_right_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 642,
+          "nominal_crossing_bracket": [
+            641,
+            642
+          ],
+          "possible_first_frame_range": [
+            642,
+            643
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "x_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 636,
+          "nominal_crossing_bracket": [
+            635,
+            636
+          ],
+          "possible_first_frame_range": [
+            636,
+            636
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_left_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 635,
+          "nominal_crossing_bracket": [
+            634,
+            635
+          ],
+          "possible_first_frame_range": [
+            635,
+            636
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_right_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 637,
+          "nominal_crossing_bracket": [
+            636,
+            637
+          ],
+          "possible_first_frame_range": [
+            637,
+            637
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        }
+      ]
+    },
+    {
+      "sample_frame": 780,
+      "start_frame": 772,
+      "end_frame": 788,
+      "direction": "enter_from_left",
+      "expanded": false,
+      "coverage_note": "Window brackets this local left-edge passage through both search and core boundaries, including cap leading/trailing edge passages. Does not claim entire oscillation or both travel directions.",
+      "sample_cap_visibility_original": "complete_visible_cap",
+      "sample_cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 60,
+        "right_clearance_px": 95
+      },
+      "sample_cap_in_core": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -27,
+        "right_clearance_px": 8
+      },
+      "events": [
+        {
+          "boundary": "search",
+          "metric": "x_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 776,
+          "nominal_crossing_bracket": [
+            775,
+            776
+          ],
+          "possible_first_frame_range": [
+            775,
+            777
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_left_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 777,
+          "nominal_crossing_bracket": [
+            776,
+            777
+          ],
+          "possible_first_frame_range": [
+            776,
+            778
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_right_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 775,
+          "nominal_crossing_bracket": [
+            774,
+            775
+          ],
+          "possible_first_frame_range": [
+            774,
+            776
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "x_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 781,
+          "nominal_crossing_bracket": [
+            780,
+            781
+          ],
+          "possible_first_frame_range": [
+            781,
+            782
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_left_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 782,
+          "nominal_crossing_bracket": [
+            781,
+            782
+          ],
+          "possible_first_frame_range": [
+            781,
+            782
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_right_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 780,
+          "nominal_crossing_bracket": [
+            779,
+            780
+          ],
+          "possible_first_frame_range": [
+            780,
+            781
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        }
+      ]
+    },
+    {
+      "sample_frame": 880,
+      "start_frame": 872,
+      "end_frame": 888,
+      "direction": "enter_from_left",
+      "expanded": false,
+      "coverage_note": "Window brackets this local left-edge passage through both search and core boundaries, including cap leading/trailing edge passages. Does not claim entire oscillation or both travel directions.",
+      "sample_cap_visibility_original": "complete_visible_cap",
+      "sample_cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": 2,
+        "right_clearance_px": 38
+      },
+      "sample_cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -87,
+        "right_clearance_px": -51
+      },
+      "events": [
+        {
+          "boundary": "search",
+          "metric": "x_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 879,
+          "nominal_crossing_bracket": [
+            878,
+            879
+          ],
+          "possible_first_frame_range": [
+            878,
+            880
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_left_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 880,
+          "nominal_crossing_bracket": [
+            879,
+            880
+          ],
+          "possible_first_frame_range": [
+            880,
+            881
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_right_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 878,
+          "nominal_crossing_bracket": [
+            877,
+            878
+          ],
+          "possible_first_frame_range": [
+            877,
+            879
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "x_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 884,
+          "nominal_crossing_bracket": [
+            883,
+            884
+          ],
+          "possible_first_frame_range": [
+            884,
+            885
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_left_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 885,
+          "nominal_crossing_bracket": [
+            884,
+            885
+          ],
+          "possible_first_frame_range": [
+            885,
+            886
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_right_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 883,
+          "nominal_crossing_bracket": [
+            882,
+            883
+          ],
+          "possible_first_frame_range": [
+            883,
+            884
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        }
+      ]
+    }
+  ],
+  "reported_valid_frames": 666,
+  "algo_mean_ms": 7.736080469772074,
+  "runtime": {
+    "python": "3.10.12",
+    "opencv": "4.8.1",
+    "numpy": "1.24.4",
+    "machine": "x86_64",
+    "host": "user-virtual-machine"
+  },
+  "replay_policy": "single imported version; force rail each frame; media frame/fps time; config unchanged",
+  "reentry_definition": "contiguous labeled outside->buffer->core; delay from first buffer frame to first correct in buffer/core; censored if none before gap/exit/end",
+  "tolerance_note": "dense: center tolerance + visual tick tolerance; boundary_unknown retains pixel assessment; sparse: projected boundaries are NOT independent"
+}
