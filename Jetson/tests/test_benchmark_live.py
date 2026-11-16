@@ -266,6 +266,126 @@ class BenchmarkTests(unittest.TestCase):
             self.assertEqual(bench.main(['--mode', 'A', '--output', str(self.root / 'cli')]), 0)
         self.assertEqual(Path(run.call_args[0][2]).name, 'config_local_roi_20261116.json')
 
+    def test_valid_intervals_exclude_boundary_invalid_runs(self):
+        # 相邻有效观测之间允许夹无效帧；首尾无效帧只能计入边界段，不能伪造间隔。
+        self.assertTrue(hasattr(bench, 'measurement_summary'))
+        stats = bench.measurement_summary([1., 1.1, 1.2, 1.4, 1.5],
+                                          [False, True, False, True, False])
+        self.assertEqual(stats['valid_frames'], 2)
+        self.assertEqual(stats['leading_invalid_run_frames'], 1)
+        self.assertEqual(stats['trailing_invalid_run_frames'], 1)
+        self.assertEqual(stats['interval_ms']['count'], 1)
+        self.assertAlmostEqual(stats['interval_ms']['max'], 300.)
+        self.assertAlmostEqual(stats['interval_ms']['mean'], 300.)
+        for flags in ([False] * 3, [False, True, False]):
+            result = bench.measurement_summary([1., 2., 3.], flags)
+            self.assertIsNone(result['interval_ms'])
+        self.assertEqual(bench.measurement_summary([1., 2.], [False, False])[
+            'leading_invalid_run_frames'], 2)
+        self.assertIsNone(bench.measurement_summary([], [])['interval_ms'])
+
+    def test_raw_disabled_keeps_pixels_and_reports_no_centimeters(self):
+        # 无几何配置必须走真实raw默认类；坐标禁用不能把像素有效数清零。
+        from camera_geometry import CameraGeometry
+        track = dict(x_px=321.25, valid=True, predicted=False, state='TRACKING',
+                     confidence=.9, method='relative_cap', reason='tracked')
+        tracker = SimpleNamespace(update=lambda *args: dict(track))
+        with patch.object(bench, 'CameraGeometry', wraps=CameraGeometry, create=True) as geo, \
+                patch.object(bench, 'BallTracker', return_value=tracker):
+            result = self.run_mode('A')
+        geo.assert_called_once_with({}, 1280, 720)
+        self.assertEqual(result['pixel_valid_frames'], result['processed_frames'])
+        self.assertEqual(result['reference_valid_frames'], 0)
+        self.assertEqual(result['cm_valid_frames'], 0)
+        self.assertIsNone(result['valid_measurements']['cm']['interval_ms'])
+        self.assertFalse(result['timestamp_verified'])
+        self.assertFalse(self.source.__dict__.get('timestamp_verified', False))
+        for row in self.rows('A'):
+            self.assertEqual(float(row['x_px']), 321.25)
+            self.assertEqual((row['pixel_valid'], row['cm_valid'], row['x_cm']), ('1', '0', ''))
+            self.assertEqual(row['camera_geometry_mode'], 'raw')
+            self.assertEqual(row['image_space'], 'raw_image')
+            self.assertEqual(row['timestamp_verified'], '0')
+
+    def test_geometry_coordinate_order_fields_binding_and_validity_counts(self):
+        # 只替换设备/算法边界；通过帧内容和调用序列证明几何预处理未被跳过。
+        events = []
+        geometry = SimpleNamespace(mode='image', image_space='undistorted_image',
+                                   context={'mode': 'image'})
+        def prepare(frame):
+            events.append('geometry')
+            time.sleep(.002)
+            return np.full_like(frame, 7)
+        geometry.prepare_frame = prepare
+        rail = SimpleNamespace(valid=True, geometry_valid=True, identity_valid=True, reason='ok')
+        def detect_rail(gray, force=False):
+            self.assertTrue(np.all(gray == 7)); self.assertTrue(force)
+            events.append('reference'); time.sleep(.002)
+            return rail
+        candidates = [object()]
+        def detect_ball(frame, gray, r):
+            self.assertTrue(np.all(frame == 7)); self.assertIs(r, rail)
+            events.append('ball'); return candidates
+        track = dict(x_px=333.25, valid=True, predicted=False, state='TRACKING',
+                     confidence=.9, method='relative_cap', reason='tracked')
+        def update(cs, timestamp):
+            self.assertIs(cs, candidates); events.append('tracker'); return dict(track)
+        rc = SimpleNamespace(enabled=True, binding={'schema': 'test-binding'}, binding_id='test-id')
+        def process(out, cs, r, frame_id):
+            events.append('coordinate'); time.sleep(.002)
+            self.assertEqual(frame_id, events.count('coordinate')-1)
+            self.assertIs(cs, candidates); self.assertIs(r, rail)
+            pixel = frame_id in (1, 2, 3)
+            ref = frame_id in (0, 1, 3)
+            cm = frame_id == 3
+            return dict(pixel_valid=pixel, reference_valid=ref, calibration_valid=True,
+                        cm_valid=cm, feedback_valid=False, measurement_x_px=333.25 if pixel else None,
+                        measurement_y_px=201.5 if pixel else None, reference_x_px=320. if ref else None,
+                        reference_y_px=200. if ref else None, rail_s_px=12.5 if pixel and ref else None,
+                        rail_x_cm=1.25 if cm else None, rail_angle_deg=2., reference_rotation_deg=1.,
+                        reference_scale=1.01, reference_residual_px=.2, origin_x_px=300., origin_y_px=200.,
+                        rail_binding_id='test-id', measurement_image_space='undistorted_image',
+                        rail_coordinate_version='rail-reference-v1', rail_coordinate_status='ok' if cm else 'unavailable')
+        rc.process = process
+        with patch.object(bench, 'CountingCamera', return_value=self.source), \
+                patch.object(bench, 'CameraGeometry', return_value=geometry, create=True), \
+                patch.object(bench, 'RailCoordinates', return_value=rc, create=True), \
+                patch.object(bench, 'RailDetector', return_value=SimpleNamespace(detect=detect_rail)), \
+                patch.object(bench, 'BallDetector', return_value=SimpleNamespace(
+                    detect=detect_ball, last_reason='candidates', last_roi=(200., 440.))), \
+                patch.object(bench, 'BallTracker', return_value=SimpleNamespace(update=update)), \
+                patch.object(bench, 'draw_overlay', side_effect=lambda frame, *a, **kw: frame), \
+                patch.object(bench, 'check_display'), patch.object(bench.cv2, 'namedWindow'), \
+                patch.object(bench.cv2, 'imshow'), patch.object(bench.cv2, 'destroyWindow'), \
+                patch.object(bench.cv2, 'getWindowProperty', return_value=1), \
+                patch.object(bench.cv2, 'waitKey', side_effect=[-1]*5+[ord('q')]):
+            result = bench.run_benchmark('B', 5., self.config, self.root/'B')
+        self.assertEqual(events, ['geometry', 'reference', 'ball', 'tracker', 'coordinate']*6)
+        self.assertEqual((result['pixel_valid_frames'], result['reference_valid_frames'],
+                          result['cm_valid_frames']), (3, 3, 1))
+        self.assertFalse(result['uart_enabled']); self.assertFalse(result['timestamp_verified'])
+        self.assertEqual(result['valid_measurements']['pixel']['leading_invalid_run_frames'], 1)
+        self.assertEqual(result['valid_measurements']['pixel']['trailing_invalid_run_frames'], 2)
+        self.assertEqual(result['valid_measurements']['pixel']['interval_ms']['count'], 2)
+        self.assertIsNone(result['valid_measurements']['cm']['interval_ms'])
+        for key in ('geometry_ms', 'reference_match_ms', 'coordinate_ms'):
+            self.assertGreaterEqual(result[key]['mean'], 1.)
+            self.assertIsNotNone(result[key]['max'])
+        rows = self.rows('B')
+        self.assertEqual(rows[3]['rail_x_cm'], '1.25')
+        self.assertEqual(rows[3]['x_cm'], '1.25')
+        self.assertEqual(rows[3]['measurement_y_px'], '201.5')
+        self.assertEqual(rows[3]['reference_x_px'], '320.0')
+        for row in rows:
+            self.assertEqual(row['x_px'], '333.25')
+            self.assertEqual(row['uart_enabled'], '0')
+            self.assertEqual(row['rail_binding_id'], 'test-id')
+            self.assertEqual(row['timestamp_verified'], '0')
+        binding = json.loads((self.root/'B'/'frames.binding.json').read_text())
+        self.assertEqual(binding, {'binding': rc.binding, 'rail_binding_id': rc.binding_id})
+        for name in ('camera_geometry.py', 'rail_coordinates.py', 'rail_calibration.py'):
+            self.assertIn(name, result['source_sha256'])
+
     def test_invalid_duration_and_existing_output_are_rejected(self):
         for duration in (0, -1, float('nan'), float('inf')):
             with self.assertRaises(ValueError):

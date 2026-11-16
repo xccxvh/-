@@ -90,9 +90,11 @@ class RailDetector(object):
     def detect(self, gray, force=False):
         """返回 RailLine。gray 为单通道灰度图。"""
         if self.upper_reference is not None:
+            self.reference_sequence = getattr(self, "reference_sequence", 0) + 1
             evidence = self.upper_reference.locate(gray)
             if evidence is None:
                 line = self._invalidate()
+                line.reference_sequence = self.reference_sequence
                 line.reason = self.upper_reference.reason
                 # 纸尺纹理匹配不等于轨道上缘身份成立：没有可用上缘几何时，
                 # fallback 不携带参考变换/轮廓，身份必须为假；reason 保留具体原因。
@@ -102,6 +104,7 @@ class RailDetector(object):
                             evidence.pop('confidence'), validity_policy='reference_identity')
             for key, value in evidence.items():setattr(line, key, value)
             line.identity_valid = True
+            line.reference_sequence = self.reference_sequence
             line.reason = 'confirmed_upper_edge'
             self.last = line
             return line

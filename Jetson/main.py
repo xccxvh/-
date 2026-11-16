@@ -24,6 +24,8 @@ from contextlib import ExitStack
 import cv2
 
 from camera import Camera, VideoFile
+from camera_geometry import CameraGeometry
+from rail_coordinates import RailCoordinates
 from rail_detector import RailDetector
 from ball_detector import BallDetector
 from ball_tracker import BallTracker
@@ -116,6 +118,13 @@ def main():
             source.fps_set = float(args.fps)
         resources.callback(source.release)
         W, H = source.width, source.height
+        geometry = CameraGeometry(cfg.get('camera_geometry', {}), W, H, BASE)
+        rail_coordinates = RailCoordinates(cfg, geometry, BASE)
+        # 新几何流程当前只交付测量；不能借新cm输出绕过历史UART/时间戳门控。
+        if rail_coordinates.enabled and (args.serial or preview is not None):
+            ap.error('rail coordinates cannot be combined with UART or legacy reference preview')
+        if preview is not None and geometry.mode != 'raw':
+            ap.error('legacy preview cannot use corrected image/point coordinates')
 
         rail_det = RailDetector(cfg["rail"], W, H)
         ball_cfg = dict(cfg["ball"])
@@ -127,8 +136,12 @@ def main():
         # 标定只在"已拟合且采集分辨率与当前一致"时才可用。相机移动、变焦
         # 或改分辨率都会让旧标定失效, 此时 x_cm 必须输出空值。
         calib_ok = bool(calib is not None and calib.ready and
-                        calib.resolution_ok(W, H))
-        if calib is None or not calib.ready:
+                        calib.resolution_ok(W, H) and geometry.mode == 'raw' and not rail_coordinates.enabled)
+        if rail_coordinates.enabled:
+            calib_status = 'rail model: ' + (rail_coordinates.calibration.status if rail_coordinates.calibration is not None else 'not available')
+        elif geometry.mode != 'raw':
+            calib_status = 'legacy calibration disabled in corrected coordinates'
+        elif calib is None or not calib.ready:
             calib_status = "not ready"
         elif not calib.resolution_ok(W, H):
             calib_status = "not ready (calibrated at %dx%d, current %dx%d)" % (
@@ -172,7 +185,19 @@ def main():
                 "rail_geometry_valid", "rail_identity_valid", "rail_reason",
                 "roi_min_px", "roi_max_px", "candidate_count", "detector_reason", "tracker_reason",
                 "rail_validity_policy", "candidate_diagnostics",
+                "pixel_valid", "reference_valid", "calibration_valid", "measurement_x_px", "measurement_y_px",
+                "reference_y_px", "rail_s_px", "rail_x_cm", "rail_angle_deg", "reference_rotation_deg",
+                "reference_scale", "reference_residual_px", "rail_coordinate_status", "rail_binding_id",
+                "image_space", "camera_geometry_mode", "geometry_ms", "reference_match_ms", "coordinate_ms",
+
             ])
+
+        if args.csv and rail_coordinates.enabled:
+            # 同一CSV绑定当前几何/算法；另建sidecar，不覆盖任何历史标定。
+            binding_path = os.path.splitext(csv_path)[0] + '.binding.json'
+            with open(binding_path, 'x') as stream:
+                json.dump(dict(binding=rail_coordinates.binding, rail_binding_id=rail_coordinates.binding_id),
+                          stream, ensure_ascii=False, indent=2, allow_nan=False)
 
         print("source: %s  %dx%d  fps=%.1f" % (
             args.video if args.video else cfg["camera"].get("device"),
@@ -212,8 +237,12 @@ def main():
                 wait_ms = ((t_read - t_cap) * 1000.0
                            if t_cap is not None else 0.0)
                 t0 = time.perf_counter()
+                frame = geometry.prepare_frame(frame)
+                geometry_ms = (time.perf_counter() - t0) * 1000.0
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                rail = rail_det.detect(gray, force=bool(args.serial or calib_ok or preview is not None))
+                t_reference = time.perf_counter()
+                rail = rail_det.detect(gray, force=bool(args.serial or calib_ok or preview is not None or rail_coordinates.enabled))
+                reference_match_ms = (time.perf_counter() - t_reference) * 1000.0
                 candidates = ball_det.detect(frame, gray, rail)
                 # Replay speed must not change motion prediction. Live read
                 # time is monotonic but still not a verified sensor timestamp.
@@ -245,6 +274,15 @@ def main():
                     x_cm = preview.position(out, candidates) if pose_ok else None
                     cm_status = preview.status
                     out['reference_preview'] = True
+                t_coordinate = time.perf_counter()
+                coordinate = rail_coordinates.process(out, candidates, rail, frame_idx)
+                coordinate_ms = (time.perf_counter() - t_coordinate) * 1000.0
+                if rail_coordinates.enabled:
+                    pose_ok = coordinate['reference_valid']
+                    x_cm = coordinate['rail_x_cm']
+                    cm_status = coordinate['rail_coordinate_status']
+                    reference_ms = reference_match_ms
+                    out.update(coordinate)
                 out['cm_status'] = cm_status
                 out["x_cm"] = x_cm
                 state_counts[out["state"]] = state_counts.get(out["state"], 0) + 1
@@ -255,6 +293,8 @@ def main():
                     source_time_verified=getattr(source, "timestamp_verified", False))
                 if preview is not None:
                     feedback_valid, feedback_reason = False, 'reference_preview'
+                if rail_coordinates.enabled:
+                    feedback_valid, feedback_reason = False, 'rail_measurement_only'
                 if serial is not None:
                     serial.send(line)
                 algo_ms = (t_out - t0) * 1000.0
@@ -282,7 +322,7 @@ def main():
                     t_vis0 = time.perf_counter()
                     vis = draw_overlay(frame, rail, candidates, out, fps_ema,
                                        algo_ms, x_cm,
-                                       calibrated=(x_cm is not None) if preview is not None else pose_ok and calibrated_method(out.get("method")),
+                                       calibrated=(x_cm is not None) if (preview is not None or rail_coordinates.enabled) else pose_ok and calibrated_method(out.get("method")),
                                        output_size=record_size if record_due and not args.display else None)
                     draw_ms = (time.perf_counter() - t_vis0) * 1000.0
                     if record_due:
@@ -318,7 +358,7 @@ def main():
                         "" if t_cap is None else "%.3f" % (t_cap*1000),
                         int(feedback_valid), feedback_reason,
                         int(x_cm is not None), cm_status,
-                        "" if preview is None or preview.reference_x_px is None else "%.4f" % preview.reference_x_px,
+                        coordinate['reference_x_px'] if rail_coordinates.enabled else ("" if preview is None or preview.reference_x_px is None else "%.4f" % preview.reference_x_px),
                         "%.3f" % reference_ms,
                         int(getattr(rail, 'geometry_valid', rail.valid)),
                         int(getattr(rail, 'identity_valid', False)), getattr(rail, 'reason', ''),
@@ -327,6 +367,15 @@ def main():
                         len(candidates), ball_det.last_reason, out.get('reason', ''),
                         getattr(rail, 'validity_policy', 'legacy_geometry'),
                         json.dumps(getattr(ball_det, 'last_diagnostics', []), separators=(',', ':')),
+                        int(coordinate['pixel_valid'] if rail_coordinates.enabled else out['valid'] and not out['predicted']),
+                        # 旧路径保留原算法，同时让追加有效性列与既有厘米输出一致。
+                        int(coordinate['reference_valid'] if rail_coordinates.enabled else (preview.valid if preview is not None else rail.valid)),
+                        int(coordinate['calibration_valid'] if rail_coordinates.enabled else (x_cm is not None or calib_ok)),
+                        coordinate['measurement_x_px'], coordinate['measurement_y_px'], coordinate['reference_y_px'],
+                        coordinate['rail_s_px'], coordinate['rail_x_cm'], coordinate['rail_angle_deg'],
+                        coordinate['reference_rotation_deg'], coordinate['reference_scale'], coordinate['reference_residual_px'],
+                        coordinate['rail_coordinate_status'], coordinate['rail_binding_id'],
+                        geometry.image_space, geometry.mode, geometry_ms, reference_match_ms, coordinate_ms,
                     ])
 
                 frame_idx += 1

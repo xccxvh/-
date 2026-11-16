@@ -52,7 +52,8 @@ class UpperEdgeReference(object):
             raise ValueError('upper-edge reference image changed')
         image=cv2.imread(str(path),cv2.IMREAD_GRAYSCALE)
         self.matcher=RulerReference(image,cfg['boxes'],search_x=int(cfg.get('search_x',45)),
-                                    search_y=int(cfg.get('search_y',45)))
+                                    search_y=int(cfg.get('search_y',45)),
+                                    rotation_recheck=cfg.get('rotation_recheck',False))
         self.profile=np.asarray(cfg['upper_edge_points'],dtype=float)
         if (self.profile.ndim!=2 or self.profile.shape[1]!=2 or len(self.profile)<3 or
                 not np.isfinite(self.profile).all() or not np.all(np.diff(self.profile[:,0])>0)):

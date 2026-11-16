@@ -5,7 +5,7 @@
 例：python3 benchmark_live.py --mode C --duration 60 --config config_local_roi_20261116.json
     --output /tmp/benchmark_C
 输出目录必须不存在，包含 frames.csv、summary.json；C另含 annotated.mp4 及时间旁文件。
-不加载标定、不开放UART；cm_valid恒假。所有 perf_counter 时间以秒为单位，耗时以ms为单位。
+可选几何/轨道厘米记录，但始终不开放UART。所有 perf_counter 时间以秒为单位，耗时以ms为单位。
 capture_return 是 OpenCV read 返回时刻，不是传感器曝光时刻；output 是显示调用/
 录像入队返回，不代表屏幕呈现或编码完成。FPS统计使用实测运行窗口，清理耗时另列。
 """
@@ -25,6 +25,8 @@ import time
 import cv2
 import numpy as np
 
+from camera_geometry import CameraGeometry
+from rail_coordinates import RailCoordinates
 from camera import Camera
 from rail_detector import RailDetector
 from ball_detector import BallDetector
@@ -131,8 +133,21 @@ def rss_mib(pid=None):
 
 
 def distribution(values):
-    return dict(mean=float(np.mean(values)) if values else None,
+    return dict(count=len(values), max=float(max(values)) if values else None,
+                mean=float(np.mean(values)) if values else None,
                 p95=float(np.percentile(values, 95)) if values else None)
+
+
+def measurement_summary(timestamps, flags):
+    """统计相邻有效观测的post-read间隔，首尾无效段不冒充有效间隔。"""
+    indices = [i for i, valid in enumerate(flags) if valid]
+    intervals = [(timestamps[b] - timestamps[a]) * 1000.
+                 for a, b in zip(indices, indices[1:])]
+    # 全部无效时首尾段均覆盖整段，二者不可相加；零/单观测没有可测间隔。
+    return dict(valid_frames=len(indices),
+                interval_ms=distribution(intervals) if intervals else None,
+                leading_invalid_run_frames=indices[0] if indices else len(flags),
+                trailing_invalid_run_frames=len(flags)-1-indices[-1] if indices else len(flags))
 
 
 def children_cpu_s():
@@ -148,6 +163,17 @@ FIELDS = ['frame', 'capture_return_s', 'result_ready_s', 'output_return_s',
           'roi_min_px', 'roi_max_px', 'candidate_count', 'detector_reason', 'tracker_reason',
           'cm_valid', 'x_cm', 'cm_status', 'uart_enabled', 'record_accepted',
           'record_frames', 'record_dropped', 'process_cpu_pct', 'process_rss_mib', 'encoder_rss_mib']
+
+# 与main使用同一坐标字段；保留原x_px/valid，避免厘米门控改变像素行为。
+COORDINATE_FIELDS = [
+    'measurement_x_px', 'measurement_y_px', 'reference_x_px', 'reference_y_px',
+    'rail_s_px', 'rail_x_cm', 'rail_angle_deg', 'reference_rotation_deg',
+    'reference_scale', 'reference_residual_px', 'origin_x_px', 'origin_y_px',
+    'rail_binding_id', 'measurement_image_space', 'rail_coordinate_version',
+    'rail_coordinate_status']
+FIELDS += ['geometry_ms', 'reference_match_ms', 'coordinate_ms',
+           'pixel_valid', 'reference_valid', 'calibration_valid',
+           'camera_geometry_mode', 'image_space', 'timestamp_verified'] + COORDINATE_FIELDS
 
 
 def run_benchmark(mode, duration, config, output):
@@ -168,6 +194,10 @@ def run_benchmark(mode, duration, config, output):
     begin = None
     capture_stats = dict(frames=0, elapsed_s=0., fps=0., interval_fps=None)
     algo_values, latency_values, rss_values, encoder_rss_values = [], [], [], []
+    geometry_values, reference_values, coordinate_values = [], [], []
+    timestamps = []
+    validity = {key: [] for key in ('pixel', 'reference', 'cm')}
+    geometry = rc = None
     loop_cpu = 0.
     setup_start = time.perf_counter()
     total_cpu_start = time.process_time()
@@ -183,7 +213,8 @@ def run_benchmark(mode, duration, config, output):
     source_root = Path(__file__).resolve().parent
     source_names = ['benchmark_live.py', 'rail_detector.py', 'ball_detector.py',
                     'ball_tracker.py', 'local_vision.py', 'camera.py', 'video_writer.py',
-                    'visualization.py', 'ruler_reference.py', 'measurement_contract.py']
+                    'visualization.py', 'ruler_reference.py', 'measurement_contract.py',
+                    'camera_geometry.py', 'rail_coordinates.py', 'rail_calibration.py']
     source_hashes = {name: hashlib.sha256((source_root / name).read_bytes()).hexdigest()
                      for name in source_names}
     try:
@@ -208,6 +239,13 @@ def run_benchmark(mode, duration, config, output):
             raise RuntimeError('camera format mismatch: expected 1280x720 MJPG, negotiated {}'.format(
                 camera_format['actual']))
         fps_header = source.fps_set if math.isfinite(source.fps_set) else None
+        # 默认raw无需内参；相对资源路径沿用各模块默认根目录，与main一致。
+        geometry = CameraGeometry(cfg.get('camera_geometry', {}), width, height)
+        rc = RailCoordinates(cfg, geometry)
+        if rc.enabled:
+            (output / 'frames.binding.json').write_text(json.dumps(
+                {'binding': rc.binding, 'rail_binding_id': rc.binding_id},
+                ensure_ascii=False, indent=2, allow_nan=False) + '\n', encoding='utf-8')
         rail_detector = RailDetector(cfg['rail'], width, height)
         ball_cfg = dict(cfg['ball'])
         if 'ball_search' in cfg:
@@ -240,12 +278,28 @@ def run_benchmark(mode, duration, config, output):
             if capture_time < begin:
                 continue  # 跳过测量窗口开始前已经排队的帧，不改原队列。
             start_algo = time.perf_counter()
+            frame = geometry.prepare_frame(frame)
+            geometry_ms = (time.perf_counter() - start_algo) * 1000.
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            # 无标定/UART；遵守配置刷新策略。参考检测器会自行逐帧确认身份。
-            rail = rail_detector.detect(gray)
+            # 新坐标需要同帧参考；禁用时保留原检测刷新策略。
+            reference_start = time.perf_counter()
+            rail = rail_detector.detect(gray, force=bool(rc.enabled))
+            reference_ms = (time.perf_counter() - reference_start) * 1000.
             candidates = ball_detector.detect(frame, gray, rail)
             track = tracker.update(candidates, capture_time)
-            track.update(x_cm=None, cm_valid=False, cm_status='benchmark_disabled')
+            coordinate_start = time.perf_counter()
+            coordinate = rc.process(track, candidates, rail, count)
+            coordinate_ms = (time.perf_counter() - coordinate_start) * 1000.
+            pixel_valid = (bool(coordinate['pixel_valid']) if rc.enabled else
+                           bool(track['valid'] and not track['predicted']))
+            if rc.enabled:
+                track.update(coordinate)
+            # UART和传感器时间验证均不受坐标有效性影响；此工具只记录。
+            cm_valid = bool(rc.enabled and coordinate['cm_valid'])
+            x_cm = coordinate['rail_x_cm'] if cm_valid else None
+            track.update(x_cm=x_cm, cm_valid=cm_valid,
+                         cm_status=coordinate['rail_coordinate_status'] if rc.enabled
+                         else 'benchmark_disabled')
             result_time = time.perf_counter()
             algo_ms = (result_time - start_algo) * 1000.
             draw_ms = display_ms = submit_ms = 0.
@@ -255,7 +309,7 @@ def run_benchmark(mode, duration, config, output):
                 draw_start = time.perf_counter()
                 vis = draw_overlay(frame, rail, candidates, track,
                                    count / max(result_time - begin, 1e-9), algo_ms,
-                                   x_cm=None, calibrated=False)
+                                   x_cm=x_cm, calibrated=cm_valid)
                 draw_ms = (time.perf_counter() - draw_start) * 1000.
                 io_start = time.perf_counter()
                 if mode == 'B':
@@ -298,11 +352,24 @@ def run_benchmark(mode, duration, config, output):
                 roi_min_px=roi[0] if roi is not None else None,
                 roi_max_px=roi[1] if roi is not None else None, candidate_count=len(candidates),
                 detector_reason=ball_detector.last_reason, tracker_reason=track.get('reason', ''),
-                cm_valid=0, x_cm=None, cm_status='benchmark_disabled', uart_enabled=0,
+                cm_valid=int(cm_valid), x_cm=x_cm, cm_status=track['cm_status'], uart_enabled=0,
+                geometry_ms=geometry_ms, reference_match_ms=reference_ms, coordinate_ms=coordinate_ms,
+                pixel_valid=int(pixel_valid), reference_valid=int(coordinate['reference_valid']),
+                calibration_valid=int(coordinate['calibration_valid']),
+                camera_geometry_mode=geometry.mode, image_space=geometry.image_space,
+                timestamp_verified=0,
                 record_accepted=int(accepted) if accepted is not None else None,
                 record_frames=writer.frames if writer is not None else 0,
                 record_dropped=writer.dropped if writer is not None else 0,
-                process_cpu_pct=cpu_pct, process_rss_mib=memory, encoder_rss_mib=encoder_memory))
+                process_cpu_pct=cpu_pct, process_rss_mib=memory, encoder_rss_mib=encoder_memory,
+                **{key: coordinate.get(key) for key in COORDINATE_FIELDS}))
+            timestamps.append(capture_time)
+            validity['pixel'].append(pixel_valid)
+            validity['reference'].append(bool(coordinate['reference_valid']))
+            validity['cm'].append(cm_valid)
+            geometry_values.append(geometry_ms)
+            reference_values.append(reference_ms)
+            coordinate_values.append(coordinate_ms)
             count += 1
             algo_values.append(algo_ms)
             latency_values.append(latency_ms)
@@ -362,7 +429,16 @@ def run_benchmark(mode, duration, config, output):
         total_cpu_including_setup_cleanup_pct=100.*(time.process_time()-total_cpu_start+child_cpu)/max(end-setup_start,1e-9),
         process_rss_peak_mib=max(rss_values) if rss_values else None,
         encoder_rss_peak_mib=max(encoder_rss_values) if encoder_rss_values else None,
-        display_verified=display_verified, uart_enabled=False, cm_valid=False,
+        display_verified=display_verified, uart_enabled=False,
+        timestamp_verified=False, cm_valid=any(validity['cm']),
+        pixel_valid_frames=sum(validity['pixel']),
+        reference_valid_frames=sum(validity['reference']), cm_valid_frames=sum(validity['cm']),
+        valid_measurements={key: measurement_summary(timestamps, flags)
+                            for key, flags in validity.items()},
+        geometry_ms=distribution(geometry_values), reference_match_ms=distribution(reference_values),
+        coordinate_ms=distribution(coordinate_values),
+        camera_geometry=geometry.context if geometry is not None else None,
+        rail_binding_id=rc.binding_id if rc is not None else None,
         recording=dict(record_format, enabled=mode == 'C', complete=recording_complete if writer is not None else False,
                        frames=writer.frames if writer is not None else 0,
                        written=writer.written if writer is not None else 0,
@@ -371,7 +447,10 @@ def run_benchmark(mode, duration, config, output):
         semantics=dict(capture_fps='successful cap.read count / measured loop elapsed seconds, including overwritten frames',
                        processing_fps='completed CSV rows / same elapsed seconds, excludes setup/cleanup',
                        latency='Camera.last_ts (post-read, not exposure) to output call return; excludes CSV/resource sample; not display presentation or encoding completion',
-                       algo='grayscale + rail + candidates + tracker; milliseconds',
+                       algo='geometry + grayscale + rail + candidates + tracker + coordinates; milliseconds',
+                       reference_match_ms='entire rail.detect call, including reference matching; milliseconds',
+                       valid_intervals='successive valid post-read timestamps, milliseconds; leading/trailing invalid runs excluded; fewer than two valid observations => null',
+                       boundary_invalid_runs='processed frame counts; when all invalid both boundary runs cover the same entire sequence, do not add them',
                        cpu='100% = one logical core; process includes all its threads, excludes ffmpeg; encoder_cpu_s includes final drain after child reap',
                        rss='sampled resident memory peak in MiB (1024^2 bytes), parent and ffmpeg separate; not allocation total',
                        recording='frames accepted; written delivered to ffmpeg, not individually confirmed encoded; trust complete only after successful release; CFR is not actual capture FPS',

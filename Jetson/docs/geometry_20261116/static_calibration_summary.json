@@ -1,0 +1,68 @@
+{
+  "schema": "rail-calibration-v1",
+  "binding": {
+    "schema": "rail-binding-v1",
+    "measurement_version": "relative-cap-v1",
+    "rail_coordinate_version": "rail-reference-v1",
+    "geometry": {
+      "mode": "raw",
+      "resolution": [
+        1280,
+        720
+      ],
+      "camera_id": "icspring-usb-camera",
+      "focus_id": "manual-refocused-20261116-evening",
+      "intrinsics_sha256": null,
+      "correction_model": "none",
+      "projection": "identity"
+    },
+    "reference_image_sha256": "84d9b21c1498d918da5893596fddd7dd861785da7f27419102ca0347f5ac2ae6",
+    "reference_config_sha256": "e1f1ffa6212efd980ee9c95f2cbb5f76e70ee59ed22983934734d743a69e9272",
+    "algorithm_sha256": "970f5bd065779b72d117acf13d31aea50eb0aa1c79c8f097372b2a97a3d7f1e0"
+  },
+  "rail_binding_id": "87a41441cbe618eaba5bf4611bf4c5fff9b55c73469f318a0112f41b4241a4b2",
+  "ready": true,
+  "validated": false,
+  "model": {
+    "type": "linear",
+    "a": 0.01736351885243343,
+    "b": -0.2563594322505892,
+    "domain_s_px": [
+      -267.9546605508405,
+      307.4477774484489
+    ]
+  },
+  "validation": {
+    "metrics": [
+      {
+        "cm": -3.0,
+        "samples": 134,
+        "accepted_input_samples": 134,
+        "total_frames": 149,
+        "coverage": 0.8993288590604027,
+        "max_abs_cm": 0.17981994614872,
+        "mean_abs_cm": 0.1685455466583248,
+        "out_of_range": 0,
+        "passed": false
+      },
+      {
+        "cm": 3.0,
+        "samples": 118,
+        "accepted_input_samples": 118,
+        "total_frames": 149,
+        "coverage": 0.7919463087248322,
+        "max_abs_cm": 0.09342267873761578,
+        "mean_abs_cm": 0.0357288645302324,
+        "out_of_range": 0,
+        "passed": false
+      }
+    ],
+    "thresholds": {
+      "min_samples": 20,
+      "min_coverage": 0.95,
+      "max_abs_cm": 0.3
+    },
+    "passed": false
+  },
+  "notice": "真实人工固定点。模型拟合可用但独立检出覆盖率未通过，不允许有效厘米反馈。"
+}

@@ -10,3 +10,8 @@ def calibrated_method(method):
     independently before its pixel coordinate may use the old cm mapping.
     """
     return method in ('geom', 'hybrid')
+
+# 原图球冠定义与轨道轴坐标各自版本化，不改变历史geometry-envelope-v2合同。
+RELATIVE_CAP_VERSION = 'relative-cap-v1'
+RAIL_COORDINATE_VERSION = 'rail-reference-v1'
+IMAGE_SPACES = ('raw_image', 'undistorted_image')
