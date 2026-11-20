@@ -192,3 +192,81 @@ def relative_caps(frame, rail, cfg, x_limits, candidate_type, diagnostics=None):
                    {'coordinate_version':'relative-cap-v1','measurement_y_px':cy,'identity_valid':True,
                     'in_search_roi':True,'appearance':appearance,'area_px':area,'curvature':float(q[0])}))
     return sorted(out,key=lambda c:c.confidence,reverse=True),'candidates' if out else 'no_cap'
+
+
+# Directions used to verify and refine a circle against the observed outer rim.
+_angles = np.arange(36) * (2 * np.pi / 36)
+_rim_x, _rim_y = np.cos(_angles), np.sin(_angles)
+
+
+def topview_balls(gray, rail, bounds, candidate_type, diagnostics):
+    from measurement_contract import TOPVIEW_CIRCLE_VERSION
+    height, width = gray.shape
+    min_radius, max_radius = 18, 32  # Observed diameter range at 1280x720.
+    margin = max_radius + 8
+    left = max(0, int(np.floor(bounds[0])) - margin)
+    right = min(width, int(np.ceil(bounds[1])) + margin + 1)
+    if right <= left:
+        return [], 'roi_empty'
+    edge = rail.edge_profile[left:right]
+    top = max(0, int(edge.min()) - 2 * max_radius - 16)
+    bottom = min(height, int(edge.max()) + 20)
+    if bottom - top < 2 * min_radius:
+        return [], 'roi_clipped'
+    patch = cv2.GaussianBlur(gray[top:bottom, left:right], (5, 5), 1.2)
+    circles = cv2.HoughCircles(patch, cv2.HOUGH_GRADIENT, 1, 24,
+                               param1=70, param2=17, minRadius=min_radius, maxRadius=max_radius)
+    balls = []
+    for x, y, radius in (() if circles is None else circles[0]):
+        if not bounds[0] <= x + left <= bounds[1]:
+            continue
+        if abs(edge[int(x)] - (y + top) - radius) > 14:
+            continue
+        if min(x, y, patch.shape[1]-1-x, patch.shape[0]-1-y) < radius + 7:
+            continue
+        # Search across the proposed rim. A convex dark-to-light boundary can
+        # remain visible on both sides even when the tool hides part of the rim.
+        distances = radius + np.arange(-5, 6)[:, None]
+        xx = x + distances * _rim_x
+        yy = y + distances * _rim_y
+        outer = patch[np.rint(yy + 2*_rim_y).astype(int), np.rint(xx + 2*_rim_x).astype(int)]
+        inner = patch[np.rint(yy - 2*_rim_y).astype(int), np.rint(xx - 2*_rim_x).astype(int)]
+        contrast = outer.astype(np.int16) - inner
+        peaks = contrast.argmax(axis=0)
+        sectors = np.arange(len(_rim_x))
+        # The bottom arc can be hidden by the rail lip. Do not fit its straight edge.
+        rim_y = yy[peaks, sectors] + top
+        lip_y = edge[np.rint(xx[peaks, sectors]).astype(int)]
+        supported = (contrast[peaks, sectors] >= 16) & (rim_y < lip_y - 2)
+        if supported.sum() < 18 or any(np.count_nonzero(supported & side) < 3
+                                       for side in (_rim_x < -.5, _rim_x > .5)):
+            continue
+        dx = xx[peaks, sectors][supported] - x
+        dy = yy[peaks, sectors][supported] - y
+        system = np.column_stack((2*dx, 2*dy, np.ones(len(dx))))
+        ox, oy, c = np.linalg.lstsq(system, dx*dx + dy*dy, rcond=None)[0]
+        if np.hypot(ox, oy) > 5 or c <= 0:
+            continue
+        rad = float(np.sqrt(c + ox*ox + oy*oy))
+        if abs(rad - radius) > 3.5 or np.median(abs(np.hypot(dx-ox, dy-oy)-rad)) > 2.5:
+            continue
+        cx, cy = float(left+x+ox), float(top+y+oy)
+        if not bounds[0] <= cx <= bounds[1]:
+            continue
+        a, b = int(cx-rad), int(cx+rad)
+        if not (rail.edge_support[max(0,a-10):a].any() and rail.edge_support[b+1:b+11].any()):
+            continue
+        # Exclude the exterior: adjacent white ruler/rail must not supply the highlight.
+        half = int(rad * .47)
+        u, v = int(round(x+ox)), int(round(y+oy))
+        core = patch[v-half:v+half+1, u-half:u+half+1]
+        appearance = float(np.percentile(core, 95) - np.median(core))
+        if appearance < 35:
+            continue
+        confidence = .65 + .30 * supported.mean()
+        balls.append(candidate_type(cx, 2*rad, 2*rad, confidence, 'topview_circle',
+                                    dict(coordinate_version=TOPVIEW_CIRCLE_VERSION, measurement_y_px=cy,
+                                         identity_valid=True, in_search_roi=True, appearance=appearance)))
+        diagnostics.append(dict(center_px=cx, center_y_px=cy, radius_px=rad,
+                                supported_sectors=int(supported.sum()), reason='accepted'))
+    return sorted(balls, key=lambda ball: ball.confidence, reverse=True), 'candidates' if balls else 'no_circle'

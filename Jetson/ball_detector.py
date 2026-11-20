@@ -286,10 +286,14 @@ class BallDetector(object):
             self.last_reason = 'roi_reference_invalid'
             return []
         self.last_roi = bounds
-        if self.mode == 'relative_cap':
+        if self.mode in ('relative_cap', 'topview_circle'):
             if not getattr(rail, 'identity_valid', False):
                 self.last_reason = 'rail_identity_invalid'
                 return []
+            if self.mode == 'topview_circle':
+                from local_vision import topview_balls
+                cands, self.last_reason = topview_balls(gray, rail, bounds, BallCandidate, self.last_diagnostics)
+                return cands
             from local_vision import relative_caps
             cands, self.last_reason = relative_caps(frame, rail, self.cfg.get('relative_cap', {}), bounds, BallCandidate, self.last_diagnostics)
             return cands

@@ -51,12 +51,15 @@ def is_sha(value):
     return isinstance(value, str) and re.match(r'^[0-9a-f]{64}$', value) is not None
 
 
+from measurement_contract import LOCAL_MEASUREMENT_VERSIONS
+
+
 def validate_binding(binding):
     """整个dict绑定；未知附加字段也进入ID，不能局部匹配忽略几何/算法变化。"""
     canonical(binding)
     if not isinstance(binding, dict) or binding.get('schema') != 'rail-binding-v1':
         raise ValueError('expected rail-binding-v1')
-    if binding.get('measurement_version') != 'relative-cap-v1' or binding.get('rail_coordinate_version') != 'rail-reference-v1':
+    if binding.get('measurement_version') not in LOCAL_MEASUREMENT_VERSIONS.values() or binding.get('rail_coordinate_version') != 'rail-reference-v1':
         raise ValueError('unsupported rail measurement coordinate version')
     if not isinstance(binding.get('geometry'), dict) or not binding['geometry']:
         raise ValueError('binding requires nonempty geometry JSON object')

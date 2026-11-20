@@ -5,6 +5,7 @@ import json
 import math
 from pathlib import Path
 import numpy as np
+from measurement_contract import LOCAL_MEASUREMENT_VERSIONS
 from ruler_reference import similarity_from_points
 
 MEASUREMENT_VERSION='relative-cap-v1'
@@ -62,7 +63,9 @@ class RailCoordinates(object):
         # 文件路径不应决定几何：部署到Nano新目录时参考图内容相同即可。
         settings=dict(ball=cfg.get('ball',{}),rail={k:v for k,v in cfg['rail'].items() if k!='upper_reference'},
                       upper_reference=config_ref,tracking=cfg.get('tracking',{}),ball_search=cfg.get('ball_search',{}))
-        self.binding=dict(schema='rail-binding-v1',measurement_version=MEASUREMENT_VERSION,
+        self.method = cfg.get('ball', {}).get('mode', 'relative_cap')
+        self.measurement_version = LOCAL_MEASUREMENT_VERSIONS.get(self.method, MEASUREMENT_VERSION)
+        self.binding=dict(schema='rail-binding-v1',measurement_version=self.measurement_version,
                           rail_coordinate_version=RAIL_COORDINATE_VERSION,geometry=geometry.context,
                           reference_image_sha256=reference_hash,reference_config_sha256=digest(dict(reference=config_ref,axis=self.points.tolist())),
                           algorithm_sha256=digest(dict(sources=source_hashes,settings=settings)))
@@ -123,8 +126,8 @@ class RailCoordinates(object):
             if len(candidates)!=1:
                 r['rail_coordinate_status']='candidate_ambiguous';return r
             c=candidates[0];extra=getattr(c,'extra',{})
-            if (c.x!=x or c.method!=out.get('method') or c.method!='relative_cap' or
-                    extra.get('coordinate_version')!=MEASUREMENT_VERSION or extra.get('identity_valid') is not True or
+            if (c.x!=x or c.method!=out.get('method') or c.method!=self.method or
+                    extra.get('coordinate_version')!=self.measurement_version or extra.get('identity_valid') is not True or
                     extra.get('in_search_roi') is not True):
                 r['rail_coordinate_status']='measurement_contract';return r
             y=extra.get('measurement_y_px');w,h=self.geometry.context['resolution']

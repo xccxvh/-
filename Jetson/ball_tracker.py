@@ -7,6 +7,7 @@ is pixels/second. Gates are image-space heuristics, not mechanical limits.
 import time
 import math
 from numbers import Real
+from measurement_contract import LOCAL_MEASUREMENT_VERSIONS
 
 
 class BallTracker(object):
@@ -69,10 +70,10 @@ class BallTracker(object):
             return False
         if not self.identity_check:
             return True
-        if (candidate.method != 'relative_cap' or not isinstance(extra, dict) or
+        if (candidate.method not in LOCAL_MEASUREMENT_VERSIONS or not isinstance(extra, dict) or
                 extra.get('identity_valid') is not True or
                 extra.get('in_search_roi') is not True or
-                extra.get('coordinate_version') != 'relative-cap-v1'):
+                extra.get('coordinate_version') != LOCAL_MEASUREMENT_VERSIONS[candidate.method]):
             return False
         appearance = extra.get('appearance')
         y = extra.get('measurement_y_px')

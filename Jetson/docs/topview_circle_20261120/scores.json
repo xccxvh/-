@@ -1,0 +1,79 @@
+{
+  "O": {
+    "frames": 120,
+    "original_sha256": "de9d745848977c85deb8b3bbd147d52f33159c3d0cc9cef0fe9cf4e9fd3051cb",
+    "old": {
+      "miss": 77,
+      "false": 43
+    },
+    "new": {
+      "miss": 8,
+      "correct": 112
+    },
+    "reference": 118,
+    "first_valid_frame": 8,
+    "max_missed_frames": 8,
+    "post_lock_max_missed_frames": 0,
+    "jitter_x_std_px": 0.8632713202979653,
+    "mean_abs_x_err_px": 1.7591071428571499,
+    "max_abs_x_err_px": 2.830000000000041,
+    "rail_coordinate_frames": 112
+  },
+  "minus5": {
+    "frames": 120,
+    "original_sha256": "26d4df4e27a918e33ecb61a60815a6650513219856016ef00a5e763fa832b819",
+    "old": {
+      "miss": 120
+    },
+    "new": {
+      "miss": 13,
+      "correct": 107
+    },
+    "reference": 120,
+    "first_valid_frame": 4,
+    "max_missed_frames": 4,
+    "post_lock_max_missed_frames": 2,
+    "jitter_x_std_px": 1.937868007195332,
+    "mean_abs_x_err_px": 3.842616822429907,
+    "max_abs_x_err_px": 9.149999999999977,
+    "rail_coordinate_frames": 107
+  },
+  "plus3": {
+    "frames": 120,
+    "original_sha256": "4541c6c12752c00bb69ae29a157398e3d28617e10ada6a84a1e05c54c8e2800d",
+    "old": {
+      "miss": 120
+    },
+    "new": {
+      "miss": 4,
+      "correct": 116
+    },
+    "reference": 120,
+    "first_valid_frame": 4,
+    "max_missed_frames": 4,
+    "post_lock_max_missed_frames": 0,
+    "jitter_x_std_px": 0.444473897078673,
+    "mean_abs_x_err_px": 0.8960344827586192,
+    "max_abs_x_err_px": 1.6100000000000136,
+    "rail_coordinate_frames": 115
+  },
+  "plus5": {
+    "frames": 120,
+    "original_sha256": "a200faeb590129fe893452068f899eccd7a4e0b186d8a9e1c357f4de5640b55b",
+    "old": {
+      "miss": 120
+    },
+    "new": {
+      "miss": 5,
+      "correct": 115
+    },
+    "reference": 120,
+    "first_valid_frame": 4,
+    "max_missed_frames": 4,
+    "post_lock_max_missed_frames": 1,
+    "jitter_x_std_px": 1.1199030473834544,
+    "mean_abs_x_err_px": 1.3450434782608702,
+    "max_abs_x_err_px": 5.279999999999973,
+    "rail_coordinate_frames": 115
+  }
+}
