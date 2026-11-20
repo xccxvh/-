@@ -8,7 +8,7 @@
 | 独立原始采样 3 秒 | passive_usb_sample.bin 共 3151 字节。可读灰度输出 gray:0,0,0,0,0,0,0,0，未出现 A5 5A 同步字。 |
 | 完整软件测试 | 电脑 245 项通过，Nano 245 项通过，包括在 Linux 伪串口双向传输协议帧并记录 CSV。 |
 
-实机双向协议及手动滚球仍待验证。Car2/User/main.c 在编译期选取应用，默认 CAR_APP_LINE_FOLLOW。Car2/BSP/VISION/vision_link.c 在 UART4 (PB10/PB11) 运行滚球协议。需由 G3519 侧确认板上固件确实运行 ball_test，并确认该板的 Type-C 虚拟串口桥接到实际运行 vision_link 的 UART。灰度文本只证明 USB 上行可读。
+首次只听时实机双向协议及手动滚球仍待验证。当时核对的固件提交 41d78b0e 中，Car2/User/main.c 在编译期选取应用，默认 CAR_APP_LINE_FOLLOW。Car2/BSP/VISION/vision_link.c 在 UART4 (PB10/PB11) 运行滚球协议。需由 G3519 侧确认板上固件确实运行 ball_test，并确认该板的 Type-C 虚拟串口桥接到实际运行 vision_link 的 UART。灰度文本只证明 USB 上行可读。
 
 ## 复测命令
 
@@ -49,3 +49,9 @@ logs 下的 link CSV 每行对应一次实际发送或接收。local_monotonic_m
 | 舵机与延迟 | 回传指令在 −10°、0°、+10° 之间切换，PWM 1611～1833 µs，软件估计角 −10° 至 +10°。多次指令变化与长缺测区重叠，无法从该段可靠确定单次动作的运动方向和响应时间。 |
 
 原始与矫正预览均已恢复，两个 HTTP 端口均实读到 JPEG。link CSV 按同一 Nano 单调时钟记录摄像头位置与舵机遥测。板端遥测携带的 board_ball_cm 在此次手动测试中为 0。板端接收位置帧的独立确认依据是 LCD 的接收序号。
+
+## 按远端 main 的 b81519b 核对现场固件
+
+该提交的 vision_link.h 将视觉协议迁移到板载 DAPLink 对应的 UART0（PA10 TX、PA11 RX），速率仍为 115200 8N1。此前关于 UART4 的记录对应旧提交。照片中的 ROLL、RUN、POS、3/3、+10.00 和 500/200 ms 与新固件 LCD 显示一致。ROLL 使用手动舵机通道按时间交替下发倾角，因此遥测 control_state=1 可与屏幕 RUN 同时出现。
+
+ball_test.c 在所有模式下先调用 Vision_Update。协议解析器在收到通过格式和 CRC 检查的新位置帧时更新 last_seq，控制有效位清零不妨碍记录序号。ROLL 页将序号行替换为 Stage/Run/Ab。由 ROLL 用 K1+K2 切换到 MANUAL 会停止循环、请求回平衡位，并在 LCD 显示 link.last_seq。切换模式保留链路序号。未重启且没有后续位置帧时，上一段现场日志对应的板端预期值为 213。0x81 的遥测序号属于另一个计数器。
