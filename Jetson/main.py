@@ -35,7 +35,7 @@ from measurement_contract import calibrated_method
 from video_writer import AsyncVideoWriter
 from recording_schedule import RecordingSchedule
 from visualization import draw_overlay
-from position_feedback import FeedbackEncoder, SerialFeedback
+from position_feedback import FeedbackEncoder, SerialFeedback, G3519MonitorEncoder, LinkJournal
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_CONFIG = os.path.join(BASE, "config.json")
@@ -120,9 +120,13 @@ def main():
         W, H = source.width, source.height
         geometry = CameraGeometry(cfg.get('camera_geometry', {}), W, H, BASE)
         rail_coordinates = RailCoordinates(cfg, geometry, BASE)
-        # 新几何流程当前只交付测量；不能借新cm输出绕过历史UART/时间戳门控。
-        if rail_coordinates.enabled and (args.serial or preview is not None):
-            ap.error('rail coordinates cannot be combined with UART or legacy reference preview')
+        # 轨道厘米使用 G3519 二进制监测协议，显式禁止控制位；
+        # 旧几何路径仍保留原先的 BV1 接口。离线录像的串口禁用在打开设备前检查。
+        binary_monitor = bool(rail_coordinates.enabled and args.serial)
+        if rail_coordinates.enabled and (args.uart_enable_valid or preview is not None):
+            ap.error('rail coordinates support monitor only; control enable and legacy preview are forbidden')
+        if binary_monitor:
+            args.csv = True
         if preview is not None and geometry.mode != 'raw':
             ap.error('legacy preview cannot use corrected image/point coordinates')
 
@@ -222,10 +226,19 @@ def main():
         if args.display:
             resources.callback(cv2.destroyAllWindows)
         serial = None
-        encoder = FeedbackEncoder()
+        journal = None
+        encoder = G3519MonitorEncoder() if binary_monitor else FeedbackEncoder()
         try:
             if args.serial:
                 serial = SerialFeedback(args.serial)
+                resources.callback(serial.close)
+                if binary_monitor:
+                    # 独立事件表保留全部遥测。两端毫秒时钟不相减，不将旧 RX 冒充当前帧。
+                    link_path = os.path.join(logs_dir, "link_%s_%s.csv" % (args.label, stamp))
+                    stream = resources.enter_context(open(link_path, "x", newline="", buffering=1))
+                    journal = LinkJournal(serial, stream)
+                    resources.callback(journal.close)
+                    print("G3519 monitor CSV:", link_path)
             while True:
                 ret, frame = source.read()
                 if not ret:
@@ -293,10 +306,12 @@ def main():
                     source_time_verified=getattr(source, "timestamp_verified", False))
                 if preview is not None:
                     feedback_valid, feedback_reason = False, 'reference_preview'
-                if rail_coordinates.enabled:
+                if rail_coordinates.enabled and not binary_monitor:
                     feedback_valid, feedback_reason = False, 'rail_measurement_only'
                 if serial is not None:
                     serial.send(line)
+                    if journal is not None:
+                        journal.sent(line, frame_idx, feedback_reason, source.timestamp_verified)
                 algo_ms = (t_out - t0) * 1000.0
                 # 采集时刻到检测/跟踪结果产生时刻。不含曝光时间和显示延迟,
                 # 曝光时间需根据相机实际设置另行计入。
@@ -393,13 +408,14 @@ def main():
             if serial is not None and serial.fd is not None:
                 try:
                     stop_time = time.perf_counter()
-                    line, _, _ = encoder.encode({'valid':False, 'confidence':0.},
+                    line, _, reason = encoder.encode({'valid':False, 'confidence':0.},
                                                  stop_time, stop_time, False, False)
                     serial.send(line)
+                    if journal is not None:
+                        journal.sent(line, '', reason, False)
                 except Exception as exc:
                     print("final UART invalid frame not delivered: %s" % exc)
-                finally:
-                    serial.close()
+                # ExitStack 先停接收线程并关闭 CSV，最后释放串口。
         elapsed = time.perf_counter() - t_start
         print("\n--- summary ---")
         print("frames: %d, elapsed: %.1fs, avg fps: %.1f" % (

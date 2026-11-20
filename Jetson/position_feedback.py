@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 """Versioned, opt-in measurement telemetry. Does not command any actuator."""
+import csv
 import math
 import os
 import select
+import struct
+import threading
 import termios
 import time
 import uuid
@@ -25,13 +28,13 @@ class FeedbackEncoder(object):
         self.last_capture = None
         self.max_age_ms = max_age_ms
 
-    def encode(self, out, capture_time, now, pose_ok, enabled=False, source_time_verified=True):
+    def assess(self, out, x, capture_time, now, pose_ok, enabled, source_time_verified):
+        # 两种协议共用帧时间、单调顺序和图像有效性门控；时钟只在 Jetson 内比较。
         reason = 'ok'
         finite_time = (capture_time is not None and math.isfinite(capture_time)
                        and math.isfinite(now) and 0 <= capture_time <= 2**53/1000
                        and 0 <= now <= 2**53/1000)
         age = (now-capture_time)*1000 if finite_time else -1
-        x = out.get('x_cm')
         conf = out.get('confidence',0.)
         if not finite_time or age < 0:
             reason = 'clock'
@@ -51,8 +54,14 @@ class FeedbackEncoder(object):
             reason = 'monitor'
         if finite_time and age >= 0 and (self.last_capture is None or capture_time > self.last_capture):
             self.last_capture = capture_time
-        valid = reason == 'ok'
         stamp = int(capture_time*1000) & 0xffffffff if finite_time else 0
+        return reason, stamp, age
+
+    def encode(self, out, capture_time, now, pose_ok, enabled=False, source_time_verified=True):
+        x = out.get('x_cm')
+        conf = out.get('confidence', 0.)
+        reason, stamp, age = self.assess(out, x, capture_time, now, pose_ok, enabled, source_time_verified)
+        valid = reason == 'ok'
         payload = 'BV1,%08X,%u,%u,%d,%d,%s,%d,%s' % (
             self.session, self.seq, stamp, max(-1,min(2147483647,int(age))),
             int(valid), '%.4f' % x if valid else '',
@@ -109,3 +118,138 @@ class SerialFeedback(object):
         if self.fd is not None:
             fd, self.fd = self.fd, None
             os.close(fd)
+
+
+class G3519MonitorEncoder(FeedbackEncoder):
+    """按 vision_link.h 编码 0x01；监测坐标可读，但 bit0 永远清零。"""
+    def encode(self, out, capture_time, now, pose_ok, enabled=False, source_time_verified=False):
+        x = out.get('rail_x_cm')
+        calibrated = bool(out.get('calibration_valid'))
+        eligible = calibrated and out.get('cm_valid') and out.get('pixel_valid')
+        reason, stamp, _ = self.assess(out, x if eligible else None, capture_time, now,
+                                       pose_ok and out.get('reference_valid'), False, source_time_verified)
+        # source_time 只表示传感器时间未经验证。新鲜的本帧厘米值可监测；
+        # 缺测、预测、过期等情况清空置信度，使用协议浮点占位值 0。
+        present = reason in ('monitor', 'source_time')
+        payload = struct.pack('<IfBBH', stamp, x if present else 0.,
+                              round(out['confidence']*100) if present else 0, 2 if calibrated else 0, 0)
+        body = struct.pack('<BBBH', 1, 1, len(payload), self.seq) + payload
+        self.seq = (self.seq + 1) & 0xffff
+        return b'\xa5\x5a' + body + struct.pack('<H', crc16(body)), False, reason
+
+
+class TelemetryParser(object):
+    """0x81 帧解码；支持分包、粘包、CRC 出错后在下一同步字处恢复。"""
+    def __init__(self):
+        self.buffer = bytearray()
+        self.crc_errors = 0
+
+    def feed(self, data):
+        self.buffer.extend(data)
+        messages = []
+        # 遥测头有固定版本、类型和长度，先同步完整五字节头。
+        header = b'\xa5\x5a\x01\x81\x20'
+        while True:
+            start = self.buffer.find(header)
+            if start < 0:
+                del self.buffer[:-4]
+                break
+            del self.buffer[:start]
+            if len(self.buffer) < 41:
+                break
+            if crc16(self.buffer[2:39]) != struct.unpack_from('<H', self.buffer, 39)[0]:
+                self.crc_errors += 1
+                del self.buffer[:1]
+                continue
+            messages.append(struct.unpack_from('<HI5fHBBf', self.buffer, 5))
+            del self.buffer[:41]
+        return messages
+
+
+class LinkJournal(object):
+    """以本地单调时钟记录 TX/RX 事件。接收线程独立于视觉帧，不重复旧遥测。"""
+    fields = ('event', 'local_monotonic_ms', 'frame', 'position_seq', 'capture_ms32',
+              'rail_x_cm', 'confidence_pct', 'position_flags', 'reason', 'timestamp_verified',
+              'telemetry_seq', 'g3519_ms', 'target_cm', 'board_ball_cm', 'ball_v_cm_s',
+              'position_error_cm', 'beam_cmd_deg', 'servo_pwm_us', 'control_state',
+              'telemetry_flags', 'beam_estimated_deg')
+
+    def __init__(self, serial, stream):
+        self.serial = serial
+        self.writer = csv.DictWriter(stream, fieldnames=self.fields)
+        self.writer.writeheader()
+        self.lock = threading.Lock()
+        self.stop = threading.Event()
+        self.parser = TelemetryParser()
+        self.rx_bytes = self.rx_frames = self.tx_frames = 0
+        self.error = None
+        self.thread = threading.Thread(target=self._receive, daemon=True)
+        self.thread.start()
+
+    def _row(self, values):
+        with self.lock:
+            self.writer.writerow(values)
+
+    def _receive(self):
+        try:
+            # 在每次实际 read 返回后打接收时间戳；同一批字节内的帧共享该时间。
+            fd = self.serial.fd
+            while not self.stop.is_set():
+                if not select.select([fd], [], [], .05)[0]:
+                    continue
+                data = os.read(fd, 4096)
+                received = time.perf_counter()*1000.
+                if not data:
+                    raise OSError('USB serial disconnected')
+                self.rx_bytes += len(data)
+                for msg in self.parser.feed(data):
+                    row = dict(zip(self.fields[10:], msg))
+                    row.update(event='rx', local_monotonic_ms=received)
+                    self._row(row)
+                    self.rx_frames += 1
+        except (OSError, ValueError) as exc:
+            self.error = exc
+
+    def sent(self, packet, frame, reason, source_verified):
+        # 主线程仅在整帧写完后记 TX；成功 write 不代表 G3519 已解码或应答。
+        seq, stamp, x, confidence, flags = struct.unpack_from('<HIfBB', packet, 5)
+        self._row(dict(event='tx', local_monotonic_ms=time.perf_counter()*1000.,
+                       frame=frame, position_seq=seq, capture_ms32=stamp,
+                       rail_x_cm=x if reason in ('monitor','source_time') else '',
+                       confidence_pct=confidence, position_flags=flags, reason=reason,
+                       timestamp_verified=int(source_verified)))
+        self.tx_frames += 1
+        if self.error:
+            raise self.error
+
+    def close(self):
+        self.stop.set()
+        self.thread.join()
+        print('G3519 TX=%d RX_bytes=%d telemetry=%d CRC_errors=%d' %
+              (self.tx_frames, self.rx_bytes, self.rx_frames, self.parser.crc_errors))
+        if self.error:
+            raise self.error
+
+
+def listen():
+    """单独测试 USB 回传。只打开串口并收遥测，无需启动摄像头或发送位置帧。"""
+    import argparse
+    from contextlib import closing
+    ap = argparse.ArgumentParser(description='仅监听 G3519 0x81 帧，115200 8N1')
+    ap.add_argument('device')
+    ap.add_argument('output', help='新建 CSV 文件')
+    ap.add_argument('--seconds', type=float, default=5.)
+    args = ap.parse_args()
+    if not math.isfinite(args.seconds) or args.seconds <= 0:
+        ap.error('--seconds must be finite and positive')
+    with open(args.output, 'x', newline='', buffering=1) as stream, closing(SerialFeedback(args.device)) as port:
+        journal = LinkJournal(port, stream)
+        try:
+            time.sleep(args.seconds)
+        finally:
+            journal.close()
+    return 0 if journal.rx_frames else 2
+
+
+if __name__ == '__main__':
+    raise SystemExit(listen())

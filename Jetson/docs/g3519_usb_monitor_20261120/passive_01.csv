@@ -1,0 +1,1 @@
+event,local_monotonic_ms,frame,position_seq,capture_ms32,rail_x_cm,confidence_pct,position_flags,reason,timestamp_verified,telemetry_seq,g3519_ms,target_cm,board_ball_cm,ball_v_cm_s,position_error_cm,beam_cmd_deg,servo_pwm_us,control_state,telemetry_flags,beam_estimated_deg
