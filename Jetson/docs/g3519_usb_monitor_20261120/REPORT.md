@@ -55,3 +55,5 @@ logs 下的 link CSV 每行对应一次实际发送或接收。local_monotonic_m
 该提交的 vision_link.h 将视觉协议迁移到板载 DAPLink 对应的 UART0（PA10 TX、PA11 RX），速率仍为 115200 8N1。此前关于 UART4 的记录对应旧提交。照片中的 ROLL、RUN、POS、3/3、+10.00 和 500/200 ms 与新固件 LCD 显示一致。ROLL 使用手动舵机通道按时间交替下发倾角，因此遥测 control_state=1 可与屏幕 RUN 同时出现。
 
 ball_test.c 在所有模式下先调用 Vision_Update。协议解析器在收到通过格式和 CRC 检查的新位置帧时更新 last_seq，控制有效位清零不妨碍记录序号。ROLL 页将序号行替换为 Stage/Run/Ab。由 ROLL 用 K1+K2 切换到 MANUAL 会停止循环、请求回平衡位，并在 LCD 显示 link.last_seq。切换模式保留链路序号。未重启且没有后续位置帧时，上一段现场日志对应的板端预期值为 213。0x81 的遥测序号属于另一个计数器。
+
+现场操作员随后读到 G3519 LCD 的实际 Seq 为 213，与 link_usb_static_20260324_183210.csv 末行 position_seq 完全一致，确认板端已解码该 0x01 退出失效帧。结合 Nano 实收 80 个连续、CRC 正确的 0x81 遥测帧，本次 Type-C/DAPLink UART0 监测模式双向收发验证通过。该次记录未逐帧确认每个位置值，也未启用自动控制。
