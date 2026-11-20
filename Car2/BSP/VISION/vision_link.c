@@ -2,13 +2,29 @@
 #include "SystemTime/system_time.h"
 
 /*
+ * 视觉链路使用的 UART 实例。
+ *
+ * 本版本按开发板 Type-C/DAPLink 接线改用 UART0：
+ * - G3519 PA10 = UART0_TX -> DAPLink/Type-C -> Jetson RX
+ * - G3519 PA11 = UART0_RX <- DAPLink/Type-C <- Jetson TX
+ *
+ * UART4（PB10/PB11）保持原 WiFi 配置不动。
+ * 滚球模式下 main.c 会关闭 UART0 的 printf 文本输出，
+ * 因此本模块可以独占 UART0 的 RX/TX 中断和二进制数据流。
+ */
+#define VISION_UART_INST            UART_0_INST
+#define VISION_UART_FREQ            UART_0_INST_FREQUENCY
+#define VISION_UART_IRQN            UART_0_INST_INT_IRQN
+#define VISION_UART_IRQ_HANDLER     UART_0_INST_IRQHandler
+
+/*
  * 视觉链路实现。
  *
  * 数据流：
- *   UART4 RX 中断 -> 256 字节接收环形缓冲 -> Vision_Update() 逐字节解析
+ *   UART0 RX 中断 -> 256 字节接收环形缓冲 -> Vision_Update() 逐字节解析
  *   -> CRC/语义校验 -> BallMeasurement -> 上层球控制。
  *
- *   Vision_SendFrame() -> 512 字节发送环形缓冲 -> UART4 TX 中断 -> Jetson/PC。
+ *   Vision_SendFrame() -> 512 字节发送环形缓冲 -> UART0 TX 中断 -> Jetson/PC。
  *
  * 设计原因：
  * 1. 中断里只搬字节，不做 CRC 和浮点解析，避免 30 Hz 数据在中断里堆积；
@@ -295,20 +311,20 @@ static void vision_parse_byte(uint8_t byte)
 static void vision_tx_drain(void)
 {
     while ((s_tx_tail != s_tx_head) &&
-           (DL_UART_Main_isTXFIFOFull(UART_WF_INST) == false)) {
+           (DL_UART_Main_isTXFIFOFull(VISION_UART_INST) == false)) {
         uint8_t byte = s_tx_ring[s_tx_tail];
 
         s_tx_tail = (uint16_t)((s_tx_tail + 1U) & VISION_TX_RING_MASK);
-        DL_UART_Main_transmitData(UART_WF_INST, byte);
+        DL_UART_Main_transmitData(VISION_UART_INST, byte);
     }
 
     if (s_tx_tail == s_tx_head) {
-        DL_UART_Main_disableInterrupt(UART_WF_INST, DL_UART_MAIN_INTERRUPT_TX);
+        DL_UART_Main_disableInterrupt(VISION_UART_INST, DL_UART_MAIN_INTERRUPT_TX);
     }
 }
 
 /*
- * UART4 中断入口。
+ * UART0 中断入口。
  *
  * 同一入口同时处理 RX 和 TX：
  * - RX：把 FIFO 读空并压入接收环形缓冲，缓冲满时丢弃并计数；
@@ -317,12 +333,12 @@ static void vision_tx_drain(void)
  * getPendingInterrupt() 会清除本次返回的中断源；若 RX/TX 同时挂起，
  * 会在下一次中断入口处理另一个来源。
  */
-void UART_WF_INST_IRQHandler(void)
+void VISION_UART_IRQ_HANDLER(void)
 {
-    switch (DL_UART_Main_getPendingInterrupt(UART_WF_INST)) {
+    switch (DL_UART_Main_getPendingInterrupt(VISION_UART_INST)) {
     case DL_UART_MAIN_IIDX_RX:
-        while (DL_UART_Main_isRXFIFOEmpty(UART_WF_INST) == false) {
-            uint8_t byte = DL_UART_Main_receiveData(UART_WF_INST);
+        while (DL_UART_Main_isRXFIFOEmpty(VISION_UART_INST) == false) {
+            uint8_t byte = DL_UART_Main_receiveData(VISION_UART_INST);
             uint16_t next = (uint16_t)((s_rx_head + 1U) & VISION_RX_RING_MASK);
 
             if (next != s_rx_tail) {
@@ -361,25 +377,26 @@ void Vision_Init(uint32_t baud)
     s_have_frame = false;
 
     /*
-     * UART4 在 SysConfig 里已经分配了 PB10/PB11 并初始化过；
+     * UART0 在 SysConfig 里已经分配了 PA10/PA11 并初始化过；
      * 这里按目标波特率重新配置，随后打开 FIFO 和收发中断。
+     * 注意：滚球模式下 printf 已在 main.c 中关闭，不会与本协议抢 TX。
      * 写法和 UART0 调试串口保持一致，便于维护。
      */
-    DL_UART_Main_changeConfig(UART_WF_INST);
-    DL_UART_Main_configBaudRate(UART_WF_INST, UART_WF_INST_FREQUENCY, baud);
-    DL_UART_Main_enableFIFOs(UART_WF_INST);
-    DL_UART_Main_setRXFIFOThreshold(UART_WF_INST, DL_UART_RX_FIFO_LEVEL_ONE_ENTRY);
-    DL_UART_Main_setTXFIFOThreshold(UART_WF_INST, DL_UART_TX_FIFO_LEVEL_1_2_EMPTY);
-    DL_UART_Main_enableInterrupt(UART_WF_INST, DL_UART_MAIN_INTERRUPT_RX);
-    DL_UART_Main_enable(UART_WF_INST);
+    DL_UART_Main_changeConfig(VISION_UART_INST);
+    DL_UART_Main_configBaudRate(VISION_UART_INST, VISION_UART_FREQ, baud);
+    DL_UART_Main_enableFIFOs(VISION_UART_INST);
+    DL_UART_Main_setRXFIFOThreshold(VISION_UART_INST, DL_UART_RX_FIFO_LEVEL_ONE_ENTRY);
+    DL_UART_Main_setTXFIFOThreshold(VISION_UART_INST, DL_UART_TX_FIFO_LEVEL_1_2_EMPTY);
+    DL_UART_Main_enableInterrupt(VISION_UART_INST, DL_UART_MAIN_INTERRUPT_RX);
+    DL_UART_Main_enable(VISION_UART_INST);
 
     /* 清掉上电期间可能残留的 RX 数据，避免把噪声当成帧头。 */
-    while (DL_UART_Main_isRXFIFOEmpty(UART_WF_INST) == false) {
-        (void)DL_UART_Main_receiveData(UART_WF_INST);
+    while (DL_UART_Main_isRXFIFOEmpty(VISION_UART_INST) == false) {
+        (void)DL_UART_Main_receiveData(VISION_UART_INST);
     }
 
-    NVIC_ClearPendingIRQ(UART_WF_INST_INT_IRQN);
-    NVIC_EnableIRQ(UART_WF_INST_INT_IRQN);
+    NVIC_ClearPendingIRQ(VISION_UART_IRQN);
+    NVIC_EnableIRQ(VISION_UART_IRQN);
 }
 
 void Vision_Update(void)
@@ -463,7 +480,7 @@ static bool vision_enqueue_frame(const uint8_t *frame, uint16_t total_len)
     }
 
     /* 队列非空，打开 TX 中断让 ISR 续发。 */
-    DL_UART_Main_enableInterrupt(UART_WF_INST, DL_UART_MAIN_INTERRUPT_TX);
+    DL_UART_Main_enableInterrupt(VISION_UART_INST, DL_UART_MAIN_INTERRUPT_TX);
 
     return true;
 }

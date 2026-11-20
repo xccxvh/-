@@ -9,16 +9,20 @@
  *
  * 本文件是“整机入口”，只负责：
  * - 初始化 LCD、按键、舵机、视觉链路和 PD 控制器；
- * - 按当前测试模式提供测量数据（真实 UART / 模拟 / 手动）；
+ * - 按当前测试模式提供输入（手动微调 / 开环 5/7.5/10° / 模拟视觉 / 真实 UART）；
  * - 处理按键、刷新 LCD、发送遥测。
  *
- * 真正的控制算法在 App/ball_control.c，底层 PWM 在 BSP/SERVO/servo.c，
+ * 真正的 PD 算法在 App/ball_control.c，底层 PWM 在 BSP/SERVO/servo.c，
  * 三者严格分层，便于单独修改和测试。
+ *
+ * 本次新增的开环滚动（ROLL）是纯时间驱动的状态机，K1 启动后循环
+ * 执行左右倾斜，直到再次按 K1 停止：
+ * 平衡点 -> +θ -> 平衡点 -> -θ -> 平衡点，只执行一次，不使用视觉反馈。
  *
  * 时序：
  * - 模拟视觉 33 ms 注入一次，接近 Jetson 30 FPS；
  * - 遥测 100 ms 一帧，非阻塞发送；
- * - LCD 200 ms 刷新一次，使用固定宽度行覆盖，避免残影。
+ * - LCD 逐行增量刷新，每行最多 50 ms 一次，避免整屏阻塞。
  */
 
 /* ===================== 测试场景定义 ===================== */
@@ -37,9 +41,13 @@
 #define BALL_TEST_LCD_LINES             (7U)
 #define BALL_TEST_LCD_LINE_INTERVAL_MS  (50U)
 
-/* 手动测试 A 的倾角档位：水平 -> 正向 -> 反向。 */
-static const float s_manual_steps[] = { 0.0f, 1.0f, -1.0f };
-#define BALL_TEST_MANUAL_STEP_COUNT     (sizeof(s_manual_steps) / sizeof(s_manual_steps[0]))
+/*
+ * 开环滚动的摆杆目标倾角（°，相对标定后的平衡点）。
+ * 当前档位：5° / 10° / 15°，由 K2 循环选择。
+ */
+static const float s_roll_angles[BALL_TEST_ROLL_LEVEL_COUNT] = {
+    5.0f, 7.50f, 10.0f
+};
 
 /* 测试 D 的指定位置序列：0 cm -> +5 cm -> -5 cm。 */
 static const float s_targets_cm[] = { 0.0f, 5.0f, -5.0f };
@@ -63,12 +71,33 @@ typedef enum {
 #define BALL_TEST_SIM_TRAVEL_CM         (18.0f)
 #define BALL_TEST_SIM_RAIL_RESTITUTION  (0.25f)
 
+/* ===================== 开环滚动状态机 ===================== */
+
+/*
+ * 阶段说明：
+ *   NEUTRAL -> POSITIVE -> RETURN_POS -> NEGATIVE -> RETURN_NEG -> POSITIVE ...
+ * 只有到位超时才进入 FINISH（ABRT）。
+ *
+ * 枚举定义放在 ball_test.h，便于 LCD、串口日志和主机测试读取当前阶段。
+ * 每个阶段都先等舵机实际到达目标倾角（SETTLE_TOL_DEG），
+ * 再按配置的保持时间停留，避免“目标还没到位就开始计时”造成倾角保持不足。
+ */
+
 /* ===================== 内部状态 ===================== */
 
 static ball_test_mode_t s_mode = BALL_TEST_MODE_UART;
-static uint8_t  s_manual_step = 0U;
+static float    s_manual_target_deg = 0.0f;  /* MANUAL 模式下以 0.1° 微调的目标 */
 static uint8_t  s_sim_case = 0U;
 static uint8_t  s_target_index = 0U;
+
+/* 开环滚动状态：只在主循环更新，不需要 volatile。 */
+static ball_test_roll_state_t s_roll_state = BALL_ROLL_IDLE;
+static bool     s_roll_running = false;
+static bool     s_roll_aborted = false;
+static uint8_t  s_roll_level = 0U;           /* 0..2 -> 5/7.5/10° */
+static bool     s_roll_settled = false;
+static uint32_t s_roll_settle_tick_ms = 0U;
+static uint32_t s_roll_hold_tick_ms = 0U;
 
 static uint16_t s_sim_seq = 0U;
 static float    s_sim_x_cm = 0.0f;
@@ -144,8 +173,32 @@ static const char *ball_test_mode_name(ball_test_mode_t mode)
         return "SIM";
     case BALL_TEST_MODE_UART:
         return "UART";
+    case BALL_TEST_MODE_ROLL:
+        return "ROLL";
     default:
         return "?";
+    }
+}
+
+/* 开环滚动阶段的短名称，用于 LCD。 */
+static const char *ball_test_roll_state_name(ball_test_roll_state_t state)
+{
+    switch (state) {
+    case BALL_ROLL_NEUTRAL:
+        return "CENTER";
+    case BALL_ROLL_POSITIVE:
+        return "POS";
+    case BALL_ROLL_RETURN_POS:
+        return "BACK+";
+    case BALL_ROLL_NEGATIVE:
+        return "NEG";
+    case BALL_ROLL_RETURN_NEG:
+        return "BACK-";
+    case BALL_ROLL_FINISH:
+        return "DONE";
+    case BALL_ROLL_IDLE:
+    default:
+        return "IDLE";
     }
 }
 
@@ -229,7 +282,7 @@ static void ball_test_inject_simulated(void)
     {
         /*
          * 滚动钢珠：x'' = (5/7) g sinθ。
-         * 摆杆限幅 ±2.5°，sinθ 与 θ 的误差小于 0.03%，直接用弧度近似。
+         * PD 输出不超过 ±2°，sinθ 与 θ 的误差小于 0.03%，直接用弧度近似。
          */
         float theta_rad = Servo_GetBeamAngleActual() * BALL_TEST_SIM_DEG_TO_RAD;
         float accel = BALL_TEST_SIM_G_TERM_CM_S2 * theta_rad;
@@ -311,12 +364,270 @@ static void ball_test_check_link_fault(void)
     }
 }
 
+/* ===================== 开环滚动 ===================== */
+
+/* 当前档位对应的摆杆倾角，单位 °（当前配置 5/7.5/10）。 */
+static float ball_test_roll_level_angle(void)
+{
+    if (s_roll_level >= BALL_TEST_ROLL_LEVEL_COUNT) {
+        s_roll_level = 0U;
+    }
+    return s_roll_angles[s_roll_level];
+}
+
+/* 各阶段的目标倾角：正向 +θ，反向 -θ，其余阶段回平衡点 0°。 */
+static float ball_test_roll_target_for_state(ball_test_roll_state_t state)
+{
+    float theta = ball_test_roll_level_angle();
+
+    switch (state) {
+    case BALL_ROLL_POSITIVE:
+        return theta;
+    case BALL_ROLL_NEGATIVE:
+        return -theta;
+    case BALL_ROLL_IDLE:
+    case BALL_ROLL_NEUTRAL:
+    case BALL_ROLL_RETURN_POS:
+    case BALL_ROLL_RETURN_NEG:
+    case BALL_ROLL_FINISH:
+    default:
+        return 0.0f;
+    }
+}
+
+/* 各阶段的保持时间，单位 ms；0 表示该阶段不额外停留。 */
+static uint32_t ball_test_roll_hold_for_state(ball_test_roll_state_t state)
+{
+    switch (state) {
+    case BALL_ROLL_POSITIVE:
+        return BALL_TEST_ROLL_POSITIVE_HOLD_MS;
+    case BALL_ROLL_NEGATIVE:
+        return BALL_TEST_ROLL_NEGATIVE_HOLD_MS;
+    case BALL_ROLL_NEUTRAL:
+    case BALL_ROLL_RETURN_POS:
+    case BALL_ROLL_RETURN_NEG:
+        return BALL_TEST_ROLL_CENTER_HOLD_MS;
+    default:
+        return 0U;
+    }
+}
+
+/*
+ * 进入某个阶段：
+ * - 记录阶段开始时刻，等待舵机实际到达；
+ * - 通过 BallControl 的手动接口下发目标（仍受 Servo 斜率/机械限幅）。
+ */
+static void ball_test_roll_enter(ball_test_roll_state_t state)
+{
+    char target_text[12];
+
+    s_roll_state = state;
+    s_roll_settled = false;
+    s_roll_settle_tick_ms = system_time_get_tick_ms();
+    BallControl_SetManualBeamAngle(ball_test_roll_target_for_state(state));
+
+    /*
+     * 阶段切换只在按键/计时事件发生，打印开销可以忽略；
+     * 输出目标角便于记录每档的实际动作时间线。
+     */
+    ball_test_fmt2(target_text, ball_test_roll_target_for_state(state));
+    printf("[ROLL] stage=%s target=%s deg\r\n",
+           ball_test_roll_state_name(state), target_text);
+}
+
+/* 中止测试：停止后续动作，摆杆限速回平衡点，并显示 ABORT。 */
+static void ball_test_roll_abort(void)
+{
+    s_roll_running = false;
+    s_roll_aborted = true;
+    s_roll_state = BALL_ROLL_FINISH;
+    s_roll_settled = false;
+
+    /* 中止即退出测试，立刻恢复默认 5.0° 安全限幅，再限速回平衡点。 */
+    Servo_SetBeamLimit(SERVO_BEAM_LIMIT_DEFAULT_DEG);
+    BallControl_SetManualBeamAngle(0.0f);
+
+    printf("[ROLL] ABORT: target not reached in %u ms\r\n",
+           (unsigned)BALL_TEST_ROLL_SETTLE_TIMEOUT_MS);
+}
+
+/* 启动连续左右滚动（K1 再按停止）。 */
+static void ball_test_roll_start(void)
+{
+    char theta_text[12];
+
+    ball_test_fmt2(theta_text, ball_test_roll_level_angle());
+
+    /*
+     * 只有测试真正开始时才把摆杆上限放宽到 5°；
+     * 空闲、停止和结束后都保持默认 5.0°，避免非测试状态下也能大幅摆动。
+     */
+    Servo_SetBeamLimit(BALL_TEST_ROLL_BEAM_LIMIT_DEG);
+
+    s_roll_running = true;
+    s_roll_aborted = false;
+    ball_test_roll_enter(BALL_ROLL_NEUTRAL);
+
+    printf("[ROLL] start level=%u theta=%s deg\r\n",
+           (unsigned)(s_roll_level + 1U), theta_text);
+}
+
+/*
+ * 停止自动测试（K1 再按一次）。
+ *
+ * 只做两件事：清除运行标志 + 目标回 0°。
+ * 不清空 s_roll_state 的显示值，方便 LCD 看到是从哪个阶段退出的；
+ * 但后续阶段不会再被执行。
+ */
+static void ball_test_roll_stop(void)
+{
+    s_roll_running = false;
+    s_roll_state = BALL_ROLL_IDLE;
+    s_roll_settled = false;
+
+    /* 退出测试立即恢复默认限幅，然后限速回平衡点。 */
+    Servo_SetBeamLimit(SERVO_BEAM_LIMIT_DEFAULT_DEG);
+    BallControl_SetManualBeamAngle(0.0f);
+
+    printf("[ROLL] stopped by key, returning to balance point\r\n");
+}
+
+/*
+ * 阶段推进：正负方向循环执行，直到操作者按 K1 停止。
+ *
+ * 循环路径：
+ *   NEUTRAL -> POSITIVE -> RETURN_POS -> NEGATIVE -> RETURN_NEG
+ *           -> POSITIVE -> ...（保持运行标志为 true）
+ *
+ * 只有在以下情况才退出循环：
+ * - 操作者按 K1 调用 ball_test_roll_stop()；
+ * - 到位超时调用 ball_test_roll_abort()；
+ * - 切换模式调用 BallTest_SetMode()。
+ *
+ * 退出时统一恢复默认 5.0° 限幅并限速回平衡点。
+ */
+static void ball_test_roll_advance(void)
+{
+    switch (s_roll_state) {
+    case BALL_ROLL_NEUTRAL:
+        ball_test_roll_enter(BALL_ROLL_POSITIVE);
+        break;
+    case BALL_ROLL_POSITIVE:
+        ball_test_roll_enter(BALL_ROLL_RETURN_POS);
+        break;
+    case BALL_ROLL_RETURN_POS:
+        ball_test_roll_enter(BALL_ROLL_NEGATIVE);
+        break;
+    case BALL_ROLL_NEGATIVE:
+        ball_test_roll_enter(BALL_ROLL_RETURN_NEG);
+        break;
+    case BALL_ROLL_RETURN_NEG:
+        /*
+         * 不结束，直接进入下一轮 +θ。
+         * RETURN_NEG 阶段本身已经等待摆杆回到平衡点并保持 CENTER_HOLD_MS，
+         * 因此这里不再额外插入一次 NEUTRAL，避免两轮之间停顿过长。
+         */
+        ball_test_roll_enter(BALL_ROLL_POSITIVE);
+        break;
+    case BALL_ROLL_FINISH:
+    case BALL_ROLL_IDLE:
+    default:
+        break;
+    }
+}
+
+/*
+ * 开环滚动任务，由主循环每圈调用。
+ *
+ * 时间逻辑：
+ * 1. 先等实际倾角进入 ±0.2° 到达窗口；
+ * 2. 到达后才开始计算该阶段保持时间；
+ * 3. 保持时间到则推进到下一阶段；
+ * 4. 超过 3 s 仍未到位则中止并回平衡点。
+ *
+ * 不使用 delay，不阻塞其他任务。
+ */
+static void ball_test_roll_task(void)
+{
+    uint32_t now;
+    float target_deg;
+    float actual_deg;
+    uint32_t hold_ms;
+
+    if (!s_roll_running) {
+        return;
+    }
+
+    now = system_time_get_tick_ms();
+    target_deg = ball_test_roll_target_for_state(s_roll_state);
+    actual_deg = Servo_GetBeamAngleActual();
+
+    if (!s_roll_settled) {
+        float error = actual_deg - target_deg;
+
+        if (error < 0.0f) {
+            error = -error;
+        }
+
+        if (error <= BALL_TEST_ROLL_SETTLE_TOL_DEG) {
+            s_roll_settled = true;
+            s_roll_hold_tick_ms = now;
+            return;
+        }
+
+        if ((uint32_t)(now - s_roll_settle_tick_ms) >=
+            BALL_TEST_ROLL_SETTLE_TIMEOUT_MS) {
+            ball_test_roll_abort();
+        }
+        return;
+    }
+
+    hold_ms = ball_test_roll_hold_for_state(s_roll_state);
+    if (hold_ms == 0U) {
+        ball_test_roll_advance();
+        return;
+    }
+
+    if ((uint32_t)(now - s_roll_hold_tick_ms) >= hold_ms) {
+        ball_test_roll_advance();
+    }
+}
+
 /* ===================== 按键与模式 ===================== */
 
-static void ball_test_advance_manual_step(void)
+/*
+ * 手动微调摆杆倾角，单位 °。
+ *
+ * 正向受 Servo 当前摆杆限幅约束（默认 5.0°），底层还有 20°/s 斜率限制。
+ * 标定时用 0.1° 或 0.2° 步长逐步逼近平衡点。
+ */
+static void ball_test_manual_adjust(float delta_deg)
 {
-    s_manual_step = (uint8_t)((s_manual_step + 1U) % BALL_TEST_MANUAL_STEP_COUNT);
-    BallControl_SetManualBeamAngle(s_manual_steps[s_manual_step]);
+    float limit = Servo_GetBeamLimit();
+    char beam_text[12];
+    char servo_target_text[12];
+    char servo_current_text[12];
+
+    s_manual_target_deg += delta_deg;
+
+    if (s_manual_target_deg > limit) {
+        s_manual_target_deg = limit;
+    } else if (s_manual_target_deg < -limit) {
+        s_manual_target_deg = -limit;
+    }
+
+    BallControl_SetManualBeamAngle(s_manual_target_deg);
+
+    /*
+     * 标定日志：同时给出“相对平衡点的倾角”和“绝对舵机角度”。
+     * 找到摆杆水平的位置后，把这里的 servo 值写回
+     * SERVO_NEUTRAL_ANGLE_DEG 即可把该位置定义为新的 0°。
+     */
+    ball_test_fmt2(beam_text, s_manual_target_deg);
+    ball_test_fmt2(servo_target_text, Servo_GetServoAngleTarget());
+    ball_test_fmt2(servo_current_text, Servo_GetServoAngle());
+    printf("[CAL] beam=%s -> servo target=%s current=%s deg\r\n",
+           beam_text, servo_target_text, servo_current_text);
 }
 
 static void ball_test_advance_sim_case(void)
@@ -334,6 +645,31 @@ static void ball_test_advance_target(void)
     BallControl_SetTarget(s_targets_cm[s_target_index]);
 }
 
+/*
+ * ROLL 模式切换倾角档位。
+ *
+ * 运行中忽略，避免测试进行到一半目标角突然变化。
+ * 切换后回到 IDLE/0°，等操作者重新按 K1 启动。
+ */
+static void ball_test_advance_roll_level(void)
+{
+    char theta_text[12];
+
+    if (s_roll_running) {
+        return;
+    }
+
+    s_roll_level = (uint8_t)((s_roll_level + 1U) % BALL_TEST_ROLL_LEVEL_COUNT);
+    s_roll_state = BALL_ROLL_IDLE;
+    s_roll_aborted = false;
+    s_roll_settled = false;
+    BallControl_SetManualBeamAngle(0.0f);
+
+    ball_test_fmt2(theta_text, ball_test_roll_level_angle());
+    printf("[ROLL] level=%u theta=%s deg\r\n",
+           (unsigned)(s_roll_level + 1U), theta_text);
+}
+
 static void ball_test_next_mode(void)
 {
     ball_test_mode_t next;
@@ -346,6 +682,9 @@ static void ball_test_next_mode(void)
         next = BALL_TEST_MODE_UART;
         break;
     case BALL_TEST_MODE_UART:
+        next = BALL_TEST_MODE_ROLL;
+        break;
+    case BALL_TEST_MODE_ROLL:
     default:
         next = BALL_TEST_MODE_MANUAL;
         break;
@@ -376,23 +715,38 @@ static void ball_test_handle_keys(void)
             ball_test_advance_sim_case();
         } else if (s_mode == BALL_TEST_MODE_UART) {
             ball_test_advance_target();
+        } else if (s_mode == BALL_TEST_MODE_ROLL) {
+            ball_test_advance_roll_level();
         } else {
-            ball_test_advance_manual_step();
+            /* MANUAL：K2 反向微调，便于零位标定时来回试探。 */
+            ball_test_manual_adjust(-BALL_TEST_MANUAL_STEP_DEG);
         }
     }
 
     if (k1_edge) {
         if (s_mode == BALL_TEST_MODE_MANUAL) {
-            /* 手动测试 A：K1 逐档切换水平/正倾/反倾。 */
-            ball_test_advance_manual_step();
+            /* MANUAL：K1 正向微调 0.1°/0.2°。 */
+            ball_test_manual_adjust(BALL_TEST_MANUAL_STEP_DEG);
+        } else if (s_mode == BALL_TEST_MODE_ROLL) {
+            /* ROLL：K1 启动连续滚动；运行中按下立即停止并回平衡点。 */
+            if (s_roll_running) {
+                ball_test_roll_stop();
+            } else {
+                ball_test_roll_start();
+            }
         } else if (BallControl_IsEnabled()) {
             BallControl_Enable(false);
-        } else {
+        } else if (BALL_TEST_ALLOW_AUTO != 0U) {
             /*
              * 使能 AUTO。若当前没有新鲜视觉，控制器会保持 IDLE，
              * LCD 状态栏会显示 IDLE，可据此判断使能是否成功。
              */
             BallControl_Enable(true);
+        } else {
+            /*
+             * 监测模式（BALL_TEST_ALLOW_AUTO=0）：UART/SIM 下 K1 不进入闭环，
+             * 只显示接收到的位置和有效性，避免首次联调误触发 PD。
+             */
         }
     }
 }
@@ -468,11 +822,14 @@ static void ball_test_lcd_build(void)
     ball_debug_t debug;
     vision_link_status_t link;
     ball_control_state_t state;
+    const char *state_text;
     char t[12];
     char x[12];
     char v[12];
     char e[12];
     char b[12];
+    char servo[12];
+    char actual[12];
     float kp;
     float kd;
 
@@ -481,35 +838,89 @@ static void ball_test_lcd_build(void)
     state = BallControl_GetState();
     s_lcd_vision_ok = debug.vision_valid;
 
+    /*
+     * 第 0 行的状态文字：
+     * - 普通模式显示 PD 状态机；
+     * - ROLL 模式显示 RUN/STOP/DONE/ABRT，因为此时控制器处于 MANUAL，
+     *   直接显示 MANUAL 会让操作者误以为没有在跑自动测试。
+     */
+    state_text = BallControl_StateText(state);
+    if (s_mode == BALL_TEST_MODE_ROLL) {
+        if (s_roll_running) {
+            state_text = "RUN";
+        } else if (s_roll_state == BALL_ROLL_FINISH) {
+            state_text = s_roll_aborted ? "ABRT" : "DONE";
+        } else {
+            state_text = "STOP";
+        }
+    }
+
     ball_test_fmt2(t, debug.target_cm);
     ball_test_fmt2(x, debug.ball_x_cm);
     ball_test_fmt2(v, debug.ball_v_cm_s);
     ball_test_fmt2(e, debug.error_cm);
     ball_test_fmt2(b, debug.beam_angle_cmd_deg);
+    ball_test_fmt2(servo, debug.servo_angle_cmd_deg);
+    ball_test_fmt2(actual, debug.beam_angle_actual_deg);
 
-    snprintf(s_lcd_lines[0], sizeof(s_lcd_lines[0]), "M:%-6s S:%-5s T:%s", ball_test_mode_name(s_mode),
-            BallControl_StateText(state), t);
-    snprintf(s_lcd_lines[1], sizeof(s_lcd_lines[1]), "X:%s V:%s E:%s", x, v, e);
-    snprintf(s_lcd_lines[2], sizeof(s_lcd_lines[2]), "Beam:%s Pulse:%4u", b, (unsigned)debug.servo_pwm_us);
-    snprintf(s_lcd_lines[3], sizeof(s_lcd_lines[3]), "Vis:%u Age:%3lu Seq:%5u",
-            debug.vision_valid ? 1U : 0U,
-            (unsigned long)debug.vision_age_ms,
-            (unsigned)link.last_seq);
+    snprintf(s_lcd_lines[0], sizeof(s_lcd_lines[0]), "M:%-6s S:%-5s T:%s",
+             ball_test_mode_name(s_mode), state_text, b);
+
+    /*
+     * 第 1 行：
+     * - MANUAL/ROLL 显示绝对舵机角度和实际摆杆倾角，便于平衡点标定；
+     * - SIM/UART 显示钢珠位置、速度和误差。
+     */
+    if ((s_mode == BALL_TEST_MODE_MANUAL) || (s_mode == BALL_TEST_MODE_ROLL)) {
+        snprintf(s_lcd_lines[1], sizeof(s_lcd_lines[1]), "Servo:%s Act:%s",
+                 servo, actual);
+    } else {
+        snprintf(s_lcd_lines[1], sizeof(s_lcd_lines[1]), "X:%s V:%s E:%s",
+                 x, v, e);
+    }
+
+    snprintf(s_lcd_lines[2], sizeof(s_lcd_lines[2]), "Beam:%s Pulse:%4u",
+             b, (unsigned)debug.servo_pwm_us);
+
+    if (s_mode == BALL_TEST_MODE_ROLL) {
+        snprintf(s_lcd_lines[3], sizeof(s_lcd_lines[3]), "Stage:%-6s Run:%u Ab:%u",
+                 ball_test_roll_state_name(s_roll_state),
+                 s_roll_running ? 1U : 0U,
+                 s_roll_aborted ? 1U : 0U);
+    } else {
+        snprintf(s_lcd_lines[3], sizeof(s_lcd_lines[3]), "Vis:%u Age:%3lu Seq:%5u",
+                 debug.vision_valid ? 1U : 0U,
+                 (unsigned long)debug.vision_age_ms,
+                 (unsigned)link.last_seq);
+    }
 
     if (s_mode == BALL_TEST_MODE_SIM) {
-        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Case:%-8s", ball_test_sim_case_name(s_sim_case));
+        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Case:%-8s",
+                 ball_test_sim_case_name(s_sim_case));
     } else if (s_mode == BALL_TEST_MODE_UART) {
         ball_test_fmt2(t, s_targets_cm[s_target_index]);
         snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Target:%s", t);
+    } else if (s_mode == BALL_TEST_MODE_MANUAL) {
+        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Manual:%s", b);
     } else {
-        ball_test_fmt2(t, s_manual_steps[s_manual_step]);
-        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Manual:%s", t);
+        ball_test_fmt2(t, ball_test_roll_level_angle());
+        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Lvl:%u/%u %s",
+                 (unsigned)(s_roll_level + 1U),
+                 (unsigned)BALL_TEST_ROLL_LEVEL_COUNT,
+                 t);
     }
 
-    snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "Ok:%lu Bad:%lu Ovf:%lu",
-            (unsigned long)debug.frames_used,
-            (unsigned long)debug.frames_rejected,
-            (unsigned long)link.rx_overflow);
+    if (s_mode == BALL_TEST_MODE_ROLL) {
+        /* ROLL 模式没有视觉帧，改为显示各阶段保持时间，方便现场核对参数。 */
+        snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "Pos:%lums Neg:%lums",
+                 (unsigned long)BALL_TEST_ROLL_POSITIVE_HOLD_MS,
+                 (unsigned long)BALL_TEST_ROLL_NEGATIVE_HOLD_MS);
+    } else {
+        snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "Ok:%lu Bad:%lu Ovf:%lu",
+                 (unsigned long)debug.frames_used,
+                 (unsigned long)debug.frames_rejected,
+                 (unsigned long)link.rx_overflow);
+    }
 
     BallControl_GetGains(&kp, &kd);
     ball_test_fmt2(t, kp);
@@ -564,9 +975,23 @@ static void ball_test_lcd_task(void)
 
         color = line_colors[i];
         if (i == 0U) {
-            color = ball_test_lcd_color_for_state(BallControl_GetState());
+            if (s_mode == BALL_TEST_MODE_ROLL) {
+                if (s_roll_running) {
+                    color = GREEN;
+                } else if ((s_roll_state == BALL_ROLL_FINISH) && s_roll_aborted) {
+                    color = RED;
+                } else {
+                    color = CYAN;
+                }
+            } else {
+                color = ball_test_lcd_color_for_state(BallControl_GetState());
+            }
         } else if (i == 3U) {
-            color = s_lcd_vision_ok ? GREEN : YELLOW;
+            if (s_mode == BALL_TEST_MODE_ROLL) {
+                color = (s_roll_state == BALL_ROLL_FINISH && s_roll_aborted) ? RED : YELLOW;
+            } else {
+                color = s_lcd_vision_ok ? GREEN : YELLOW;
+            }
         }
 
         LCD_ShowString(0U,
@@ -589,25 +1014,48 @@ static void ball_test_lcd_task(void)
 void BallTest_SetMode(ball_test_mode_t mode)
 {
     /*
+     * 第一优先级：停止正在运行的开环滚动。
+     * 切换模式后绝不能再执行上一次测试剩余的预设倾角动作。
+     */
+    s_roll_running = false;
+    s_roll_state = BALL_ROLL_IDLE;
+    s_roll_aborted = false;
+    s_roll_settled = false;
+
+    /*
      * 先清故障再退出自动：ClearFault 本身也是显式操作，
      * 用于允许操作者在故障后重新选择测试模式。
      */
     BallControl_ClearFault();
     BallControl_Enable(false);
 
+    /*
+     * 离开任何模式都先恢复默认 5.0° 限幅。
+     * ROLL 测试只在 K1 启动的那一次执行中临时放宽到 5°，
+     * 停止、结束、中止或切换模式后都会回到这里的安全值。
+     */
+    Servo_SetBeamLimit(SERVO_BEAM_LIMIT_DEFAULT_DEG);
+
     s_mode = mode;
-    s_manual_step = 0U;
+    s_manual_target_deg = 0.0f;
     s_sim_case = 0U;
     s_target_index = 0U;
+    s_roll_level = 0U;
     s_sim_seq = 0U;
     s_sim_x_cm = 0.0f;
     s_sim_v_cm_s = 0.0f;
     s_have_forwarded = false;
     s_last_forwarded_seq = 0U;
 
-    if (mode == BALL_TEST_MODE_MANUAL) {
+    if ((mode == BALL_TEST_MODE_MANUAL) || (mode == BALL_TEST_MODE_ROLL)) {
+        /*
+         * MANUAL 和 ROLL 都复用 BallControl 的手动保持通道：
+         * - 摆杆回平衡点 0°；
+         * - 后续由手动微调或开环状态机周期性下发目标；
+         * - 仍然受 Servo 的斜率和机械限幅保护。
+         */
         BallControl_EnterManual();
-        BallControl_SetManualBeamAngle(s_manual_steps[0]);
+        BallControl_SetManualBeamAngle(0.0f);
     } else {
         BallControl_SetTarget(0.0f);
         /* 让第一次任务循环立刻产生一帧数据，减少使能前的等待。 */
@@ -634,6 +1082,19 @@ void BallTest_SetMode(ball_test_mode_t mode)
     }
 }
 
+void BallTest_GetRollStatus(ball_roll_status_t *status)
+{
+    if (status == NULL) {
+        return;
+    }
+
+    status->running = s_roll_running;
+    status->aborted = s_roll_aborted;
+    status->level = s_roll_level;
+    status->theta_deg = ball_test_roll_level_angle();
+    status->state = s_roll_state;
+}
+
 void BallTest_AppInit(void)
 {
     printf("\r\n[BALL] G3519 ball balance control init\r\n");
@@ -646,7 +1107,7 @@ void BallTest_AppInit(void)
      * 初始化顺序不可交换：
      * - user_key 的 20 ms 消抖依赖 system_time；
      * - Servo_Init 的斜率限制依赖 system_time；
-     * - Vision_Init 会重新配置 UART4 并打开中断；
+     * - Vision_Init 会重新配置 UART0（PA10/PA11）并打开中断；
      * - BallControl_Init 只清状态，不访问硬件。
      */
     user_key_init();
@@ -657,8 +1118,8 @@ void BallTest_AppInit(void)
 
     BallTest_SetMode((ball_test_mode_t)BALL_TEST_DEFAULT_MODE);
 
-    printf("[BALL] servo PA9/TIMA0 50Hz, vision UART4 PB10/PB11 115200\r\n");
-    printf("[BALL] K1=enable/step, K2=case/target, K1+K2=mode\r\n");
+    printf("[BALL] servo PA9/TIMA0 50Hz, vision UART0 PA10/PA11 115200\r\n");
+    printf("[BALL] K1=enable/step/run, K2=case/level, K1+K2=mode\r\n");
 }
 
 void BallTest_AppTask(void)
@@ -675,6 +1136,9 @@ void BallTest_AppTask(void)
     } else if (s_mode == BALL_TEST_MODE_UART) {
         ball_test_poll_uart();
         ball_test_check_link_fault();
+    } else if (s_mode == BALL_TEST_MODE_ROLL) {
+        /* 开环状态机只依赖按键和系统时基，不使用视觉数据。 */
+        ball_test_roll_task();
     }
 
     /*

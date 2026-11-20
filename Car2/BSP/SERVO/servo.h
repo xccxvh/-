@@ -14,7 +14,7 @@
  * 实测要点（来自 ServoTest 副工程）：
  * - 本板 TIMA0 的 CC1 高电平时间 = “周期 - 比较值”，因此写比较值时要用
  *   16000 - 脉宽计数，不能直接写脉宽。
- * - 舵机 104° 时摆杆水平，104° 即零位 SERVO_NEUTRAL_ANGLE_DEG。
+ * - 零位由 SERVO_NEUTRAL_ANGLE_DEG 定义（当前标定值 106°），该角度下摆杆水平。
  *
  * 分层约束：
  * - 本模块只负责“摆杆目标倾角 -> 舵机角度 -> PWM 比较值”的映射、限幅和
@@ -26,6 +26,23 @@
  * - 只包含 BSP 公共基础头 bsp_common.h，不包含聚合头 bsp.h。
  */
 #include "bsp_common.h"
+
+/*
+ * 摆杆倾角默认安全上限（°）。
+ *
+ * - MANUAL/SIM/UART 等非测试状态使用该默认值（PD 自身仍有 ±2° 限幅）；
+ * - 开环滚动测试只在一次执行期间调用 Servo_SetBeamLimit(15.0f)，
+ *   停止/结束/中止/切换模式后必须恢复为本默认值。
+ */
+#define SERVO_BEAM_LIMIT_DEFAULT_DEG    (5.0f)
+
+/*
+ * Servo_SetBeamLimit() 允许的绝对上限（°）。
+ *
+ * 当前最大测试档位 15°，这里留出余量到 20°；
+ * 真正的机械行程仍由 SERVO_MECH_MIN_DEG/MAX_DEG 和现场检查约束。
+ */
+#define SERVO_BEAM_LIMIT_MAX_DEG        (20.0f)
 
 /*
  * 舵机模块运行状态快照，供 LCD、串口遥测和上层调试读取。
@@ -52,7 +69,8 @@ typedef struct {
  * 行为：
  * - 把 TIMA0 从 SysConfig 默认的 80 kHz 重新配置为 50 Hz 舵机时序；
  * - 只保留 CC1（PA9）输出，避免 PA8 继续输出无关脉冲；
- * - 立即把舵机写到零位 104°（摆杆水平），然后启动计数器。
+ * - 立即把舵机写到零位 SERVO_NEUTRAL_ANGLE_DEG（当前 106°，摆杆水平），
+ *   然后启动计数器。
  *
  * 调用时机：
  * - 必须在 SYSCFG_DL_init() 和 system_time_init() 之后调用。
@@ -69,7 +87,8 @@ void Servo_Init(void);
  *
  * 处理流程：
  * 1. 过滤 NaN/Inf，并把倾角限制在 SERVO_BEAM_LIMIT_DEG 内。
- * 2. 按 SERVO_BEAM_TO_SERVO_RATIO 换算成舵机角度，再叠加零位 104°。
+ * 2. 按当前机械比例（默认 SERVO_BEAM_TO_SERVO_RATIO）换算成舵机角度，
+ *    再叠加当前零位。
  * 3. 限制到机械安全范围 SERVO_MECH_MIN_DEG ~ SERVO_MECH_MAX_DEG。
  * 4. 按 SERVO_MAX_SLEW_DPS 做变化率限制，避免舵机瞬间大幅摆动。
  * 5. 写入 TIMA0 CC1 比较值。
@@ -85,7 +104,7 @@ void Servo_SetBeamAngle(float angle_deg);
  *
  * 用途：
  * - 视觉丢失、退出 AUTO、故障保护时的“安全回中”动作。
- * - 与直接写 104° 不同，本函数会受斜率限制，不会突然大幅摆动。
+ * - 与直接写零位不同，本函数会受斜率限制，不会突然大幅摆动。
  */
 void Servo_SetNeutral(void);
 
@@ -121,6 +140,42 @@ void Servo_SetBeamLimit(float limit_deg);
  * - 若方向相反，调用本函数传 -1 或修改 SERVO_BEAM_DIR_SIGN。
  */
 void Servo_SetDirection(float sign);
+
+/*
+ * 运行时修改“摆杆倾角 -> 舵机角度”的机械比例。
+ *
+ * 参数：
+ * - servo_deg_per_beam_deg：摆杆每倾斜 1° 对应的舵机角度增量，必须 >0。
+ *
+ * 标定方法：
+ * - 在 MANUAL 模式给出一个已知摆杆倾角（例如 +1.0°），用量角器/手机水平仪
+ *   测量摆杆实际倾角 θ_actual；
+ * - ratio = 舵机角度增量 / θ_actual；
+ * - 例如命令 +1.0° 时舵机从 104.0° 转到 105.5°，实际摆杆只倾斜 0.5°，
+ *   则 ratio 应设为 3.0。
+ *
+ * 说明：本函数只改内存参数，掉电不保存；最终标定值应写回
+ * SERVO_BEAM_TO_SERVO_RATIO 宏。
+ */
+void Servo_SetBeamRatio(float servo_deg_per_beam_deg);
+
+/* 返回当前“摆杆倾角 -> 舵机角度”比例。 */
+float Servo_GetBeamRatio(void);
+
+/* 返回当前摆杆倾角安全上限，单位 °。 */
+float Servo_GetBeamLimit(void);
+
+/* 返回当前舵机零位角度，单位 °（当前配置 106°）。 */
+float Servo_GetNeutralAngle(void);
+
+/*
+ * 返回当前摆杆目标倾角对应的“舵机目标角度”，单位 °。
+ *
+ * 与 Servo_GetServoAngle() 的区别：
+ * - GetServoAngle 返回斜率限制后的当前值，舵机可能还在转动；
+ * - GetServoAngleTarget 返回本次目标最终会到达的角度，适合标定时记录。
+ */
+float Servo_GetServoAngleTarget(void);
 
 /*
  * 读取模块状态快照。

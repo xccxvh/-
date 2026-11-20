@@ -88,6 +88,12 @@ typedef struct {
 #define UART_WF_INST_INT_IRQN           (0)
 #define UART_WF_INST_IRQHandler         UART4_IRQHandler
 
+/* vision_link.c 现在使用 UART0 作为视觉链路，主机测试桩也要提供对应宏。 */
+#define UART_0_INST                     ((UART_Regs *)0)
+#define UART_0_INST_FREQUENCY           (40000000U)
+#define UART_0_INST_INT_IRQN            (0)
+#define UART_0_INST_IRQHandler          UART0_IRQHandler
+
 #define DL_UART_RX_FIFO_LEVEL_ONE_ENTRY (0U)
 #define DL_UART_TX_FIFO_LEVEL_1_2_EMPTY (0U)
 #define DL_UART_MAIN_INTERRUPT_RX       (1U)

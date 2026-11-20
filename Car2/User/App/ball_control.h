@@ -69,6 +69,8 @@ typedef enum {
  * 字段含义：
  * - error_cm：target - x，正表示钢珠在目标左侧（需要 +θ 加速）；
  * - beam_angle_cmd_deg：控制器输出的摆杆目标倾角；
+ * - beam_angle_actual_deg：斜率限制后的实际倾角估计（用于 15° 开环滚动测试显示）；
+ * - servo_angle_cmd_deg：限速后的舵机角度，零位标定时读取该值；
  * - servo_pwm_us：Servo 模块当前实际脉宽；
  * - vision_age_ms：距最近一帧的本地毫秒数；
  * - frames_used/frames_rejected：本控制器接受/拒绝的测量帧计数。
@@ -80,6 +82,8 @@ typedef struct {
     float    ball_v_cm_s;
     float    error_cm;
     float    beam_angle_cmd_deg;
+    float    beam_angle_actual_deg;   /* 软件估算的摆杆倾角（非传感器实测） */
+    float    servo_angle_cmd_deg;     /* 限速后的舵机角度，便于零位标定 */
     uint16_t servo_pwm_us;
     uint8_t  control_state;
     uint8_t  fault_code;

@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>__MSPM0G3519__</Define>
+              <Define>__MSPM0G3519__,CAR_APP_SELECT=1</Define>
               <Undefine></Undefine>
               <IncludePath>..\BSP;..\Source;..\Source\third_party\CMSIS\Core\Include;..\User</IncludePath>
             </VariousControls>

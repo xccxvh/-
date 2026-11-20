@@ -20,7 +20,7 @@
 #include <string.h>
 
 /* 真实的 UART4 中断入口在 vision_link.c 中定义，这里显式声明以便测试调用。 */
-void UART_WF_INST_IRQHandler(void);
+void UART_0_INST_IRQHandler(void);
 
 static int g_checks = 0;
 static int g_failures = 0;
@@ -114,8 +114,8 @@ static void uart_service(void)
      * 第一次中断把 RX FIFO 搬进 vision_link 的内部环形缓冲；
      * 第二次中断用于 TX 队列（若为空则是空转）。
      */
-    UART_WF_INST_IRQHandler();
-    UART_WF_INST_IRQHandler();
+    UART_0_INST_IRQHandler();
+    UART_0_INST_IRQHandler();
     Vision_Update();
 }
 
@@ -263,7 +263,7 @@ static void test_telemetry_frame(void)
     check_true(Vision_SendFrame(VISION_LINK_TYPE_TELEMETRY, payload, 32U) == true,
                "telemetry enqueued");
 
-    UART_WF_INST_IRQHandler();
+    UART_0_INST_IRQHandler();
     len = host_uart_tx_len;
 
     check_true(len == 41U, "telemetry frame length = 41");

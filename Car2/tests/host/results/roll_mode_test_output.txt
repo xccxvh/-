@@ -1,0 +1,91 @@
+=== roll mode host tests ===
+
+[BALL] G3519 ball balance control init
+[BALL] mode=UART target=0.00 Kp=+0.60 Kd=+0.30
+[BALL] servo PA9/TIMA0 50Hz, vision UART0 PA10/PA11 115200
+[BALL] K1=enable/step/run, K2=case/level, K1+K2=mode
+[BALL] mode=ROLL target=0.00 Kp=+0.60 Kd=+0.30
+[PASS] ROLL starts in IDLE
+[PASS] ROLL not running after mode switch
+[PASS] default level index = 0
+[PASS] default level angle is positive
+[PASS] ROLL idle keeps default beam limit (actual=5.00)
+[ROLL] level=2 theta=+7.50 deg
+[PASS] K2 advances to another level
+[PASS] level angle stays positive
+[ROLL] level=3 theta=+10.00 deg
+[PASS] K2 advances to another level
+[PASS] level angle stays positive
+[PASS] K2 reaches last level
+[ROLL] level=1 theta=+5.00 deg
+[PASS] K2 wraps back to default level (actual=5.00)
+
+[BALL] G3519 ball balance control init
+[BALL] mode=UART target=0.00 Kp=+0.60 Kd=+0.30
+[BALL] servo PA9/TIMA0 50Hz, vision UART0 PA10/PA11 115200
+[BALL] K1=enable/step/run, K2=case/level, K1+K2=mode
+[BALL] mode=ROLL target=0.00 Kp=+0.60 Kd=+0.30
+[ROLL] stage=CENTER target=+0.00 deg
+[ROLL] start level=1 theta=+5.00 deg
+[PASS] K1 starts continuous roll
+[PASS] running test raises beam limit to configured max (actual=15.00)
+[ROLL] stage=POS target=+5.00 deg
+[ROLL] stage=BACK+ target=+0.00 deg
+[ROLL] stage=NEG target=-5.00 deg
+[ROLL] stage=BACK- target=+0.00 deg
+[ROLL] stage=POS target=+5.00 deg
+[PASS] POSITIVE repeats after RETURN_NEG
+[PASS] sequence keeps running until K1 stop
+[PASS] RETURN_POS stage executed
+[PASS] NEGATIVE stage executed
+[PASS] RETURN_NEG stage executed
+[PASS] positive stage reaches configured +theta (actual=5.00)
+[PASS] negative stage reaches configured -theta (actual=-5.00)
+[ROLL] stopped by key, returning to balance point
+[PASS] K1 stops continuous roll
+[PASS] stop returns to IDLE
+[PASS] stop restores default beam limit (actual=5.00)
+[PASS] beam returns to balance point after stop (actual=0.00)
+
+[BALL] G3519 ball balance control init
+[BALL] mode=UART target=0.00 Kp=+0.60 Kd=+0.30
+[BALL] servo PA9/TIMA0 50Hz, vision UART0 PA10/PA11 115200
+[BALL] K1=enable/step/run, K2=case/level, K1+K2=mode
+[BALL] mode=ROLL target=0.00 Kp=+0.60 Kd=+0.30
+[ROLL] stage=CENTER target=+0.00 deg
+[ROLL] start level=1 theta=+5.00 deg
+[ROLL] stage=POS target=+5.00 deg
+[PASS] still running before stop
+[PASS] positive angle reached before stop (actual=5.00)
+[ROLL] stopped by key, returning to balance point
+[PASS] K1 stops running sequence
+[PASS] state returns to IDLE on stop
+[PASS] stop restores default beam limit (actual=5.00)
+[PASS] no NEGATIVE stage after stop
+[PASS] no reverse motion after stop
+[PASS] beam returns to balance point after stop (actual=0.00)
+
+[BALL] G3519 ball balance control init
+[BALL] mode=UART target=0.00 Kp=+0.60 Kd=+0.30
+[BALL] servo PA9/TIMA0 50Hz, vision UART0 PA10/PA11 115200
+[BALL] K1=enable/step/run, K2=case/level, K1+K2=mode
+[BALL] mode=ROLL target=0.00 Kp=+0.60 Kd=+0.30
+[ROLL] level=2 theta=+7.50 deg
+[ROLL] level=3 theta=+10.00 deg
+[PASS] selected last configured level
+[ROLL] stage=CENTER target=+0.00 deg
+[ROLL] start level=3 theta=+10.00 deg
+[PASS] max level sequence started
+[PASS] max level run raises limit to configured max (actual=15.00)
+[ROLL] stage=POS target=+10.00 deg
+[ROLL] stage=BACK+ target=+0.00 deg
+[ROLL] stage=NEG target=-10.00 deg
+[ROLL] stage=BACK- target=+0.00 deg
+[PASS] max level reaches configured theta (actual=10.00)
+[ROLL] stopped by key, returning to balance point
+[PASS] max level test stopped by K1
+[PASS] max level stop restores default beam limit (actual=5.00)
+[BALL] mode=MANUAL target=0.00 Kp=+0.60 Kd=+0.30
+[PASS] leaving ROLL restores default beam limit (actual=5.00)
+[PASS] MANUAL still clamps beam to default limit (actual=5.00)
+=== 40 checks, 0 failures ===

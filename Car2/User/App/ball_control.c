@@ -580,6 +580,8 @@ void BallControl_GetDebug(ball_debug_t *debug)
     debug->ball_v_cm_s = s_ball_v_cm_s;
     debug->error_cm = s_target_cm - s_ball_x_cm;
     debug->beam_angle_cmd_deg = s_beam_cmd_deg;
+    debug->beam_angle_actual_deg = Servo_GetBeamAngleActual();
+    debug->servo_angle_cmd_deg = servo.servo_angle_cmd_deg;
     debug->servo_pwm_us = servo.pulse_us;
     debug->control_state = (uint8_t)s_state;
     debug->fault_code = s_fault_code;

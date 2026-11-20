@@ -12,7 +12,8 @@
  * 3. 所有动作都在函数内完成，不阻塞；斜率限制基于 1 ms 系统时基。
  *
  * 标定基准（来自 ServoTest）：
- * - 舵机 104° 时摆杆水平；
+ * - ServoTest 早前测得 104° 时摆杆水平；本次已按完整机械结构重新标定，
+ *   当前零位见 SERVO_NEUTRAL_ANGLE_DEG（现为 106°）。
  * - 0° 对应 400 计数（0.5 ms），180° 对应 2000 计数（2.5 ms）。
  */
 
@@ -24,11 +25,15 @@
 
 /*
  * 零位与机械限位。
- * - 104° 是实测“摆杆水平、钢珠在 O 点附近稳定”的舵机角度。
+ * - 当前零位为 106°，是在 104° 基础上按完整摆杆/钢珠结构重新标定的值；
+ *   再次拆装后需重新复核并写回本宏。
+ * - 标定方法：MANUAL 模式用 K1/K2 以 0.1° 微调，LCD/串口会显示
+ *   “相对倾角”和“绝对舵机角度”，找到钢珠不持续滚动的角度后
+ *   把本宏改成该绝对角度。
  * - 10°~170° 避开 MG995/MG996R 的机械端点，防止堵转发热。
  * - 拆装舵盘、摆杆或改变配重后零位会漂移，需要重新标定并修改本宏。
  */
-#define SERVO_NEUTRAL_ANGLE_DEG         (104.0f)
+#define SERVO_NEUTRAL_ANGLE_DEG         (110.0f)
 #define SERVO_MECH_MIN_DEG              (10.0f)
 #define SERVO_MECH_MAX_DEG              (170.0f)
 
@@ -48,12 +53,12 @@
 
 /*
  * 安全限幅：
- * - 摆杆最大倾角默认 2.5°，PD 控制器还会再限制到 ±2.0°。
+ * - 摆杆最大倾角默认 5.0°；PD 控制器还会再限制到 ±2.0°，
+ *   开环滚动测试在单次执行期间临时放宽到 15°。
  * - 舵机最大角速度 20°/s，对应 30 Hz 更新时每帧最多 0.67°，
  *   避免视觉噪声直接变成舵机抖动。
  * - 单次斜率计算的 dt 上限 50 ms，防止长时间未调用后一次性跳很大角度。
  */
-#define SERVO_BEAM_LIMIT_DEG_DEFAULT    (2.5f)
 #define SERVO_MAX_SLEW_DPS              (20.0f)
 #define SERVO_SLEW_DT_CAP_MS            (50U)
 
@@ -66,7 +71,8 @@ static const DL_TimerA_ClockConfig s_servo_clock = {
 
 static servo_status_t s_status;
 static float    s_servo_angle_deg = SERVO_NEUTRAL_ANGLE_DEG;
-static float    s_beam_limit_deg  = SERVO_BEAM_LIMIT_DEG_DEFAULT;
+static float    s_beam_limit_deg  = SERVO_BEAM_LIMIT_DEFAULT_DEG;
+static float    s_beam_ratio      = SERVO_BEAM_TO_SERVO_RATIO;
 static float    s_beam_dir_sign   = SERVO_BEAM_DIR_SIGN;
 static uint32_t s_last_update_ms  = 0U;
 
@@ -201,6 +207,14 @@ void Servo_Init(void)
      */
     DL_TimerA_setCCPDirection(PWM_0_INST, DL_TIMER_CC1_OUTPUT);
 
+    /*
+     * 每次初始化都恢复安全默认值：
+     * - 倾角上限 5.0°（开环 15° 测试结束后也必须回到这里）；
+     * - 摆杆/舵机比例使用宏默认值，运行时的 Servo_SetBeamRatio 不保留。
+     */
+    s_beam_limit_deg = SERVO_BEAM_LIMIT_DEFAULT_DEG;
+    s_beam_ratio = SERVO_BEAM_TO_SERVO_RATIO;
+
     /* 初始化时直接回零位，不经过斜率限制，保证上电姿态确定。 */
     s_servo_angle_deg = SERVO_NEUTRAL_ANGLE_DEG;
     neutral_ticks = servo_angle_to_pulse_ticks(s_servo_angle_deg);
@@ -233,10 +247,11 @@ void Servo_SetBeamAngle(float angle_deg)
 
     /*
      * 第二层映射：摆杆倾角 -> 舵机角度。
-     * 正方向由 s_beam_dir_sign 标定，角度比例由 SERVO_BEAM_TO_SERVO_RATIO 决定。
+     * 正方向由 s_beam_dir_sign 标定，角度比例由运行时 s_beam_ratio 决定
+     * （默认取 SERVO_BEAM_TO_SERVO_RATIO）。
      */
     servo_target = SERVO_NEUTRAL_ANGLE_DEG +
-                   (s_beam_dir_sign * SERVO_BEAM_TO_SERVO_RATIO * angle_deg);
+                   (s_beam_dir_sign * s_beam_ratio * angle_deg);
 
     /* 第三层限幅：舵机机械安全范围。 */
     servo_target = servo_clampf(servo_target, SERVO_MECH_MIN_DEG, SERVO_MECH_MAX_DEG);
@@ -276,7 +291,7 @@ void Servo_SetManualServoAngle(float angle_deg)
 
     /* 手动模式下反推等效摆杆倾角，便于 LCD 同时显示两种角度。 */
     s_status.beam_angle_cmd_deg = (s_servo_angle_deg - SERVO_NEUTRAL_ANGLE_DEG) /
-                                  (s_beam_dir_sign * SERVO_BEAM_TO_SERVO_RATIO);
+                                  (s_beam_dir_sign * s_beam_ratio);
     s_status.servo_angle_cmd_deg = s_servo_angle_deg;
     s_status.rate_limited        = limited;
 }
@@ -287,7 +302,7 @@ void Servo_SetBeamLimit(float limit_deg)
         return;
     }
 
-    s_beam_limit_deg = servo_clampf(limit_deg, 0.1f, 10.0f);
+    s_beam_limit_deg = servo_clampf(limit_deg, 0.1f, SERVO_BEAM_LIMIT_MAX_DEG);
 }
 
 void Servo_SetDirection(float sign)
@@ -297,6 +312,41 @@ void Servo_SetDirection(float sign)
     }
 
     s_beam_dir_sign = (sign > 0.0f) ? 1.0f : -1.0f;
+}
+
+void Servo_SetBeamRatio(float servo_deg_per_beam_deg)
+{
+    if (!servo_float_is_finite(servo_deg_per_beam_deg)) {
+        return;
+    }
+    if ((servo_deg_per_beam_deg < 0.05f) || (servo_deg_per_beam_deg > 10.0f)) {
+        return;
+    }
+
+    s_beam_ratio = servo_deg_per_beam_deg;
+}
+
+float Servo_GetBeamRatio(void)
+{
+    return s_beam_ratio;
+}
+
+float Servo_GetBeamLimit(void)
+{
+    return s_beam_limit_deg;
+}
+
+float Servo_GetNeutralAngle(void)
+{
+    return SERVO_NEUTRAL_ANGLE_DEG;
+}
+
+float Servo_GetServoAngleTarget(void)
+{
+    float target = SERVO_NEUTRAL_ANGLE_DEG +
+                   (s_beam_dir_sign * s_beam_ratio * s_status.beam_angle_cmd_deg);
+
+    return servo_clampf(target, SERVO_MECH_MIN_DEG, SERVO_MECH_MAX_DEG);
 }
 
 void Servo_GetStatus(servo_status_t *status)
@@ -326,7 +376,7 @@ float Servo_GetBeamAngleActual(void)
      * 输入同一坐标系的倾角。
      */
     return (s_servo_angle_deg - SERVO_NEUTRAL_ANGLE_DEG) /
-           (s_beam_dir_sign * SERVO_BEAM_TO_SERVO_RATIO);
+           (s_beam_dir_sign * s_beam_ratio);
 }
 
 uint16_t Servo_GetPulseUs(void)

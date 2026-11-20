@@ -11,8 +11,12 @@
  *   error > 0 表示黑线偏左（靠近 G1~G4），error < 0 表示偏右（靠近 G5~G8）。
  * - TIMA1 分频 10 ms 中断：读 compare_bits 做循迹；每 100 ms 另读 0x20 ADC 供 LCD 显示 G1~G8。
  * - read_status 不更新 adc[]，合并状态时必须保留已有 ADC，避免栈垃圾导致 G1~G8 乱跳。
- * - 上电后先以 150 直行，直到首次检测到黑线加权；丢线后沿用上一次加权速度。
+ * - 当前为匀速模式：全程基准速度固定 150，直到 A 点停车。
  * - 线偏 G1~G4（error>0）：M1 加速、M2 减速甚至反转；线偏 G5~G8（error<0）：M2 加速、M1 减速甚至反转。
+ * - 保留可选的“第二弯后降速”分段代码：把 LINE_FOLLOW_SPEED_PROFILE_ENABLE 改为 1 后，
+ *   第二弯前 250，识别到第二弯后 3 s 内线性降到 100，之后保持 100。
+ * - 转弯识别（仅分段模式使用）：|error| >= 30 连续 100 ms 记一次弯；
+ *   回到 |error| <= 12 并保持 200 ms 才允许识别下一个弯。
  *
  * 安全约束：
  * - M1/M2 nFAULT/nSLEEP 异常时停车。
@@ -44,20 +48,80 @@
 #define LINE_FOLLOW_GRAY_THRESHOLD          GRAY_TRACK_DEFAULT_LED_THRESHOLD
 
 /*
- * 小车逻辑前进基准速度；差速修正后单轮可正转或反转。
- * 按用户要求把基准速度从 150 提高到 300（2 倍）；上限/下限保持 650，
- * 给差速修正留出余量。若 2 倍速度下弯道开始摆动或冲线，
- * 优先降低下面的 KP 或把基准速度回调到 220~260。
+ * 速度策略开关：
+ * - 0：匀速模式（当前使用），全程使用 K2 选中的档位速度；
+ * - 1：启用“第二弯后降速”分段：第二弯前 250，识别到第二弯后 3 s 内
+ *      线性降到 100，之后保持 100。
+ *
+ * 关闭时转弯计数代码仍保留，但不会改变速度，方便以后重新开启。
  */
-#define LINE_FOLLOW_BASE_SPEED_PERMILLE     (300)
-#define LINE_FOLLOW_MAX_SPEED_PERMILLE      (650)
-#define LINE_FOLLOW_MIN_SPEED_PERMILLE      (-650)
+#define LINE_FOLLOW_SPEED_PROFILE_ENABLE         (0U)
 
 /*
- * 比例增益：单点 G1 有效时 error 约 +50，单点 G8 有效时约 -50。
+ * 速度档位（单位：电机千分比），K2 在停车/结束状态循环选择：
+ *   第 1 档 100、第 2 档 150、第 3 档 200、第 4 档 250。
+ *
+ * 默认从 100 开始，便于先验证 A 点识别；差速修正叠加在档位速度上，
+ * 上限/下限仍保持 ±650。
  */
-#define LINE_FOLLOW_KP_NUM                  (12)
+#define LINE_FOLLOW_SPEED_GEAR_COUNT             (4U)
+
+static const int16_t s_line_speed_gears[LINE_FOLLOW_SPEED_GEAR_COUNT] = {
+    100, 150, 200, 250
+};
+static volatile uint8_t s_line_speed_gear = 0U;
+#define LINE_FOLLOW_R2_TURN2_START_SPEED_PERMILLE (250)
+#define LINE_FOLLOW_R2_TURN2_SPEED_PERMILLE      (100)
+#define LINE_FOLLOW_R2_TURN2_RAMP_MS             (3000U)
+#define LINE_FOLLOW_MAX_SPEED_PERMILLE           (650)
+#define LINE_FOLLOW_MIN_SPEED_PERMILLE           (-650)
+
+/*
+ * 转弯识别（用于确定“第二个转弯”的入口）。
+ *
+ * 判定方式：
+ * - 8 路加权误差 |error| >= 30，连续保持 100 ms，记为进入一个弯；
+ * - 之后必须回到 |error| <= 12 并保持 200 ms，才允许识别下一个弯，
+ *   避免同一个弯的左右抖动被重复计数；
+ * - 第 2 次识别到转弯时，启动 3 s 降速斜坡。
+ *
+ * 现场调整：
+ * - 第二个弯识别不到：把 ENTER_ERROR 从 30 降到 25；
+ * - 普通弯被误判成第二个弯：提高到 35~40，或增大 REARM_MS；
+ * - 两个弯之间没有回中直道：减小 REARM_MS。
+ */
+#define LINE_FOLLOW_TURN_ENTER_ERROR             (30)
+#define LINE_FOLLOW_TURN_CONFIRM_MS              (100U)
+#define LINE_FOLLOW_TURN_REARM_ERROR             (12)
+#define LINE_FOLLOW_TURN_REARM_MS                (200U)
+#define LINE_FOLLOW_CONTROL_PERIOD_MS            (10U)
+#define LINE_FOLLOW_TURN_CONFIRM_CYCLES          \
+    (LINE_FOLLOW_TURN_CONFIRM_MS / LINE_FOLLOW_CONTROL_PERIOD_MS)
+
+/*
+ * 循迹转向增益。
+ *
+ * 误差范围：8 路加权平均后，单点 G1/G8 有效时约 ±50，中心 G4/G5 附近约 0。
+ * 原来的 Kp=1.2（12/10）在 300 基准速度下最大差速只有 ±60，
+ * 弯道外侧传感器已经压线但车头来不及转，表现为“拐弯不跟线”。
+ *
+ * 现在改成两段式：
+ * - 基础段：|error| <= 20 时 Kp=1.6（16/10），保证直道不因离散跳变而摆动；
+ * - 急弯段：|error| > 20 时，超出部分再叠加 1.4 倍增益，
+ *   error=50 时总修正约 122（原来只有 60），单轮差速明显增大。
+ *
+ * 调参建议：
+ * - 仍然转不过来：先增大 LINE_FOLLOW_TURN_BOOST_NUM；
+ * - 直道左右摆动：减小 LINE_FOLLOW_KP_NUM 或提高 BOOST_START；
+ * - 不要把单轮修正直接拉到接近 650 的饱和值，否则会变成原地打转。
+ */
+#define LINE_FOLLOW_KP_NUM                  (16)
 #define LINE_FOLLOW_KP_DEN                  (10)
+
+/* 急弯补偿起点与额外增益：error 超过 20 后，每多 1 点误差再增加 1.4 点修正。 */
+#define LINE_FOLLOW_TURN_BOOST_START        (20)
+#define LINE_FOLLOW_TURN_BOOST_NUM          (24)
+#define LINE_FOLLOW_TURN_BOOST_DEN          (10)
 
 #define LINE_FOLLOW_LCD_LINE_HEIGHT         (16U)
 #define LINE_FOLLOW_LCD_MAX_LINES           (15U)
@@ -65,8 +129,7 @@
 
 /* ===================== 要求 2：按键启动 + 计时 + A 点停车 ===================== */
 
-/* 最短运行时间，防止刚起步还在 A 点横线上就误判终点。 */
-#define LINE_FOLLOW_R2_MIN_RUN_MS               (8000U)
+/* 不再限制最短运行时间：只要离开起点并满足终点传感器条件就停车。 */
 
 /* 题目要求整圈不超过 20 s，超过即本次测试失败并主动停车。 */
 #define LINE_FOLLOW_R2_TIMEOUT_MS               (20000U)
@@ -75,11 +138,22 @@
 #define LINE_FOLLOW_R2_START_CLEAR_MAX_SENSORS  (2U)
 #define LINE_FOLLOW_R2_START_CLEAR_MS           (100U)
 
-/* A 点 5 cm 横向启停线：同时压黑的路数明显多于普通循迹线，阈值取 4 路。 */
+/*
+ * A 点 5 cm 横向启停线判定。
+ *
+ * 条件：同时压黑路数 >= LINE_FOLLOW_R2_FINISH_SENSOR_MIN，
+ * 并连续保持 LINE_FOLLOW_R2_FINISH_HOLD_MS 后停车。
+ *
+ * 识别数量就在这里改：
+ *   4U -> 至少 4 路（当前）
+ *   5U -> 至少 5 路
+ *   3U -> 至少 3 路（更容易触发，也更容易在弯道误判）
+ */
 #define LINE_FOLLOW_R2_FINISH_SENSOR_MIN        (4U)
 
-/* 连续 2 个 10 ms 控制周期满足终点条件才确认，滤除单周期噪声。 */
-#define LINE_FOLLOW_R2_FINISH_CONFIRM_COUNT     (2U)
+/* 终点模式需要连续保持的时间，按 10 ms 控制周期换算成周期数。 */
+#define LINE_FOLLOW_R2_FINISH_HOLD_MS           (150U)
+#define LINE_FOLLOW_R2_FINISH_CONFIRM_COUNT         (LINE_FOLLOW_R2_FINISH_HOLD_MS / LINE_FOLLOW_CONTROL_PERIOD_MS)
 
 /* 连续丢线 1 s 仍未找回黑线则判失败并停车。 */
 #define LINE_FOLLOW_R2_LOST_STOP_MS             (1000U)
@@ -126,6 +200,18 @@ static volatile uint32_t s_r2_lost_tick = 0U;
 static volatile uint8_t s_r2_start_clear_count = 0U;
 static volatile uint8_t s_r2_finish_count = 0U;
 static volatile uint8_t s_r2_lost_count = 0U;
+
+/*
+ * 转弯计数与第二弯降速状态。
+ * 10 ms ISR 更新，主循环/LCD 只读，因此统一声明为 volatile。
+ */
+static volatile uint8_t  s_r2_turn_count = 0U;
+static volatile bool     s_r2_turn_rearmed = true;
+static volatile uint8_t  s_r2_turn_confirm_count = 0U;
+static volatile bool     s_r2_turn_rearm_active = false;
+static volatile uint32_t s_r2_turn_rearm_tick = 0U;
+static volatile bool     s_r2_turn2_ramp_active = false;
+static volatile uint32_t s_r2_turn2_ramp_start_ms = 0U;
 
 /*
  * 传感器横向权重（加权平均 line_error）：
@@ -279,6 +365,18 @@ static bool line_follow_compute_error(uint8_t active_bits,
     return true;
 }
 
+/*
+ * 判断当前压黑路数是否达到终点识别阈值。
+ *
+ * 阈值由 LINE_FOLLOW_R2_FINISH_SENSOR_MIN 决定（当前 4）。
+ * 保持时间由调用方用 s_r2_finish_count 累计，
+ * 连续 FINISH_CONFIRM_COUNT 个 10 ms 周期满足后才停车。
+ */
+static bool line_follow_is_finish_count(uint8_t active_count)
+{
+    return (active_count >= LINE_FOLLOW_R2_FINISH_SENSOR_MIN);
+}
+
 static bool line_follow_m1_m2_available(void)
 {
     /*
@@ -320,25 +418,197 @@ static void line_follow_apply_forward_speed(int16_t m1_forward,
     motor_set_speed(MOTOR_M2, s_m2_command);
 }
 
+/*
+ * 当前基准速度。
+ *
+ * LINE_FOLLOW_SPEED_PROFILE_ENABLE = 0（当前）：
+ *   返回 K2 当前选中的档位速度（100/150/200/250），实现匀速循迹。
+ *
+ * LINE_FOLLOW_SPEED_PROFILE_ENABLE = 1：
+ *   - 未识别到第二弯：LINE_FOLLOW_R2_TURN2_START_SPEED_PERMILLE（250）；
+ *   - 识别到第二弯后：3 s 内线性降到 100；
+ *   - 之后保持 100。
+ *
+ * 函数在 10 ms 中断和主循环（LCD 显示）中都会被调用，
+ * 只做整数运算，不访问硬件，执行时间可以忽略。
+ */
+static int16_t line_follow_get_base_speed(void)
+{
+    uint32_t elapsed_ms;
+    int32_t speed;
+    uint8_t gear = s_line_speed_gear;
+    int16_t gear_speed;
+
+    if (gear >= LINE_FOLLOW_SPEED_GEAR_COUNT) {
+        gear = 0U;
+    }
+    gear_speed = s_line_speed_gears[gear];
+
+    /* 匀速模式：忽略转弯状态，速度恒定为当前档位。 */
+    if (LINE_FOLLOW_SPEED_PROFILE_ENABLE == 0U) {
+        return gear_speed;
+    }
+
+    if (!s_r2_turn2_ramp_active) {
+        return gear_speed;
+    }
+
+    elapsed_ms = (uint32_t)(system_time_get_tick_ms() - s_r2_turn2_ramp_start_ms);
+    if (elapsed_ms >= LINE_FOLLOW_R2_TURN2_RAMP_MS) {
+        return (int16_t)LINE_FOLLOW_R2_TURN2_SPEED_PERMILLE;
+    }
+
+    speed = (int32_t)gear_speed -
+            (((int32_t)(gear_speed - LINE_FOLLOW_R2_TURN2_SPEED_PERMILLE) *
+              (int32_t)elapsed_ms) /
+             (int32_t)LINE_FOLLOW_R2_TURN2_RAMP_MS);
+
+    return (int16_t)speed;
+}
+
+/* 每次 K1 启动/重新初始化时清空转弯计数和降速斜坡。 */
+static void line_follow_reset_turn_profile(void)
+{
+    s_r2_turn_count = 0U;
+    s_r2_turn_rearmed = true;
+    s_r2_turn_confirm_count = 0U;
+    s_r2_turn_rearm_active = false;
+    s_r2_turn_rearm_tick = 0U;
+    s_r2_turn2_ramp_active = false;
+    s_r2_turn2_ramp_start_ms = 0U;
+}
+
+/*
+ * 转弯识别（10 ms ISR 调用）。
+ *
+ * 逻辑：
+ * 1. |error| >= ENTER_ERROR 连续 CONFIRM_CYCLES 个周期，记为一次转弯；
+ * 2. 计到第 2 次时启动 3 s 降速斜坡；
+ * 3. 每次计数后必须回到中心区 |error| <= REARM_ERROR 并保持 REARM_MS，
+ *    才允许识别下一次，防止同一个弯被重复计数；
+ * 4. 只有按键启动且本周期识别到黑线时才计数。
+ *
+ * error 的符号不参与计数：不管是左弯还是右弯都算一次。
+ */
+static void line_follow_update_turn_profile(int16_t error, bool has_line, uint32_t now_ms)
+{
+    int32_t magnitude;
+
+    /*
+     * 匀速模式下不统计转弯、也不启动降速斜坡。
+     * 保留函数和参数，重新开启分段速度时无需改调用点。
+     */
+    if (LINE_FOLLOW_SPEED_PROFILE_ENABLE == 0U) {
+        return;
+    }
+
+    /*
+     * 必须已经离开起点横线（finish_armed）才开始计弯，
+     * 避免起步姿态压在 A 点横线上时被误判成第一个弯。
+     */
+    if ((!s_r2_drive_enabled) || (!s_r2_finish_armed) ||
+        (!has_line) || s_r2_turn2_ramp_active) {
+        return;
+    }
+
+    magnitude = (error < 0) ? -(int32_t)error : (int32_t)error;
+
+    /* 回中重新武装：离开弯道后要稳定在中心区一段时间。 */
+    if (magnitude <= LINE_FOLLOW_TURN_REARM_ERROR) {
+        if (!s_r2_turn_rearm_active) {
+            s_r2_turn_rearm_active = true;
+            s_r2_turn_rearm_tick = now_ms;
+        } else if ((uint32_t)(now_ms - s_r2_turn_rearm_tick) >=
+                   LINE_FOLLOW_TURN_REARM_MS) {
+            s_r2_turn_rearmed = true;
+        }
+    } else {
+        s_r2_turn_rearm_active = false;
+    }
+
+    if (magnitude >= LINE_FOLLOW_TURN_ENTER_ERROR) {
+        if (s_r2_turn_confirm_count < 0xFFU) {
+            s_r2_turn_confirm_count++;
+        }
+
+        if (s_r2_turn_rearmed &&
+            (s_r2_turn_confirm_count >= LINE_FOLLOW_TURN_CONFIRM_CYCLES)) {
+            s_r2_turn_confirm_count = 0U;
+            s_r2_turn_rearmed = false;
+            s_r2_turn_count++;
+
+            /*
+             * 第 2 个弯：记录起点，后续每个 10 ms 周期由
+             * line_follow_get_base_speed() 计算 250 -> 100 的斜坡。
+             */
+            if (s_r2_turn_count == 2U) {
+                s_r2_turn2_ramp_active = true;
+                s_r2_turn2_ramp_start_ms = now_ms;
+            }
+        }
+    } else {
+        s_r2_turn_confirm_count = 0U;
+    }
+}
+
 static void line_follow_apply_straight_forward(line_follow_state_t drive_state)
 {
-    line_follow_apply_forward_speed(LINE_FOLLOW_BASE_SPEED_PERMILLE,
-                                    LINE_FOLLOW_BASE_SPEED_PERMILLE,
-                                    drive_state);
+    int16_t base_speed = line_follow_get_base_speed();
+
+    line_follow_apply_forward_speed(base_speed, base_speed, drive_state);
+}
+
+/*
+ * 计算转向差速修正量（正数 = 向左修正，负数 = 向右修正）。
+ *
+ * 两段式比例：
+ * 1. 基础段对所有误差生效，保证直道中心附近仍有连续修正；
+ * 2. 急弯段只在 |error| > BOOST_START 时叠加，用来解决高速下外侧传感器
+ *    已经压线、但基础比例不足以及时转车头的问题。
+ *
+ * 实现约束：
+ * - 全部使用 int32 整数运算，避免在 10 ms 控制中断里引入浮点；
+ * - error 由加权平均得到，最大约 ±50，不会溢出；
+ * - 输出仍由后面的 clamp 限制在 ±650，不会超过电机允许范围。
+ */
+static int32_t line_follow_compute_correction(int16_t error)
+{
+    int32_t correction;
+    int32_t magnitude;
+    int32_t boost;
+
+    correction = ((int32_t)error * LINE_FOLLOW_KP_NUM) / LINE_FOLLOW_KP_DEN;
+
+    magnitude = (error < 0) ? -(int32_t)error : (int32_t)error;
+    if (magnitude > LINE_FOLLOW_TURN_BOOST_START) {
+        boost = ((magnitude - LINE_FOLLOW_TURN_BOOST_START) *
+                 LINE_FOLLOW_TURN_BOOST_NUM) / LINE_FOLLOW_TURN_BOOST_DEN;
+        correction += (error > 0) ? boost : -boost;
+    }
+
+    return correction;
 }
 
 static void line_follow_apply_drive_from_error(int16_t error,
                                                line_follow_state_t drive_state)
 {
     int32_t correction;
+    int16_t base_speed;
     int16_t m1_forward;
     int16_t m2_forward;
 
-    correction = ((int32_t)error * LINE_FOLLOW_KP_NUM) / LINE_FOLLOW_KP_DEN;
-    m1_forward = line_follow_clamp_i16((int32_t)LINE_FOLLOW_BASE_SPEED_PERMILLE + correction,
+    correction = line_follow_compute_correction(error);
+    base_speed = line_follow_get_base_speed();
+
+    /*
+     * 差速输出：左转时 M1 加速、M2 减速，右转反之。
+     * 基准速度由第二弯降速逻辑动态给出（250 -> 100），
+     * correction 仍按同样的转向增益叠加。
+     */
+    m1_forward = line_follow_clamp_i16((int32_t)base_speed + correction,
                                        LINE_FOLLOW_MIN_SPEED_PERMILLE,
                                        LINE_FOLLOW_MAX_SPEED_PERMILLE);
-    m2_forward = line_follow_clamp_i16((int32_t)LINE_FOLLOW_BASE_SPEED_PERMILLE - correction,
+    m2_forward = line_follow_clamp_i16((int32_t)base_speed - correction,
                                        LINE_FOLLOW_MIN_SPEED_PERMILLE,
                                        LINE_FOLLOW_MAX_SPEED_PERMILLE);
 
@@ -447,6 +717,13 @@ void line_following_control_isr(void)
     s_active_count = active_count;
 
     /*
+     * 转弯计数与第二弯降速：
+     * 只在按键启动后、本周期识别到黑线时计数；
+     * 识别到第 2 个弯后由 line_follow_get_base_speed() 接管 3 s 降速。
+     */
+    line_follow_update_turn_profile(error, has_line, system_time_get_tick_ms());
+
+    /*
      * 每 100 ms 补读 ADC：G1~G8 为各路反射光 12 位原始值（0~4095），仅用于 LCD 观测。
      */
     s_gray_adc_counter++;
@@ -462,7 +739,8 @@ void line_following_control_isr(void)
     /*
      * 要求 2 判定（10 ms 周期）：
      * 1. 起点脱离：连续 100 ms 压黑路数 <= 2，才允许识别 A 点；
-     * 2. 终点：已武装、已跑 >= 8 s、连续 2 周期压黑路数 >= 4；
+     * 2. 终点：已武装、压黑路数 >= FINISH_SENSOR_MIN（当前 4 路），
+     *    连续保持 FINISH_HOLD_MS（当前 50 ms）即确认，不再限制运行时间；
      * 3. 超时：>= 20 s；
      * 4. 丢线：连续 1 s 压黑路数为 0。
      * 命中后立即锁存成绩、关闭驱动，由主循环完成制动和显示。
@@ -487,8 +765,7 @@ void line_following_control_isr(void)
         }
 
         if (s_r2_finish_armed &&
-            (elapsed >= LINE_FOLLOW_R2_MIN_RUN_MS) &&
-            (active_count >= LINE_FOLLOW_R2_FINISH_SENSOR_MIN)) {
+            line_follow_is_finish_count(active_count)) {
             s_r2_finish_count++;
             if (s_r2_finish_count >= LINE_FOLLOW_R2_FINISH_CONFIRM_COUNT) {
                 s_r2_final_ms = elapsed;
@@ -627,6 +904,7 @@ static void line_follow_lcd_line(uint8_t line, uint16_t color, const char *fmt, 
     s_lcd_cache[line].valid = true;
 }
 
+#if (LINE_FOLLOW_VOFA_GRAY_ENABLE == 0U)
 static int32_t line_follow_angle_to_centideg(float angle)
 {
     if (angle >= 0.0f) {
@@ -635,64 +913,27 @@ static int32_t line_follow_angle_to_centideg(float angle)
 
     return (int32_t)(angle * 100.0f - 0.5f);
 }
+#endif
 
-static void line_follow_lcd_angle(uint8_t line,
-                                  const char *label_a,
-                                  float angle_a,
-                                  const char *label_b,
-                                  float angle_b)
-{
-    int32_t a = line_follow_angle_to_centideg(angle_a);
-    int32_t b = line_follow_angle_to_centideg(angle_b);
-    char sign_a = '+';
-    char sign_b = '+';
-
-    if (a < 0) {
-        sign_a = '-';
-        a = -a;
-    }
-    if (b < 0) {
-        sign_b = '-';
-        b = -b;
-    }
-
-    line_follow_lcd_line(line,
-                         WHITE,
-                         "%s:%c%03ld.%02ld %s:%c%03ld.%02ld",
-                         label_a,
-                         sign_a,
-                         (long)(a / 100),
-                         (long)(a % 100),
-                         label_b,
-                         sign_b,
-                         (long)(b / 100),
-                         (long)(b % 100));
-}
-
-static void line_follow_lcd_roll_line(uint8_t line, float roll, bool imu_ready)
-{
-    int32_t value = line_follow_angle_to_centideg(roll);
-    char sign = '+';
-
-    if (value < 0) {
-        sign = '-';
-        value = -value;
-    }
-
-    line_follow_lcd_line(line,
-                         WHITE,
-                         "Rol:%c%03ld.%02ld IMU:%u",
-                         sign,
-                         (long)(value / 100),
-                         (long)(value % 100),
-                         imu_ready ? 1U : 0U);
-}
-
+/*
+ * 精简后的调试界面（只保留终点判定和速度相关的关键指标）。
+ *
+ * 显示布局：
+ *   0: R2 状态 + 计时
+ *   1: 压黑位图 Act、压黑路数 N、加权误差 Err
+ *   2: Arm（已离开起点）/ OK（压黑路数达到阈值）/ F（终点确认计数）
+ *   3: 灰度模块结果、是否使用旧数据、I2C 错误计数
+ *   4: K1 状态 + K2 档位/速度
+ *
+ * 其他行不再绘制，初始化时 LCD 已经整屏清黑。
+ */
 static void line_follow_draw_lcd(void)
 {
     uint16_t state_color = GREEN;
-
-    /* G1~G8 为 0x20 ADC 原始值，ISR 每 100 ms 刷新；主循环只读快照。 */
+    const char *r2_text;
+    uint32_t now;
+    uint32_t r2_elapsed;
+    bool finish_count_ok;
 
     if (s_state == LINE_FOLLOW_STATE_I2C_ERROR) {
         state_color = RED;
@@ -703,103 +944,54 @@ static void line_follow_draw_lcd(void)
         state_color = YELLOW;
     }
 
-    /*
-     * 第 0 行显示要求 2 的状态和计时：
-     * WAIT 等待 K1；RUN 显示实时时间；FINISH/TIMEOUT/LOST 显示锁存成绩。
-     */
-    {
-        const char *r2_text = line_follow_r2_state_text(s_r2_state);
-        uint32_t r2_elapsed;
+    now = system_time_get_tick_ms();
+    r2_text = line_follow_r2_state_text(s_r2_state);
 
-        if (s_r2_state == LINE_FOLLOW_R2_RUN) {
-            r2_elapsed = system_time_get_tick_ms() - s_r2_start_ms;
-        } else {
-            r2_elapsed = s_r2_final_ms;
-        }
-
-        if ((s_r2_state == LINE_FOLLOW_R2_TIMEOUT) ||
-            (s_r2_state == LINE_FOLLOW_R2_LOST)) {
-            state_color = RED;
-        } else if (s_r2_state == LINE_FOLLOW_R2_WAIT_KEY) {
-            state_color = CYAN;
-        }
-
-        line_follow_lcd_line(0U, state_color,
-                             "R2:%s T=%lu.%02lus",
-                             r2_text,
-                             (unsigned long)(r2_elapsed / 10000U),
-                             (unsigned long)((r2_elapsed / 100U) % 100U));
+    if (s_r2_state == LINE_FOLLOW_R2_RUN) {
+        r2_elapsed = now - s_r2_start_ms;
+    } else {
+        r2_elapsed = s_r2_final_ms;
     }
-    line_follow_lcd_line(1U,
-                         s_gray_ok ? GREEN : RED,
-                         "Gray:%s Hb:%03u St:%u",
-                         gray_track_result_text(s_gray_snapshot.result),
-                         (unsigned)s_gray_snapshot.heartbeat,
-                         s_gray_using_stale ? 1U : 0U);
-    line_follow_lcd_line(2U,
-                         WHITE,
-                         "Thr:%03u Act:%02X Err:%+4d N:%u",
-                         (unsigned)LINE_FOLLOW_GRAY_THRESHOLD,
+
+    if ((s_r2_state == LINE_FOLLOW_R2_TIMEOUT) ||
+        (s_r2_state == LINE_FOLLOW_R2_LOST)) {
+        state_color = RED;
+    } else if (s_r2_state == LINE_FOLLOW_R2_WAIT_KEY) {
+        state_color = CYAN;
+    }
+
+    finish_count_ok = line_follow_is_finish_count(s_active_count);
+
+    line_follow_lcd_line(0U, state_color,
+                         "R2:%s T=%lu.%02lus",
+                         r2_text,
+                         (unsigned long)(r2_elapsed / 10000U),
+                         (unsigned long)((r2_elapsed / 100U) % 100U));
+    line_follow_lcd_line(1U, WHITE,
+                         "Act:%02X N:%u Err:%+4d",
                          (unsigned)s_active_bits,
-                         (int)s_line_error,
-                         (unsigned)s_active_count);
-    line_follow_lcd_line(3U,
-                         WHITE,
-                         "G1:%04u G2:%04u G3:%04u",
-                         (unsigned)s_gray_snapshot.adc[0],
-                         (unsigned)s_gray_snapshot.adc[1],
-                         (unsigned)s_gray_snapshot.adc[2]);
-    line_follow_lcd_line(4U,
-                         WHITE,
-                         "G4:%04u G5:%04u G6:%04u",
-                         (unsigned)s_gray_snapshot.adc[3],
-                         (unsigned)s_gray_snapshot.adc[4],
-                         (unsigned)s_gray_snapshot.adc[5]);
-    line_follow_lcd_line(5U,
-                         WHITE,
-                         "G7:%04u G8:%04u Last:%+4d",
-                         (unsigned)s_gray_snapshot.adc[6],
-                         (unsigned)s_gray_snapshot.adc[7],
-                         (int)s_last_line_error);
-    line_follow_lcd_line(6U,
-                         GREEN,
-                         "M1 Cmd:%+4d Raw:%04u mA:%04u",
-                         (int)s_m1_command,
-                         (unsigned)s_motor_m1.adc_raw,
-                         (unsigned)s_motor_m1.current_ma);
-    line_follow_lcd_line(7U,
-                         GREEN,
-                         "M2 Cmd:%+4d Raw:%04u mA:%04u",
-                         (int)s_m2_command,
-                         (unsigned)s_motor_m2.adc_raw,
-                         (unsigned)s_motor_m2.current_ma);
-    line_follow_lcd_line(8U,
-                         WHITE,
-                         "Q1:%c%05u Q2:%c%05u",
-                         motor_qei_get_direction_up(MOTOR_M1) ? 'U' : 'D',
-                         (unsigned)motor_qei_get_count(MOTOR_M1),
-                         motor_qei_get_direction_up(MOTOR_M2) ? 'U' : 'D',
-                         (unsigned)motor_qei_get_count(MOTOR_M2));
-    line_follow_lcd_angle(9U, "Yaw", s_imu_ypr[0], "Pit", s_imu_ypr[1]);
-    line_follow_lcd_roll_line(10U, s_imu_ypr[2], s_imu_ready);
-    line_follow_lcd_line(11U,
-                         state_color,
-                         "State:%s ErrCnt:%lu",
-                         line_follow_state_text(s_state),
+                         (unsigned)s_active_count,
+                         (int)s_line_error);
+    line_follow_lcd_line(2U, YELLOW,
+                         "Arm:%u OK:%u F:%u",
+                         s_r2_finish_armed ? 1U : 0U,
+                         finish_count_ok ? 1U : 0U,
+                         (unsigned)s_r2_finish_count);
+    line_follow_lcd_line(3U, s_gray_ok ? GREEN : RED,
+                         "Gray:%s St:%u E:%lu",
+                         gray_track_result_text(s_gray_snapshot.result),
+                         s_gray_using_stale ? 1U : 0U,
                          (unsigned long)gray_track_get_error_count());
-    line_follow_lcd_line(12U,
-                         GRAY,
-                         "M3/M4 off Base:%d Kp:%d/%d",
-                         LINE_FOLLOW_BASE_SPEED_PERMILLE,
-                         LINE_FOLLOW_KP_NUM,
-                         LINE_FOLLOW_KP_DEN);
-    line_follow_lcd_line(13U,
-                         YELLOW,
-                         (s_r2_state == LINE_FOLLOW_R2_WAIT_KEY) ? "K1: START" :
-                         ((s_r2_state == LINE_FOLLOW_R2_RUN) ? "K1: RUNNING" :
-                          "K1: RETRY"));
+    line_follow_lcd_line(4U, YELLOW,
+                         "K1:%-6s K2:G%u/%u %d",
+                         (s_r2_state == LINE_FOLLOW_R2_WAIT_KEY) ? "START" :
+                         ((s_r2_state == LINE_FOLLOW_R2_RUN) ? "RUN" : "RETRY"),
+                         (unsigned)(s_line_speed_gear + 1U),
+                         (unsigned)LINE_FOLLOW_SPEED_GEAR_COUNT,
+                         (int)line_follow_get_base_speed());
 }
 
+#if (LINE_FOLLOW_VOFA_GRAY_ENABLE == 0U)
 static void line_follow_print_angle(const char *label, float angle)
 {
     int32_t value = line_follow_angle_to_centideg(angle);
@@ -816,6 +1008,7 @@ static void line_follow_print_angle(const char *label, float angle)
            (long)(value / 100),
            (long)(value % 100));
 }
+#endif /* LINE_FOLLOW_VOFA_GRAY_ENABLE */
 
 /*
  * VOFA+ FireWater 协议：把待发缓冲区的 G1~G8 数据经 UART0 发出。
@@ -870,9 +1063,11 @@ void line_following_vofa_20ms_tick(void)
 }
 #endif
 
+#if (LINE_FOLLOW_VOFA_GRAY_ENABLE == 0U)
 static void line_follow_print_uart(void)
 {
     printf("[LINE] state=%s gray=%s thr=%u active=0x%02X err=%d n=%u "
+           "spd=%d gear=%u turn=%u ramp=%u arm=%u "
            "m1=%d m2=%d q1=%u q2=%u imu_ready=%u ",
            line_follow_state_text(s_state),
            gray_track_result_text(s_gray_snapshot.result),
@@ -880,6 +1075,11 @@ static void line_follow_print_uart(void)
            (unsigned)s_active_bits,
            (int)s_line_error,
            (unsigned)s_active_count,
+           (int)line_follow_get_base_speed(),
+           (unsigned)(s_line_speed_gear + 1U),
+           (unsigned)s_r2_turn_count,
+           s_r2_turn2_ramp_active ? 1U : 0U,
+           s_r2_finish_armed ? 1U : 0U,
            (int)s_m1_command,
            (int)s_m2_command,
            (unsigned)motor_qei_get_count(MOTOR_M1),
@@ -892,6 +1092,7 @@ static void line_follow_print_uart(void)
     line_follow_print_angle("R", s_imu_ypr[2]);
     printf(" errors=%lu\r\n", (unsigned long)gray_track_get_error_count());
 }
+#endif /* LINE_FOLLOW_VOFA_GRAY_ENABLE */
 
 /* ===================== 要求 2：启动 / 制动 / 主循环状态机 ===================== */
 
@@ -912,10 +1113,13 @@ static void line_follow_r2_start(void)
     s_ever_had_line = false;
     s_line_error = 0;
     s_last_line_error = 0;
-    s_last_m1_forward = LINE_FOLLOW_BASE_SPEED_PERMILLE;
-    s_last_m2_forward = LINE_FOLLOW_BASE_SPEED_PERMILLE;
+    s_last_m1_forward = line_follow_get_base_speed();
+    s_last_m2_forward = line_follow_get_base_speed();
     s_r2_state = LINE_FOLLOW_R2_RUN;
     s_r2_drive_enabled = true;
+
+    /* 每次启动都清零转弯计数和降速状态（匀速模式下只清状态，不改变速度）。 */
+    line_follow_reset_turn_profile();
     line_follow_lcd_invalidate();
 }
 
@@ -942,17 +1146,47 @@ static void line_follow_r2_brake_and_stop(void)
  *   FINISHED/TIMEOUT/LOST：锁存成绩，制动一次并在 LCD/串口显示；
  *   结束后再按一次 K1 即可重测。
  */
+/*
+ * K2：在停车/结束状态循环切换速度档位（100 -> 150 -> 200 -> 250）。
+ *
+ * 只改 s_line_speed_gear，不动电机；下一次 K1 启动时
+ * line_follow_r2_start() 会用新档位初始化左右轮速度。
+ */
+static void line_follow_cycle_speed_gear(void)
+{
+    uint8_t gear = (uint8_t)((s_line_speed_gear + 1U) %
+                             LINE_FOLLOW_SPEED_GEAR_COUNT);
+
+    s_line_speed_gear = gear;
+
+    printf("[LINE] speed gear=%u/%u base=%d\r\n",
+           (unsigned)(gear + 1U),
+           (unsigned)LINE_FOLLOW_SPEED_GEAR_COUNT,
+           (int)line_follow_get_base_speed());
+}
+
 static void line_following_r2_task(void)
 {
     switch (s_r2_state) {
     case LINE_FOLLOW_R2_WAIT_KEY:
         if (user_key_take_edge(USER_KEY_K1)) {
             line_follow_r2_start();
+        } else if (user_key_take_edge(USER_KEY_K2)) {
+            line_follow_cycle_speed_gear();
         }
         break;
 
     case LINE_FOLLOW_R2_RUN:
-        /* 终点/超时/丢线在 10 ms ISR 内判定并锁存，这里只负责显示。 */
+        /*
+         * 终点/超时/丢线在 10 ms ISR 内判定并锁存，这里只负责显示。
+         *
+         * 运行期间不响应 K1，但必须把可能产生的按键边沿清掉：
+         * 否则如果运行中按过 K1 或按键抖动产生了边沿，这个边沿会一直
+         * 挂在 s_edge_pending 里；终点制动结束后 FINISHED 分支一读，
+         * 就会立刻调用 line_follow_r2_start()，表现为“A 点停一下又继续跑”。
+         */
+        (void)user_key_take_edge(USER_KEY_K1);
+        (void)user_key_take_edge(USER_KEY_K2);
         break;
 
     case LINE_FOLLOW_R2_FINISHED:
@@ -968,6 +1202,8 @@ static void line_following_r2_task(void)
         }
         if (user_key_take_edge(USER_KEY_K1)) {
             line_follow_r2_start();
+        } else if (user_key_take_edge(USER_KEY_K2)) {
+            line_follow_cycle_speed_gear();
         }
         break;
 
@@ -1021,8 +1257,8 @@ void line_following_app_init(void)
     s_imu_ready = IMU_isReady();
     s_line_error = 0;
     s_last_line_error = 0;
-    s_last_m1_forward = LINE_FOLLOW_BASE_SPEED_PERMILLE;
-    s_last_m2_forward = LINE_FOLLOW_BASE_SPEED_PERMILLE;
+    s_last_m1_forward = line_follow_get_base_speed();
+    s_last_m2_forward = line_follow_get_base_speed();
     s_m1_command = 0;
     s_m2_command = 0;
     s_active_bits = 0U;
@@ -1057,6 +1293,7 @@ void line_following_app_init(void)
     s_r2_start_clear_count = 0U;
     s_r2_finish_count = 0U;
     s_r2_lost_count = 0U;
+    line_follow_reset_turn_profile();
     line_follow_stop_drive(LINE_FOLLOW_STATE_BOOT);
     line_follow_lcd_invalidate();
 
@@ -1066,7 +1303,7 @@ void line_following_app_init(void)
 #else
     printf("[LINE] ctrl=10ms_isr thr=%u base=%d kp=%d/%d\r\n",
            (unsigned)LINE_FOLLOW_GRAY_THRESHOLD,
-           LINE_FOLLOW_BASE_SPEED_PERMILLE,
+           (int)line_follow_get_base_speed(),
            LINE_FOLLOW_KP_NUM,
            LINE_FOLLOW_KP_DEN);
 #endif

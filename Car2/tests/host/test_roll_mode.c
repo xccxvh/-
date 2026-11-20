@@ -1,0 +1,335 @@
+/*
+ * 开环 5°/10°/15° 自动左右滚动的主机端测试。
+ *
+ * 使用真实的 BSP/SERVO/servo.c、User/App/ball_control.c 和
+ * User/App/ball_test.c，只把 LCD、按键和视觉链路替换成脚本/空实现，
+ * 因此可以直接验证：
+ * - ROLL 运行期间把摆杆上限临时放宽到 15°，退出后恢复默认 5°；
+ * - K2 在 5/10/15° 之间切换；
+ * - 状态机按 NEUTRAL -> POSITIVE -> RETURN -> NEGATIVE -> RETURN -> FINISH 执行一次；
+ * - K1 在运行中能立即停止，且不会再执行后续反向动作；
+ * - 每个阶段会等待实际倾角到位后再计时。
+ *
+ * 编译/运行见 run_tests.sh。
+ */
+
+#include "App/ball_test.h"
+#include "SERVO/servo.h"
+#include "SystemTime/system_time.h"
+#include "bsp.h"
+
+#include <stdio.h>
+
+void host_key_press(user_key_id_t key);
+void host_key_release(user_key_id_t key);
+
+static int g_checks = 0;
+static int g_failures = 0;
+
+static void check_true(bool condition, const char *name)
+{
+    g_checks++;
+    if (condition) {
+        printf("[PASS] %s\n", name);
+    } else {
+        g_failures++;
+        printf("[FAIL] %s\n", name);
+    }
+}
+
+static void check_near(float actual, float expect, float tol, const char *name)
+{
+    g_checks++;
+    if ((actual >= expect - tol) && (actual <= expect + tol)) {
+        printf("[PASS] %s (actual=%.2f)\n", name, actual);
+    } else {
+        g_failures++;
+        printf("[FAIL] %s (actual=%.2f expect=%.2f)\n", name, actual, expect);
+    }
+}
+
+/* 推进 10 ms 并跑一次真实的应用任务。 */
+static void step_ms(uint32_t ms)
+{
+    host_time_advance_ms(ms);
+    BallTest_AppTask();
+}
+
+/* 模拟一次“按下并立即松开”的有效按键边沿。 */
+static void tap_key(user_key_id_t key)
+{
+    host_key_press(key);
+    BallTest_AppTask();
+    host_key_release(key);
+}
+
+static void setup_roll_mode(void)
+{
+    host_time_reset();
+    BallTest_AppInit();
+    BallTest_SetMode(BALL_TEST_MODE_ROLL);
+}
+
+/* ===================== 模式与档位 ===================== */
+
+static void test_mode_and_levels(void)
+{
+    ball_roll_status_t status;
+    float default_theta;
+    uint8_t i;
+
+    setup_roll_mode();
+
+    BallTest_GetRollStatus(&status);
+    default_theta = status.theta_deg;
+
+    check_true(status.state == BALL_ROLL_IDLE, "ROLL starts in IDLE");
+    check_true(!status.running, "ROLL not running after mode switch");
+    check_true(status.level == 0U, "default level index = 0");
+    check_true(default_theta > 0.01f, "default level angle is positive");
+    check_near(Servo_GetBeamLimit(), SERVO_BEAM_LIMIT_DEFAULT_DEG, 0.001f,
+               "ROLL idle keeps default beam limit");
+
+    /*
+     * 不写死具体角度：只要 K2 能依次切到不同的正角度，
+     * 并且按满一圈后回到默认档位即可。
+     * 具体 5/7.5/10/... 由 s_roll_angles[] 决定，改参数不会误报。
+     */
+    for (i = 1U; i < BALL_TEST_ROLL_LEVEL_COUNT; i++) {
+        float previous = status.theta_deg;
+        float delta;
+
+        tap_key(USER_KEY_K2);
+        BallTest_GetRollStatus(&status);
+        delta = status.theta_deg - previous;
+        if (delta < 0.0f) {
+            delta = -delta;
+        }
+        check_true(delta > 0.01f, "K2 advances to another level");
+        check_true(status.theta_deg > 0.01f, "level angle stays positive");
+    }
+
+    check_true(status.level == (BALL_TEST_ROLL_LEVEL_COUNT - 1U),
+               "K2 reaches last level");
+
+    tap_key(USER_KEY_K2);
+    BallTest_GetRollStatus(&status);
+    check_near(status.theta_deg, default_theta, 0.001f,
+               "K2 wraps back to default level");
+}
+
+/* ===================== 完整一次左右滚动 ===================== */
+
+static void test_continuous_cycle(void)
+{
+    ball_roll_status_t status;
+    ball_test_roll_state_t last_state = BALL_ROLL_IDLE;
+    uint8_t positive_entries = 0U;
+    bool seen_negative = false;
+    bool seen_return_pos = false;
+    bool seen_return_neg = false;
+    float default_theta;
+    float max_actual = -100.0f;
+    float min_actual = 100.0f;
+    uint32_t elapsed = 0U;
+
+    setup_roll_mode();
+    BallTest_GetRollStatus(&status);
+    default_theta = status.theta_deg;
+
+    tap_key(USER_KEY_K1);   /* 启动连续循环 */
+
+    BallTest_GetRollStatus(&status);
+    check_true(status.running, "K1 starts continuous roll");
+    check_near(Servo_GetBeamLimit(), BALL_TEST_ROLL_BEAM_LIMIT_DEG, 0.001f,
+               "running test raises beam limit to configured max");
+
+    /*
+     * 跑到第二次进入 POSITIVE，证明 RETURN_NEG 之后会重新开始下一轮，
+     * 而不是停在 FINISH。角度断言跟随当前默认档位，不写死 5°。
+     */
+    while (status.running && (elapsed < 10000U) && (positive_entries < 2U)) {
+        float actual;
+
+        step_ms(10U);
+        elapsed += 10U;
+        BallTest_GetRollStatus(&status);
+        actual = Servo_GetBeamAngleActual();
+
+        if ((status.state == BALL_ROLL_POSITIVE) &&
+            (last_state != BALL_ROLL_POSITIVE)) {
+            positive_entries++;
+        }
+        if (status.state == BALL_ROLL_RETURN_POS) {
+            seen_return_pos = true;
+        } else if (status.state == BALL_ROLL_NEGATIVE) {
+            seen_negative = true;
+        } else if (status.state == BALL_ROLL_RETURN_NEG) {
+            seen_return_neg = true;
+        }
+        last_state = status.state;
+
+        if (actual > max_actual) {
+            max_actual = actual;
+        }
+        if (actual < min_actual) {
+            min_actual = actual;
+        }
+    }
+
+    check_true(positive_entries >= 2U, "POSITIVE repeats after RETURN_NEG");
+    check_true(status.running, "sequence keeps running until K1 stop");
+    check_true(seen_return_pos, "RETURN_POS stage executed");
+    check_true(seen_negative, "NEGATIVE stage executed");
+    check_true(seen_return_neg, "RETURN_NEG stage executed");
+    check_near(max_actual, default_theta, 0.05f,
+               "positive stage reaches configured +theta");
+    check_near(min_actual, -default_theta, 0.05f,
+               "negative stage reaches configured -theta");
+
+    /* 用 K1 停止，确认恢复默认限幅并回到平衡点。 */
+    tap_key(USER_KEY_K1);
+    BallTest_GetRollStatus(&status);
+    check_true(!status.running, "K1 stops continuous roll");
+    check_true(status.state == BALL_ROLL_IDLE, "stop returns to IDLE");
+    check_near(Servo_GetBeamLimit(), SERVO_BEAM_LIMIT_DEFAULT_DEG, 0.001f,
+               "stop restores default beam limit");
+
+    for (int i = 0; i < 50; i++) {
+        step_ms(10U);
+    }
+    check_near(Servo_GetBeamAngleActual(), 0.0f, 0.05f,
+               "beam returns to balance point after stop");
+}
+
+/* ===================== 运行中停止 ===================== */
+
+static void test_stop_during_positive(void)
+{
+    ball_roll_status_t status;
+    uint32_t elapsed = 0U;
+    float min_after_stop = 100.0f;
+    float default_theta;
+    bool saw_negative_after_stop = false;
+
+    setup_roll_mode();
+    BallTest_GetRollStatus(&status);
+    default_theta = status.theta_deg;
+
+    tap_key(USER_KEY_K1);
+
+    /* 等到进入正倾角阶段并且真的到达当前档位角度。 */
+    do {
+        step_ms(10U);
+        elapsed += 10U;
+        BallTest_GetRollStatus(&status);
+    } while ((elapsed < 3000U) &&
+             !((status.state == BALL_ROLL_POSITIVE) &&
+               (Servo_GetBeamAngleActual() >= (default_theta - 0.1f))));
+
+    check_true(status.running, "still running before stop");
+    check_near(Servo_GetBeamAngleActual(), default_theta, 0.1f,
+               "positive angle reached before stop");
+
+    tap_key(USER_KEY_K1);   /* 停止 */
+
+    BallTest_GetRollStatus(&status);
+    check_true(!status.running, "K1 stops running sequence");
+    check_true(status.state == BALL_ROLL_IDLE, "state returns to IDLE on stop");
+    check_near(Servo_GetBeamLimit(), SERVO_BEAM_LIMIT_DEFAULT_DEG, 0.001f,
+               "stop restores default beam limit");
+
+    /* 停止后 1 s 内不允许出现反向阶段，摆杆应回 0°。 */
+    for (int i = 0; i < 100; i++) {
+        float actual;
+
+        step_ms(10U);
+        BallTest_GetRollStatus(&status);
+        actual = Servo_GetBeamAngleActual();
+        if (actual < min_after_stop) {
+            min_after_stop = actual;
+        }
+        if (status.state == BALL_ROLL_NEGATIVE) {
+            saw_negative_after_stop = true;
+        }
+    }
+
+    check_true(!saw_negative_after_stop, "no NEGATIVE stage after stop");
+    check_true(min_after_stop >= -0.05f, "no reverse motion after stop");
+    check_near(Servo_GetBeamAngleActual(), 0.0f, 0.05f,
+               "beam returns to balance point after stop");
+}
+
+/* ===================== 最大档位与限幅隔离 ===================== */
+
+static void test_max_level(void)
+{
+    ball_roll_status_t status;
+    uint32_t elapsed = 0U;
+    float max_actual = -100.0f;
+    float max_theta;
+    uint8_t i;
+
+    setup_roll_mode();
+
+    /* 从默认档位按满一圈之前的次数，到达数组最后一档。 */
+    for (i = 1U; i < BALL_TEST_ROLL_LEVEL_COUNT; i++) {
+        tap_key(USER_KEY_K2);
+    }
+
+    BallTest_GetRollStatus(&status);
+    max_theta = status.theta_deg;
+    check_true(status.level == (BALL_TEST_ROLL_LEVEL_COUNT - 1U),
+               "selected last configured level");
+
+    tap_key(USER_KEY_K1);
+    BallTest_GetRollStatus(&status);
+    check_true(status.running, "max level sequence started");
+    check_near(Servo_GetBeamLimit(), BALL_TEST_ROLL_BEAM_LIMIT_DEG, 0.001f,
+               "max level run raises limit to configured max");
+
+    while (status.running && (elapsed < 3000U)) {
+        float actual;
+
+        step_ms(10U);
+        elapsed += 10U;
+        BallTest_GetRollStatus(&status);
+        actual = Servo_GetBeamAngleActual();
+        if (actual > max_actual) {
+            max_actual = actual;
+        }
+    }
+
+    check_near(max_actual, max_theta, 0.1f, "max level reaches configured theta");
+
+    tap_key(USER_KEY_K1);   /* 停止，避免跑完整周期 */
+    BallTest_GetRollStatus(&status);
+    check_true(!status.running, "max level test stopped by K1");
+    check_near(Servo_GetBeamLimit(), SERVO_BEAM_LIMIT_DEFAULT_DEG, 0.001f,
+               "max level stop restores default beam limit");
+
+    /* 回到 MANUAL 后必须恢复默认限幅（当前工程配置为 5°）。 */
+    BallTest_SetMode(BALL_TEST_MODE_MANUAL);
+    check_near(Servo_GetBeamLimit(), SERVO_BEAM_LIMIT_DEFAULT_DEG, 0.001f,
+               "leaving ROLL restores default beam limit");
+
+    for (int i = 0; i < 100; i++) {
+        host_time_advance_ms(10U);
+        Servo_SetBeamAngle(20.0f);
+    }
+    check_near(Servo_GetBeamAngleActual(), SERVO_BEAM_LIMIT_DEFAULT_DEG, 0.02f,
+               "MANUAL still clamps beam to default limit");
+}
+
+int main(void)
+{
+    printf("=== roll mode host tests ===\n");
+
+    test_mode_and_levels();
+    test_continuous_cycle();
+    test_stop_during_positive();
+    test_max_level();
+
+    printf("=== %d checks, %d failures ===\n", g_checks, g_failures);
+    return (g_failures == 0) ? 0 : 1;
+}

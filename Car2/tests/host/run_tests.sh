@@ -37,11 +37,28 @@ gcc -std=c99 -Wall -Wextra -O2 \
     tests/host/stubs/system_time_stub.c \
     -lm
 
+echo "== build: roll mode =="
+gcc -std=c99 -Wall -Wextra -O2 \
+    -I tests/host/stubs -I BSP -I User \
+    -o tests/host/roll_mode_host.exe \
+    tests/host/test_roll_mode.c \
+    User/App/ball_test.c \
+    User/App/ball_control.c \
+    BSP/SERVO/servo.c \
+    tests/host/stubs/system_time_stub.c \
+    tests/host/stubs/user_key_stub.c \
+    tests/host/stubs/lcd_stub.c \
+    tests/host/stubs/vision_stub.c \
+    -lm
+
 echo "== run: ball control =="
 ./tests/host/ball_test_host.exe | tee tests/host/results/host_test_output.txt
 
 echo "== run: vision link =="
 ./tests/host/vision_link_host.exe | tee tests/host/results/vision_link_test_output.txt
+
+echo "== run: roll mode =="
+./tests/host/roll_mode_host.exe | tee tests/host/results/roll_mode_test_output.txt
 
 echo "== artifacts =="
 ls -l tests/host/results

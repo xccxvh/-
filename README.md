@@ -55,9 +55,11 @@
 `Car2/` 是最终上车工程，在循迹之外新增了静态滚球闭环：
 
 - 舵机：PA9 / TIMA0 CCP1，50 Hz，零位 104°；
-- 视觉：UART4（PB10/PB11，115200），二进制位置帧 + 遥测帧；
+- 视觉：UART0（PA10/PA11，Type-C/DAPLink，115200），二进制位置帧 + 遥测帧；
 - 控制：PD（Kp=0.60 °/cm，Kd=0.30 °/(cm/s)），±2° 限幅、20°/s 速率限制；
 - 安全：IDLE/MANUAL/AUTO/VISION_LOST/FAULT 状态机，视觉 150 ms 超时即退出闭环；
+- 标定/开环：MANUAL 支持 0.1° 微调并显示绝对舵机角度；ROLL 模式提供
+  2°/3°/4°/5° 四档自动左右滚动，K1 启动/停止、K2 切档，退出后恢复 2.5° 限幅；
 - 循迹与滚球通过 `User/main.c` 的 `CAR_APP_SELECT` 宏二选一，默认仍是循迹。
 
 完整说明、标定表和测试步骤见 [`Car2/docs/BALL_CONTROL.md`](Car2/docs/BALL_CONTROL.md)。

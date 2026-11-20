@@ -2,12 +2,12 @@
 [PASS] servo init ready
 [PASS] servo timer started
 [PASS] servo period = 16000 ticks (50 Hz)
-[PASS] neutral 104 deg -> ~1655 us
+[PASS] neutral angle maps to expected pulse
 [PASS] slew limited to 1.0 deg per call after long gap (actual=1.0000 expect=1.0000)
 [PASS] servo reaches +2.0 deg (actual=2.0000 expect=2.0000)
-[PASS] beam +2 deg -> ~1677 us
+[PASS] beam +2 deg maps to expected pulse
 [PASS] servo returns to neutral (actual=0.0000 expect=0.0000)
-[PASS] beam hard limit 2.5 deg (actual=2.5000 expect=2.5000)
+[PASS] beam hard limit equals default limit (actual=5.0000 expect=5.0000)
 [PASS] enable AUTO with fresh vision
 [PASS] x=-2 cm -> +1.2 deg (accelerate +x) (actual=1.2000 expect=1.2000)
 [PASS] x=+2 cm -> -1.2 deg (accelerate -x) (actual=-1.2000 expect=-1.2000)

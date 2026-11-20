@@ -83,19 +83,35 @@ static void feed(float x_cm, bool valid, float confidence)
 
 /* ===================== 舵机映射 ===================== */
 
+/*
+ * 按 Servo 模块的映射公式反推期望脉宽：
+ *   脉宽计数 = 400 + 1600 * 舵机角度 / 180（四舍五入）
+ *   脉宽 us  = 计数 * 5 / 4
+ * 这样即使零位从 104° 重新标定成别的值，测试仍然有效。
+ */
+static uint16_t expected_pulse_us(float servo_deg)
+{
+    float ticks = 400.0f + (1600.0f * servo_deg / 180.0f) + 0.5f;
+
+    return (uint16_t)(((uint32_t)ticks * 5U) / 4U);
+}
+
 static void test_servo_mapping(void)
 {
     uint16_t neutral_us;
+    uint16_t expected_neutral_us;
+    uint16_t expected_plus2_us;
 
     reset_all();
     check_true(Servo_IsReady(), "servo init ready");
     check_true(host_servo_started, "servo timer started");
     check_true(host_servo_load_ticks == 16000U, "servo period = 16000 ticks (50 Hz)");
 
+    expected_neutral_us = expected_pulse_us(Servo_GetNeutralAngle());
     neutral_us = Servo_GetPulseUs();
-    /* 104° -> 400 + 1600*104/180 = 1324 计数 -> 1655 us */
-    check_true((neutral_us >= 1653U) && (neutral_us <= 1657U),
-               "neutral 104 deg -> ~1655 us");
+    check_true((neutral_us + 1U >= expected_neutral_us) &&
+               (neutral_us <= expected_neutral_us + 1U),
+               "neutral angle maps to expected pulse");
 
     /*
      * 单次调用间隔 1 s：dt 被限制到 50 ms，只能转 20°/s × 0.05 s = 1°。
@@ -112,9 +128,12 @@ static void test_servo_mapping(void)
         Servo_SetBeamAngle(2.0f);
     }
     check_near(Servo_GetBeamAngleActual(), 2.0f, 0.01f, "servo reaches +2.0 deg");
-    /* 106° -> 1342 计数 -> 1677 us */
-    check_true((Servo_GetPulseUs() >= 1675U) && (Servo_GetPulseUs() <= 1679U),
-               "beam +2 deg -> ~1677 us");
+    /* 期望脉宽 = 零位 + 2° × 机械比例，避免写死 104°/106°。 */
+    expected_plus2_us = expected_pulse_us(Servo_GetNeutralAngle() +
+                                          (Servo_GetBeamRatio() * 2.0f));
+    check_true((Servo_GetPulseUs() + 1U >= expected_plus2_us) &&
+               (Servo_GetPulseUs() <= expected_plus2_us + 1U),
+               "beam +2 deg maps to expected pulse");
 
     /* 反向回到 0°，同样受限速。 */
     for (int i = 0; i < 30; i++) {
@@ -128,8 +147,8 @@ static void test_servo_mapping(void)
         host_time_advance_ms(10);
         Servo_SetBeamAngle(30.0f);
     }
-    check_near(Servo_GetBeamAngleActual(), 2.5f, 0.01f,
-               "beam hard limit 2.5 deg");
+    check_near(Servo_GetBeamAngleActual(), SERVO_BEAM_LIMIT_DEFAULT_DEG, 0.01f,
+               "beam hard limit equals default limit");
 }
 
 /* ===================== PD 符号与静态误差 ===================== */

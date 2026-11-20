@@ -4,16 +4,17 @@
 /*
  * Jetson Nano 视觉位置数据链路。
  *
- * 硬件连接（默认使用 Car2 空闲的 UART4）：
- * - G3519 PB11 = UART4_RX，接 Jetson 的 TX；
- * - G3519 PB10 = UART4_TX，接 Jetson 的 RX；
+ * 硬件连接（使用板载 DAPLink / Type-C 对应的 UART0）：
+ * - G3519 PA10 = UART0_TX，经 DAPLink/Type-C 接 Jetson RX；
+ * - G3519 PA11 = UART0_RX，经 DAPLink/Type-C 接 Jetson TX；
  * - 双方必须共地，电平 3.3 V（若 Jetson 侧为 5 V TTL，必须加电平转换）。
  * - 默认波特率 115200，8N1。
  *
  * 资源说明：
- * - UART4 在旧工程里分配给 WiFi 模块（BSP/WiFi/wb2_wifi.c）。
- * - 滚球控制工程不再同时使用 WiFi；若必须保留 WiFi，应改用其它 UART 并
- *   修改 VISION_LINK_INST 相关宏，二者不能共用一个串口。
+ * - UART0 在循迹模式下仍是 printf/VOFA 调试口；
+ * - 滚球模式下 main.c 会调用 uart0_set_output_enable(false) 关闭 printf，
+ *   由本模块独占 UART0 的 RX/TX 中断与二进制数据流；
+ * - UART4（PB10/PB11）保持原 WiFi 配置不变，本模块不再使用。
  *
  * 通信约束：
  * - 位置帧约 30 Hz，单帧 21 字节，115200 下占用不到 1%；
@@ -56,9 +57,11 @@
  *   24  2     舵机脉宽 servo_pwm_us（uint16）
  *   26  1     控制状态 control_state（见 ball_control_state_t）
  *   27  1     标志位：bit0=视觉有效，bit1=自动控制使能，bit2=故障
- *   28  4     经过斜率限制后的实际摆杆倾角 beam_actual_deg（float32）
+ *   28  4     软件估算的摆杆倾角 beam_actual_deg（float32，非角度传感器实测）
  *
- * 说明：beam_actual_deg 可用于 PC/Jetson 做“半实物仿真”——
+ * 说明：beam_actual_deg = 舵机限速后的角度经 SERVO_BEAM_TO_SERVO_RATIO
+ * 反算得到，只是软件估算，不能代替摆杆角度传感器。可用于 PC/Jetson
+ * 做“半实物仿真”——
  * 接收遥测里的实际倾角，积分钢珠动力学，再把位置帧发回 G3519。
  *
  * 详细协议说明和 Jetson 端示例见 docs/BALL_CONTROL.md 与 tools/。
@@ -125,7 +128,7 @@ typedef struct {
  *
  * 行为：
  * - 清空收发缓冲和统计；
- * - 按 baud 重新配置 UART4，开启 FIFO、RX 中断和 TX 中断对应的 NVIC；
+ * - 按 baud 重新配置 UART0，开启 FIFO、RX 中断和 TX 中断对应的 NVIC；
  * - 不发送任何数据，也不阻塞。
  *
  * 调用时机：
