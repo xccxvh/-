@@ -132,6 +132,23 @@ def _validate_image_maps(maps, K, D, width, height):
         raise ValueError(reason + ': max_error_px={:.9g}, limit_px={:.9g}'.format(error, limit))
 
 
+def _project_image_maps(K, D, width, height):
+    """Project ideal output-pixel rays into the raw image. Tile to bound OpenCV Jacobian memory."""
+    map_x = np.empty((height, width), dtype=np.float32)
+    map_y = np.empty_like(map_x)
+    zero = np.zeros(3, dtype=np.float64)
+    for top in range(0, height, 16):
+        bottom = min(top + 16, height)
+        v, u = np.mgrid[top:bottom, :width]
+        rays = np.stack(((u - K[0, 2]) / K[0, 0], (v - K[1, 2]) / K[1, 1],
+                         np.ones_like(u)), axis=-1)
+        pixels, _ = cv2.projectPoints(rays.reshape(-1, 3), zero, zero, K, D)
+        pixels = pixels.reshape(bottom - top, width, 2)
+        map_x[top:bottom] = pixels[:, :, 0]
+        map_y[top:bottom] = pixels[:, :, 1]
+    return map_x, map_y
+
+
 class CameraGeometry(object):
     def __init__(self, cfg, width, height, base_dir=None):
         if any(type(v) is not int or v <= 0 for v in (width, height)):
@@ -179,7 +196,13 @@ class CameraGeometry(object):
         if self.mode == 'image':
             # 固定P=K、原分辨率；不使用getOptimalNewCameraMatrix、不裁剪或缩放FOV。
             # 校正造成的边界空洞保留为黑边，不能保证原图边缘内容全部保留。
-            self._maps = cv2.initUndistortRectifyMap(K, D, None, K, (width, height), cv2.CV_32FC1)
+            builder = cfg.get('map_builder', 'native')
+            if builder == 'project_points':
+                self._maps = _project_image_maps(K, D, width, height)
+            elif builder == 'native':
+                self._maps = cv2.initUndistortRectifyMap(K, D, None, K, (width, height), cv2.CV_32FC1)
+            else:
+                raise ValueError('unknown image map_builder: {}'.format(builder))
             # 必须在intrinsics_valid/context成功赋值之前检查；已知错误不能启用。
             _validate_image_maps(self._maps, K, D, width, height)
         self.context.update(intrinsics_sha256=digest, correction_model=MODEL, projection='P=K')

@@ -125,6 +125,17 @@ class CameraGeometryTests(unittest.TestCase):
                 np.testing.assert_allclose(maps,expected,rtol=0,
                                            atol=float(np.spacing(np.float32(640.))))
 
+    def test_project_points_builder_uses_independent_validation(self):
+        with patch('camera_geometry.cv2.initUndistortRectifyMap',
+                   side_effect=AssertionError('native maps selected')):
+            geometry = self.geometry('image', map_builder='project_points')
+        yy, xx = np.indices((480, 640))
+        expected = independent_brown(self.document, np.column_stack((xx.ravel(), yy.ravel())))
+        np.testing.assert_allclose(np.stack(geometry._maps, axis=-1).reshape(-1, 2),
+                                   expected, rtol=0, atol=np.spacing(np.float32(640)))
+        with self.assertRaisesRegex(ValueError, 'map_builder'):
+            self.geometry('image', map_builder='unknown')
+
     def test_combined_distortion_maps_are_correct_or_explicitly_rejected(self):
         # 不依据OpenCV版本skip：实际maps错误必须被拒绝，正确才允许启用。
         K=np.asarray(self.document['K']);D=np.asarray(self.document['D'])

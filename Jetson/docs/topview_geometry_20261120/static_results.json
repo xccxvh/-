@@ -1,0 +1,382 @@
+{
+  "O": {
+    "video": "point_O/raw.mkv",
+    "sha256": "de9d745848977c85deb8b3bbd147d52f33159c3d0cc9cef0fe9cf4e9fd3051cb",
+    "raw_ball_center": [
+      653,
+      547
+    ],
+    "radius": 27,
+    "modes": {
+      "raw": {
+        "frames": 120,
+        "valid": 43,
+        "reference": 118,
+        "rail": 118,
+        "identity": {
+          "miss": 77,
+          "false": 43
+        },
+        "longest_no_correct_frames": 120,
+        "correct_center_px": null,
+        "template_min": 0.984,
+        "dominant_component": {
+          "none": 2,
+          "width": 118
+        },
+        "detector": {
+          "rail_invalid": 2,
+          "no_cap": 17,
+          "candidates": 101
+        },
+        "tracker": {
+          "no_candidates": 19,
+          "acquiring": 24,
+          "identity_rejected": 23,
+          "ambiguous": 6,
+          "tracked": 43,
+          "position_rejected": 5
+        },
+        "algo_ms": {
+          "mean": 60.43108333333334,
+          "p95": 64.3195,
+          "std": 39.143276536246375
+        },
+        "geometry_ms": {
+          "mean": 0.02579943328934557,
+          "p95": 0.02542139973229495,
+          "std": 0.014399371807856597
+        },
+        "reference_ms": {
+          "mean": 20.281241358316038,
+          "p95": 22.013823000042976,
+          "std": 1.5594764379449912
+        }
+      },
+      "undistorted": {
+        "frames": 120,
+        "valid": 0,
+        "reference": 113,
+        "rail": 113,
+        "identity": {
+          "miss": 120
+        },
+        "longest_no_correct_frames": 120,
+        "correct_center_px": null,
+        "template_min": 0.984,
+        "dominant_component": {
+          "none": 7,
+          "width": 113
+        },
+        "detector": {
+          "rail_invalid": 7,
+          "no_cap": 50,
+          "candidates": 63
+        },
+        "tracker": {
+          "no_candidates": 57,
+          "acquiring": 38,
+          "identity_rejected": 7,
+          "ambiguous": 15,
+          "position_rejected": 3
+        },
+        "algo_ms": {
+          "mean": 61.03433333333334,
+          "p95": 67.56400000000001,
+          "std": 35.321355998256294
+        },
+        "geometry_ms": {
+          "mean": 17.544109341717256,
+          "p95": 19.778830500172262,
+          "std": 1.6549887714213658
+        },
+        "reference_ms": {
+          "mean": 15.469022091679108,
+          "p95": 15.980555099440608,
+          "std": 0.8516424089329732
+        }
+      }
+    }
+  },
+  "minus5": {
+    "video": "point_minus5/raw.mkv",
+    "sha256": "26d4df4e27a918e33ecb61a60815a6650513219856016ef00a5e763fa832b819",
+    "raw_ball_center": [
+      357,
+      524
+    ],
+    "radius": 24,
+    "modes": {
+      "raw": {
+        "frames": 120,
+        "valid": 0,
+        "reference": 120,
+        "rail": 120,
+        "identity": {
+          "miss": 120
+        },
+        "longest_no_correct_frames": 120,
+        "correct_center_px": null,
+        "template_min": 0.986,
+        "dominant_component": {
+          "width": 118,
+          "height_aspect": 2
+        },
+        "detector": {
+          "candidates": 63,
+          "no_cap": 57
+        },
+        "tracker": {
+          "acquiring": 43,
+          "no_candidates": 57,
+          "position_rejected": 6,
+          "ambiguous": 8,
+          "identity_rejected": 6
+        },
+        "algo_ms": {
+          "mean": 52.241,
+          "p95": 56.431,
+          "std": 36.254089318769736
+        },
+        "geometry_ms": {
+          "mean": 0.024875433390055452,
+          "p95": 0.026781400219988427,
+          "std": 0.0027395495236469465
+        },
+        "reference_ms": {
+          "mean": 18.640482624975146,
+          "p95": 20.02140639992831,
+          "std": 1.0587822657391914
+        }
+      },
+      "undistorted": {
+        "frames": 120,
+        "valid": 0,
+        "reference": 120,
+        "rail": 120,
+        "identity": {
+          "miss": 120
+        },
+        "longest_no_correct_frames": 120,
+        "correct_center_px": null,
+        "template_min": 0.986,
+        "dominant_component": {
+          "width": 18,
+          "height_aspect": 91,
+          "area_fill": 1,
+          "arc_shape": 10
+        },
+        "detector": {
+          "candidates": 115,
+          "no_cap": 5
+        },
+        "tracker": {
+          "acquiring": 56,
+          "position_rejected": 14,
+          "ambiguous": 33,
+          "no_candidates": 5,
+          "identity_rejected": 12
+        },
+        "algo_ms": {
+          "mean": 73.34208333333332,
+          "p95": 76.5735,
+          "std": 34.643798889455745
+        },
+        "geometry_ms": {
+          "mean": 18.68053770001552,
+          "p95": 21.220645850098663,
+          "std": 1.7758306752245498
+        },
+        "reference_ms": {
+          "mean": 15.758470516645199,
+          "p95": 16.02421150041664,
+          "std": 0.2722681421701458
+        }
+      }
+    }
+  },
+  "plus3": {
+    "video": "geometry_comparison/point_plus3.mkv",
+    "sha256": "4541c6c12752c00bb69ae29a157398e3d28617e10ada6a84a1e05c54c8e2800d",
+    "raw_ball_center": [
+      828,
+      514
+    ],
+    "radius": 26,
+    "modes": {
+      "raw": {
+        "frames": 120,
+        "valid": 0,
+        "reference": 120,
+        "rail": 120,
+        "identity": {
+          "miss": 120
+        },
+        "longest_no_correct_frames": 120,
+        "correct_center_px": null,
+        "template_min": 0.991,
+        "dominant_component": {
+          "width": 70,
+          "accepted": 18,
+          "height_aspect": 15,
+          "arc_shape": 15,
+          "arc_shoulders": 1,
+          "area_fill": 1
+        },
+        "detector": {
+          "no_cap": 87,
+          "candidates": 33
+        },
+        "tracker": {
+          "no_candidates": 87,
+          "acquiring": 30,
+          "identity_rejected": 2,
+          "ambiguous": 1
+        },
+        "algo_ms": {
+          "mean": 52.15125,
+          "p95": 54.336,
+          "std": 39.24753241845275
+        },
+        "geometry_ms": {
+          "mean": 0.030779108396927768,
+          "p95": 0.059140299799764644,
+          "std": 0.03302542524036691
+        },
+        "reference_ms": {
+          "mean": 20.71515320835715,
+          "p95": 22.208385000112685,
+          "std": 1.5838650621489783
+        }
+      },
+      "undistorted": {
+        "frames": 120,
+        "valid": 0,
+        "reference": 120,
+        "rail": 120,
+        "identity": {
+          "miss": 120
+        },
+        "longest_no_correct_frames": 120,
+        "correct_center_px": null,
+        "template_min": 0.991,
+        "dominant_component": {
+          "width": 102,
+          "arc_shape": 16,
+          "height_aspect": 1,
+          "area_fill": 1
+        },
+        "detector": {
+          "no_cap": 101,
+          "candidates": 19
+        },
+        "tracker": {
+          "no_candidates": 101,
+          "acquiring": 18,
+          "identity_rejected": 1
+        },
+        "algo_ms": {
+          "mean": 64.47016666666666,
+          "p95": 65.14949999999999,
+          "std": 38.827931226187616
+        },
+        "geometry_ms": {
+          "mean": 18.73762764995111,
+          "p95": 20.510387449439804,
+          "std": 1.8635246439884863
+        },
+        "reference_ms": {
+          "mean": 17.68799520831787,
+          "p95": 19.287424250023832,
+          "std": 1.4848891812776208
+        }
+      }
+    }
+  },
+  "plus5": {
+    "video": "geometry_comparison/point_plus5.mkv",
+    "sha256": "a200faeb590129fe893452068f899eccd7a4e0b186d8a9e1c357f4de5640b55b",
+    "raw_ball_center": [
+      940,
+      512
+    ],
+    "radius": 26,
+    "modes": {
+      "raw": {
+        "frames": 120,
+        "valid": 0,
+        "reference": 120,
+        "rail": 120,
+        "identity": {
+          "miss": 120
+        },
+        "longest_no_correct_frames": 120,
+        "correct_center_px": null,
+        "template_min": 0.991,
+        "dominant_component": {
+          "width": 64,
+          "height_aspect": 56
+        },
+        "detector": {
+          "no_cap": 120
+        },
+        "tracker": {
+          "no_candidates": 120
+        },
+        "algo_ms": {
+          "mean": 42.935500000000005,
+          "p95": 42.7745,
+          "std": 35.25431301864592
+        },
+        "geometry_ms": {
+          "mean": 0.023415741672276152,
+          "p95": 0.02380720015935367,
+          "std": 0.004092656140926568
+        },
+        "reference_ms": {
+          "mean": 18.09066970005612,
+          "p95": 18.94258089987488,
+          "std": 0.6327815257556988
+        }
+      },
+      "undistorted": {
+        "frames": 120,
+        "valid": 0,
+        "reference": 120,
+        "rail": 120,
+        "identity": {
+          "miss": 120
+        },
+        "longest_no_correct_frames": 120,
+        "correct_center_px": null,
+        "template_min": 0.991,
+        "dominant_component": {
+          "width": 120
+        },
+        "detector": {
+          "no_cap": 102,
+          "candidates": 18
+        },
+        "tracker": {
+          "no_candidates": 102,
+          "acquiring": 18
+        },
+        "algo_ms": {
+          "mean": 59.00525,
+          "p95": 59.294,
+          "std": 35.75696179213451
+        },
+        "geometry_ms": {
+          "mean": 16.617120675042923,
+          "p95": 17.647278799904598,
+          "std": 0.456242453136646
+        },
+        "reference_ms": {
+          "mean": 16.18910246662229,
+          "p95": 17.317580549479317,
+          "std": 0.38365994173688384
+        }
+      }
+    }
+  }
+}
