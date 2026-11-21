@@ -55,6 +55,18 @@ class RailCalibrationTests(unittest.TestCase):
             path.write_text(json.dumps(data), encoding='utf-8')
             return self.m.RailCalibration(path, binding() if current_binding is None else current_binding)
 
+    def test_outer_positions_allow_independent_core_endpoints(self):
+        # 同一合同下，实测外侧刻度可替换旧端点；短覆盖或缺零点仍必须拒绝。
+        fit = [session(self.m, cm, i*100) for i, cm in enumerate((-6, 0, 6))]
+        verify = [session(self.m, cm, 400+i*100) for i, cm in enumerate((-5, -3, 3, 5))]
+        model = self.loaded(self.m.build_model(binding(), fit, verify))
+        self.assertTrue(model.validated)
+        self.assertAlmostEqual(model.position(600), 5.)
+        self.assertIsNone(model.position(621))
+        for positions in [(-4, 0, 6), (-6, 0, 4), (-6, 1, 6)]:
+            with self.assertRaises(ValueError):
+                self.m.build_model(binding(), [session(self.m, cm, i*100) for i, cm in enumerate(positions)])
+
     def test_binding_id_matches_parent_json_including_unicode_geometry(self):
         import hashlib
         b = binding(); b['geometry']['说明'] = '纸尺坐标'

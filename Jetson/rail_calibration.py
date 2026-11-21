@@ -147,8 +147,9 @@ def fitted(fit_sessions, binding, method):
     """每个实物位置以中位s拟合，位置等权；方向可反转但必须严格单调。"""
     groups = grouped(fit_sessions, binding)
     cms = np.asarray([g['cm'] for g in groups], dtype=float)
-    if len(groups) < 3 or not all(np.any(np.abs(cms-cm) <= 1e-9) for cm in (-5., 0., 5.)):
-        raise ValueError('fit requires at least -5, 0, +5 cm positions')
+    # 外侧实物点可以覆盖 ±5 cm，使 ±5 cm 本身可留作独立验证。仍须实测零点。
+    if len(groups) < 3 or cms[0] > -5.+1e-9 or cms[-1] < 5.-1e-9 or not np.any(np.abs(cms) <= 1e-9):
+        raise ValueError('fit requires zero and measured positions spanning at least -5 to +5 cm')
     if not np.all(np.diff(cms) > 1e-6):
         raise ValueError('fit needs distinct positions')
     # 位置内合并已检查互不重叠的session；无效/预测/缺参考行不能充数。

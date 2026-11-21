@@ -1,0 +1,12 @@
+run,role,cm
+fit_m6_01,fit,-6
+fit_p6_01,fit,6
+verify_m5_01,verify,-5
+verify_p3_01,verify,3
+verify_m3_01,verify,-3
+verify_p5_01,verify,5
+verify_m5_02,verify,-5
+verify_m3_02,verify,-3
+verify_p5_02,verify,5
+verify_p3_03,verify,3
+fit_zero_04,fit,0

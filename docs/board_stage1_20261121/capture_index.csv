@@ -1,0 +1,16 @@
+run,file,sha256,frames,role,known_cm,note
+fit_m6_01,raw.mkv,fe79d1366bbd76af75417cf81f348383886cd3a2e1ea478db4eb615732d21ec9,150,fit,-6,USB telemetry unavailable during recording
+placement02_retry,raw.mjpg,e5212f242430f6148cb469816609690a128937531d5ab830b8e918dc5a77ca08,150,setup,,operator moving ball; hand occludes ruler
+fit_p6_01,raw.mjpg,147f2a912768b43698638b87a62c97a5b19d68e285b16b594554516a6f793d4b,150,fit,6,synchronized telemetry
+fit_zero_02,raw.mjpg,6424e844ed6ae3a0bc3a4dfd07cc0a07ca7ad175d154888385e37b8f0753e7b0,44,partial,0,recording stopped before 150; retained
+verify_m5_01,raw.mjpg,35d81a6fc28d4c64af3e1e4586accf001dbeee26787918da0c06c92616b2a4d8,150,verify,-5,"operator placement, full clip"
+verify_p3_01,raw.mjpg,7a83e4a52e551e82e9074ff8431cf41a16ec553bfc1b1ecf43b255b0e74074e1,150,verify,3,"operator placement, full clip"
+verify_m3_01,raw.mjpg,49cf0519950fb45f6876e02d0aae5765e520a6afc0da67799c9dfaf7fac116d2,150,verify,-3,"operator placement, full clip"
+verify_p5_01,raw.mjpg,262e8db962666b99fa08adfc930a1a83e485a3656d6c34d87f8526e507769973,150,verify,5,"operator placement, full clip"
+verify_m5_02,raw.mjpg,44f216923b0fade6ab7d8b8b6d8f23a2042f53cb7ce4259aa6049e8ca0eb607c,150,verify,-5,"operator placement, full clip"
+verify_m3_02,raw.mjpg,47498c65c5f73f03b7810d72729e23b581591cb8f868c427d97eeff8ea8c5d1f,150,verify,-3,"operator placement, full clip"
+verify_p5_02,raw.mjpg,e32807e825b2569a19e81b218f51c96643efcba962b011ab52ce3f7a7f2d5219,150,verify,5,"operator placement, full clip"
+verify_p3_03,raw.mjpg,bcdd8ff5ab892cdc82cb4c99211e448de7b2a38d8ce04e6477157fddce5381dc,150,verify,3,"operator placement, full clip"
+fit_zero_04,raw.mjpg,937734369ac404cc163250e63a836281d2ee10c2bf925f8eff32b6a40c8dadf2,150,fit,0,"operator placement, full clip"
+verify_p3_02,raw.mjpg,5ddca43533afe43d1d7767aab252f7b38b554ba8e4fb73d4f5e5902e91c76c49,150,reported_position_conflict,3,original operator label conflicts with visible ruler
+fit_zero_03,raw.mjpg,bcdf810a5f81ef55bb551532fbdd934e6eae61ab4de8d8ad27091b5b5e9447bc,150,reported_position_conflict,0,original operator label conflicts with visible ruler
