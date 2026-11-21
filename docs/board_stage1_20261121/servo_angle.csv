@@ -1,2 +1,3 @@
 run,ruler_cm,beam_cmd_deg,servo_pwm_us,software_beam_deg,horizontal_spacing_cm,right_minus_left_cm,scale_resolution_cm,measured_angle_deg,approach,manual_confirmed,rx_frames,raw_cm_count,raw_cm_median,raw_max_abs_cm,points_cm_count,points_cm_median,points_max_abs_cm,video_sha256
 tilt_O_start_01,12,0,1722,0.0,26,-0.8,0.1,-1.7623910236605127,initial_unspecified,1,50,143,-0.3477683665022817,0.3692954579883122,143,-0.345923525935973,0.36645543795026514,f45ffc4e8deff70bf4dcc023a8d213b97ca64b5a2e0a55b144fa517a83acb676
+tilt_O_plus05_01,12,0.5,1727,0.5,26,-0.9,0.1,-1.9825238610843805,from_0,1,50,146,-0.12626906622240797,0.15575372409886476,146,-0.1357868711358756,0.16383061222624185,f5d883ef949019fa4b611a9f8ff301790d05c5fb83fb306d4f4a001ad71d2ce0
