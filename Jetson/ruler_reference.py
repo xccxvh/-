@@ -5,15 +5,21 @@ This corrects image translation, in-plane rotation and uniform scale, not
 arbitrary perspective. A failed update clears the transform immediately.
 Coordinates are reference-image pixels, never implicitly centimeters.
 """
+from concurrent.futures import ThreadPoolExecutor
 import math
 import cv2
 import numpy as np
 
 
+# 同一进程共享有界工作池。仅并行同帧三块的重计算；所有任务返回后主线程提交姿态。
+# 不积压视频帧，退出时由标准库回收工作线程。一个 worker 用于串行消融。
+_PATCH_POOL = ThreadPoolExecutor(max_workers=3)
+
+
 class RulerReference(object):
     def __init__(self, gray, boxes, search_x=32, search_y=24,
                  min_score=.85, min_margin=.05, max_residual_px=2.5,
-                 rotation_recheck=False, adaptive_search=False):
+                 rotation_recheck=False, adaptive_search=False, search_workers=3):
         if gray is None or gray.ndim != 2 or gray.dtype != np.uint8:
             raise ValueError('reference must be uint8 grayscale')
         # 两个开关独立且只接受真正的布尔值；旧配置默认逐帧固定窗匹配。
@@ -21,6 +27,9 @@ class RulerReference(object):
             raise ValueError('rotation_recheck must be boolean')
         if type(adaptive_search) is not bool:
             raise ValueError('adaptive_search must be boolean')
+        if type(search_workers) is not int or search_workers not in (1,3):
+            raise ValueError('search_workers must be 1 or 3')
+        self.search_workers = search_workers
         self.rotation_recheck = rotation_recheck
         self.adaptive_search = adaptive_search
         self.shape = gray.shape
@@ -46,14 +55,21 @@ class RulerReference(object):
         if len(points) < 3 or np.ptp(self.points[:, 0]) < 100:
             raise ValueError('need at least three separated ruler patches')
         self.transform = None
+        self._last_rectified = False
 
     def update(self, gray):
         # 上一姿态仅用于安排本帧搜索。分辨率变化、遮挡或几何失败时，
         # 对外映射立即失效，下一帧从参考位置独立重定位。
         previous = self.transform
+        previous_rectified = self._last_rectified
+        self._last_rectified = False
         self.transform = None
         if gray is None or gray.shape != self.shape or gray.dtype != np.uint8:
             return {'valid': False, 'reason': 'resolution_or_format'}
+        if self.adaptive_search and self.rotation_recheck:
+            result = self._guided_update(gray, previous, previous_rectified)
+            self._last_rectified = bool(result.get('rotation_rechecked'))
+            return result
         if self.adaptive_search and previous is not None:
             inverse, translation = previous
             predicted = self.points.dot(np.linalg.inv(inverse).T) + translation
@@ -69,6 +85,73 @@ class RulerReference(object):
         if self.rotation_recheck and result['reason'] == 'weak_or_ambiguous_patch':
             result = self._rotation_recheck(gray)
         if self.adaptive_search and result['valid']:
+            result['registration_mode'] = 'relocalize'
+        return result
+
+    def _raw_peaks(self, gray, expected=None):
+        """读取本帧实测峰。局部窗只用于提议；正式确认始终检查整个位移域。"""
+        H, W = self.shape
+
+        def one(i):
+            x, y, w, h, patch = self.patches[i]
+            low_x, high_x = max(0,x-self.search_x), min(W-w,x+self.search_x)
+            low_y, high_y = max(0,y-self.search_y), min(H-h,y+self.search_y)
+            if expected is not None:
+                xx, yy = np.rint(expected[i] - [w/2.,h/2.]).astype(int)
+                low_x, high_x = max(low_x,xx-12), min(high_x,xx+12)
+                low_y, high_y = max(low_y,yy-12), min(high_y,yy+12)
+                if low_x > high_x or low_y > high_y:
+                    return None
+            window = gray[low_y:high_y+h,low_x:high_x+w]
+            score, margin, (u,v) = self._peak(window,patch)
+            return [low_x+u+w/2.,low_y+v+h/2.],score,margin
+
+        # 小窗计算太少，调度三次反而增加开销；只把全域任务交给工作池。
+        run = _PATCH_POOL.map if self.search_workers == 3 and expected is None else map
+        records = list(run(one,range(len(self.patches))))
+        if any(item is None for item in records):
+            return None
+        return tuple(list(values) for values in zip(*records))
+
+    def _guided_update(self, gray, previous, previous_rectified):
+        """上一有效姿态仅给出小窗中心；重新拟合本帧姿态，全窗复核后再发布。"""
+        expected = None
+        local = None
+        checked = None
+        if previous is not None:
+            expected = self.points.dot(np.linalg.inv(previous[0]).T) + previous[1]
+        if previous_rectified and expected is not None:
+            local = self._raw_peaks(gray,expected)
+            if local is not None:
+                points, scores, margins = local
+                # 裸模板足够强时优先走原始坐标的全窗确认，保持坐标语义。
+                if (max(scores) >= self.min_score and min(margins) >= self.min_margin
+                        and min(scores) < self.min_score):
+                    checked = self._confirm_rotation(gray,points,scores)
+                    if checked['valid']:
+                        # 满域 NCC 的胜者还必须是历帧小窗内的本帧实测点。
+                        # 满域次峰已比较，不能靠局部遮罩消掉异地相同尺纹。
+                        if np.max(np.abs(np.asarray(checked['current_points'])-expected)) <= 12:
+                            checked['registration_mode'] = 'rotation_track'
+                            return checked
+                        self.transform = None
+
+        # 冷启动、弱证据或跳变统一回全窗。三个原始峰只采集一次，同一帧
+        # 全窗匹配与旋转提议共享这些实测值，避免重复进行相同的相关计算。
+        points, scores, margins = self._raw_peaks(gray)
+        if min(scores) >= self.min_score and min(margins) >= self.min_margin:
+            pose, info = similarity_from_points(self.points,points,self.max_residual)
+            if pose is None:
+                return {'valid':False,'reason':info['reason']}
+            self.transform = pose
+            tracking = expected is not None and np.max(np.abs(np.asarray(points)-expected)) <= 12
+            return dict(info, min_score=min(scores),min_margin=min(margins),
+                        reference_points=self.points.tolist(),current_points=points,
+                        registration_mode='track' if tracking else 'relocalize')
+        if checked is not None and not checked['valid'] and points == local[0]:
+            return checked
+        result = self._confirm_rotation(gray,points,scores)
+        if result['valid']:
             result['registration_mode'] = 'relocalize'
         return result
 
@@ -214,6 +297,10 @@ class RulerReference(object):
                 return {'valid':False, 'reason':'rotation_proposal_untrusted'}
             proposed.append((x0+xx+w/2., y0+yy+h/2.))
             proposal_scores.append(score)
+        return self._confirm_rotation(gray,proposed,proposal_scores)
+
+    def _confirm_rotation(self, gray, proposed, proposal_scores):
+        """三块姿态校正后的竞争峰均在完整可见域中检查，几何通过后提交。"""
         # 不为全无可信分数的纹理估计姿态；不降低最终min_score/min_margin。
         if max(proposal_scores) < self.min_score:
             return {'valid':False, 'reason':'rotation_proposal_untrusted'}
@@ -222,27 +309,34 @@ class RulerReference(object):
             return {'valid':False, 'reason':'rotation_proposal_'+info['reason']}
         inverse, translation = proposal
         matrix = np.linalg.inv(inverse)
-        current, scores, margins = [], [], []
-        for box in self.patches:
+        def one(box):
             x, y, w, h, patch = box
-            eligible = None
             if self.adaptive_search:
-                search = self._visible_rectified_search(gray, box, matrix, translation)
-                if search is None:
-                    return {'valid':False, 'reason':'rotation_recheck_clipped'}
-                window, origin, eligible = search
+                search = self._visible_rectified_search(gray,box,matrix,translation)
             else:
-                search = self._rectified_search(gray, box, matrix, translation)
-                if search is None:
-                    return {'valid':False, 'reason':'rotation_recheck_clipped'}
-                window, origin = search
-            score, margin, (xx,yy) = self._peak(window, patch, eligible)
+                search = self._rectified_search(gray,box,matrix,translation)
+            if search is None:
+                return None
+            window, origin = search[:2]
+            eligible = search[2] if self.adaptive_search else None
+            score, margin, (xx,yy) = self._peak(window,patch,eligible)
+            rectified = origin + np.array([xx+w/2.,yy+h/2.])
+            return matrix.dot(rectified)+translation,score,margin
+
+        run = _PATCH_POOL.map if self.search_workers == 3 and self.adaptive_search else map
+        # 逐块顺序判定，几何或纹理失败始终不发布局部结果。
+        records = list(run(one,self.patches))
+        current, scores, margins = [], [], []
+        for record in records:
+            if record is None:
+                return {'valid':False, 'reason':'rotation_recheck_clipped'}
+            point, score, margin = record
             if (not math.isfinite(score) or not math.isfinite(margin) or
                     score < self.min_score or margin < self.min_margin):
                 return {'valid':False, 'reason':'rotation_recheck_weak_or_ambiguous_patch'}
-            rectified = origin + np.array([xx+w/2., yy+h/2.])
-            current.append(matrix.dot(rectified)+translation)
-            scores.append(score); margins.append(margin)
+            current.append(point)
+            scores.append(score)
+            margins.append(margin)
         current = np.asarray(current, dtype=float)
         # 复核不能把搜索预算加倍；最终中心仍须落在原始search_x/y位移范围内。
         if np.any(np.abs(current-self.points) > np.array([self.search_x,self.search_y])):

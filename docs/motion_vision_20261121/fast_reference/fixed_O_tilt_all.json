@@ -1,0 +1,63 @@
+{
+  "n": 895,
+  "old": {
+    "valid": 886,
+    "pixels": 832,
+    "modes": {
+      "relocalize": 225,
+      "track": 661,
+      "": 9
+    },
+    "ms": [
+      3.2318,
+      13.2884,
+      26.1859
+    ],
+    "mean_ms": 5.6881
+  },
+  "new": {
+    "valid": 886,
+    "pixels": 832,
+    "modes": {
+      "relocalize": 97,
+      "track": 661,
+      "rotation_track": 128,
+      "": 9
+    },
+    "ms": [
+      4.0248,
+      7.6959,
+      13.1267
+    ],
+    "mean_ms": 4.7103
+  },
+  "rail_gains_losses": [
+    0,
+    0
+  ],
+  "pixel_gains_losses": [
+    0,
+    0
+  ],
+  "origin_delta": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "point_delta": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "rail_s_delta": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "pixel_x_delta": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "old_archive_reason_mismatches": 0
+}
