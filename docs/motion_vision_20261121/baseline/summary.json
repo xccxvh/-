@@ -1,0 +1,103 @@
+{
+  "original_live": {
+    "frames": 895,
+    "span_s": 30.00534967599924,
+    "processed": 895,
+    "pixels": 0,
+    "coverage_processed": 0.0,
+    "processed_hz": 29.828014326255126,
+    "pixel_hz": 0.0,
+    "longest_capture_gap_ms": 30005.34967599924,
+    "counts": {
+      "reference_rotation_proposal_untrusted": 895
+    },
+    "stage_mean_p95_ms": {}
+  },
+  "before": {
+    "frames": 895,
+    "span_s": 30.00534967599924,
+    "processed": 895,
+    "pixels": 660,
+    "coverage_processed": 0.7374301675977654,
+    "processed_hz": 29.828014326255126,
+    "pixel_hz": 21.996077603718863,
+    "longest_capture_gap_ms": 1248.533488999783,
+    "counts": {
+      "no_circle": 144,
+      "acquiring": 62,
+      "pixel": 660,
+      "identity_rejected": 17,
+      "reference_rotation_recheck_clipped": 11,
+      "ambiguous": 1
+    },
+    "stage_mean_p95_ms": {
+      "decode_ms": [
+        8.399204469273744,
+        9.5505
+      ],
+      "reference_and_edge_ms": [
+        3.0861608938547485,
+        3.5652999999999997
+      ],
+      "detector_ms": [
+        2.2404972067039104,
+        2.6082
+      ],
+      "tracker_ms": [
+        0.047158659217877104,
+        0.062
+      ],
+      "coordinates_ms": [
+        0.08064916201117317,
+        0.1
+      ],
+      "total_ms": [
+        13.853653631284917,
+        15.286999999999999
+      ]
+    }
+  },
+  "after": {
+    "frames": 895,
+    "span_s": 30.00534967599924,
+    "processed": 895,
+    "pixels": 783,
+    "coverage_processed": 0.8748603351955307,
+    "processed_hz": 29.828014326255126,
+    "pixel_hz": 26.095346611684654,
+    "longest_capture_gap_ms": 471.10322899970924,
+    "counts": {
+      "no_circle": 69,
+      "acquiring": 28,
+      "pixel": 783,
+      "identity_rejected": 14,
+      "ambiguous": 1
+    },
+    "stage_mean_p95_ms": {
+      "decode_ms": [
+        8.296820111731844,
+        9.3072
+      ],
+      "reference_and_edge_ms": [
+        3.5474279329608938,
+        3.8846
+      ],
+      "detector_ms": [
+        2.5475296089385475,
+        3.9913999999999996
+      ],
+      "tracker_ms": [
+        0.04798882681564246,
+        0.058
+      ],
+      "coordinates_ms": [
+        0.08003240223463687,
+        0.093
+      ],
+      "total_ms": [
+        14.51981899441341,
+        16.1446
+      ]
+    }
+  }
+}

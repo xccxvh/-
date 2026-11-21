@@ -1,0 +1,47 @@
+{
+  "version": "motion_left_print_20261121_v1",
+  "config": "config_motion_left_print_20261121.json",
+  "config_sha256": "7b11db1f3fc0c01dd88928d37536c4ebebbd9fc631b6337b8c8165350d293427",
+  "reference_sha256": "3c6da668646e530e87fc80368bd68fdef1be0c5f59344afd466ba7cc1505eff3",
+  "modes": {
+    "raw": {
+      "binding": "3305f0161444c368b74a67253a9f444cdfd636e89d2076c6c56bc926fdde8b32",
+      "fit_status": "evaluated_offline",
+      "deployable_for_static": false,
+      "file": "raw_audit.json",
+      "sha256": "9ef4a063d6ec668dde7e63c74d8779acb4a277faa3a16de897f59c9ff66b35a1",
+      "runtime_validated": false
+    },
+    "points": {
+      "binding": "e5de9361d43a2e1b13e56e33c0f3b9a266e794e337c127bda184075e3d0d4d76",
+      "fit_status": "evaluated_offline",
+      "deployable_for_static": false,
+      "file": "points_audit.json",
+      "sha256": "8546e0da9f8393ad3a9a539af2f4df364f69427e61fc29ac73ede8f2655344cb",
+      "runtime_validated": false
+    }
+  },
+  "source": "/home/user/桌面/jetson_nano/7/motion_calibration/left_print_two_rounds",
+  "tilt_source": "/home/user/桌面/jetson_nano/7/motion_calibration/left_print_tilt_v1",
+  "source_sha256": {
+    "rail_detector.py": "f4c246b96236e177e61e5e2e1d9f90bf2c831728ffefb867a50829b31ed32a1d",
+    "ball_detector.py": "a0f956b1f3f58c7bf54761c31d498b6c28409637e93b68e921674924a5720289",
+    "ruler_reference.py": "25f7901f3b7410a300d02d27439526e20813eb48d71ae9220b3eba2563cb5f06",
+    "ball_tracker.py": "ab34ba63c04c9f071e755883cdf1735f91b2c53d7005e2840599df85fcbc1be5",
+    "local_vision.py": "caab6cd1428bf1b1677111c281e3b4ce0d53ddf7c066bda5e71356a72cc59f32",
+    "camera_geometry.py": "0bf7037919abf8310789e0e70fdaaa34ebe0efe8d8bf81d435b6c25ad573d284",
+    "rail_coordinates.py": "9f7ca56abfcf55a2283b704504c949f20cff2757754b5b0bb705ca9a30fddbb1",
+    "measurement_contract.py": "58e1edd879f363b40535f2227211bbee4010d57d9a9ccbdb7e21530c76ede8fd",
+    "motion_observe.py": "f833e3e55f0018a2bb1de524200d3d65cebfa9f7cdb0a8bdc7a3e80248870c31",
+    "rail_calibration.py": "8cb741e9a54c62f59b0120a9c984eb1dc44d5259c6333389e953832283838af0",
+    "calibrate_rail.py": "24baa000d803d19f02a3c96b20f333706b996a0fff41447d5e2b63f213dfb20a"
+  },
+  "files": {
+    "evaluation.json": "dc578662830dd2c02b166ffbf54f238f4a40d7bda1ad13e173d0ceb588293403",
+    "evidence.zip": "21d36c94c639a722a2b5a3a7b77ee770f4835e8a848e7c76d4e329df875feefe",
+    "points_audit.json": "8546e0da9f8393ad3a9a539af2f4df364f69427e61fc29ac73ede8f2655344cb",
+    "raw_audit.json": "9ef4a063d6ec668dde7e63c74d8779acb4a277faa3a16de897f59c9ff66b35a1",
+    "statistics.csv": "70f383468dc57e707b8603ad04bbb59e9a27518f570ec1f204c18b4c9b514809",
+    "tilt.json": "f82f039757aa0677c60bbd7c68497f9aed765c249549c4f4b8b5100fa9eeb08a"
+  }
+}

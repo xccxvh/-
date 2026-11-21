@@ -1,0 +1,72 @@
+{
+  "version": "motion_static_cm_20261121_v1",
+  "source": "/home/user/\u684c\u9762/jetson_nano/7/motion_calibration/frozen_audit_v1",
+  "config": "config_motion_topview_20261121.json",
+  "config_sha256": "bdd42b08fa7676e909b7d0861c068c5131945a150163c1a6e7c9dc998575287e",
+  "reference_sha256": "3c6da668646e530e87fc80368bd68fdef1be0c5f59344afd466ba7cc1505eff3",
+  "source_sha256": {
+    "ball_detector.py": "a0f956b1f3f58c7bf54761c31d498b6c28409637e93b68e921674924a5720289",
+    "ball_tracker.py": "ab34ba63c04c9f071e755883cdf1735f91b2c53d7005e2840599df85fcbc1be5",
+    "measurement_contract.py": "58e1edd879f363b40535f2227211bbee4010d57d9a9ccbdb7e21530c76ede8fd",
+    "local_vision.py": "caab6cd1428bf1b1677111c281e3b4ce0d53ddf7c066bda5e71356a72cc59f32",
+    "ruler_reference.py": "25f7901f3b7410a300d02d27439526e20813eb48d71ae9220b3eba2563cb5f06",
+    "rail_detector.py": "f4c246b96236e177e61e5e2e1d9f90bf2c831728ffefb867a50829b31ed32a1d",
+    "rail_coordinates.py": "9f7ca56abfcf55a2283b704504c949f20cff2757754b5b0bb705ca9a30fddbb1",
+    "camera_geometry.py": "0bf7037919abf8310789e0e70fdaaa34ebe0efe8d8bf81d435b6c25ad573d284",
+    "rail_calibration.py": "8cb741e9a54c62f59b0120a9c984eb1dc44d5259c6333389e953832283838af0",
+    "calibrate_rail.py": "24baa000d803d19f02a3c96b20f333706b996a0fff41447d5e2b63f213dfb20a",
+    "motion_observe.py": "f833e3e55f0018a2bb1de524200d3d65cebfa9f7cdb0a8bdc7a3e80248870c31"
+  },
+  "audits": {
+    "raw": {
+      "file": "raw_audit.json",
+      "sha256": "e0da6f85132a2be862487f94f71afe68e9e45832aa70b5ea95e9917f4841d372",
+      "binding": "40c9aa1aa2f080c3a683c696583980b2af7b8121d6de13126bf620d77baff97f",
+      "geometry": {
+        "mode": "raw",
+        "resolution": [
+          1280,
+          720
+        ],
+        "camera_id": "icspring-usb-camera",
+        "focus_id": "topview-focused-20261120",
+        "intrinsics_sha256": null,
+        "correction_model": "none",
+        "projection": "identity"
+      },
+      "deployable": false,
+      "probe_status": "invalid: model schema or binding mismatch",
+      "loader_validated": false,
+      "each_placement_passed": false
+    },
+    "points": {
+      "file": "points_audit.json",
+      "sha256": "8a35fb1616b6d59e026343a37a8275d79678fb21a7c250146a5eb950c81fc0f6",
+      "binding": "744167a36afedcc2094ce8fd693e945e9f9f75b3066eca2cc8845b52a04126b6",
+      "geometry": {
+        "mode": "points",
+        "resolution": [
+          1280,
+          720
+        ],
+        "camera_id": "icspring-usb-camera",
+        "focus_id": "topview-focused-20261120",
+        "intrinsics_sha256": "89245c1b97980d92d0b940ad38ae20371196cf21f0fb6232479cd19ed7cb081b",
+        "correction_model": "opencv-pinhole-brown5-v1",
+        "projection": "P=K"
+      },
+      "deployable": false,
+      "probe_status": "invalid: model schema or binding mismatch",
+      "loader_validated": false,
+      "each_placement_passed": false
+    }
+  },
+  "evidence_zip_sha256": "247884c1921578145ad148e5443a639b36729bc34558ed894b3238ccdc8431f9",
+  "statistics_sha256": "5f79e911fd42b3ef0d3a0e191cb4dacc8d16f9af554c144d75d44ab3b5667f94",
+  "evaluation_sha256": "77b403f5f4a140939c65e71f4b0a5fdf2e49b9020f2dad1bda4065a36e9e35cb",
+  "script_sha256": "8cfc32b646d26649555cc801085d91402982ad37a6344bd14604fc35e83c4c6d",
+  "tilt_files": {
+    "tilt.json": "254b54362d910c730d048b929bc6201dba50e44611187bbd3a73a95ec65b13bd",
+    "tilt_evidence.zip": "4afac2c59a28913cedfe655963b601b5c192f0b4da7a5628f8a8da9c3627c347"
+  }
+}

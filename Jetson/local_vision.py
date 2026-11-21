@@ -53,7 +53,9 @@ class UpperEdgeReference(object):
         image=cv2.imread(str(path),cv2.IMREAD_GRAYSCALE)
         self.matcher=RulerReference(image,cfg['boxes'],search_x=int(cfg.get('search_x',45)),
                                     search_y=int(cfg.get('search_y',45)),
-                                    rotation_recheck=cfg.get('rotation_recheck',False))
+                                    rotation_recheck=cfg.get('rotation_recheck',False),
+                                    # 原样透传，缺省关闭，由匹配器严格校验布尔类型。
+                                    adaptive_search=cfg.get('adaptive_search',False))
         self.profile=np.asarray(cfg['upper_edge_points'],dtype=float)
         if (self.profile.ndim!=2 or self.profile.shape[1]!=2 or len(self.profile)<3 or
                 not np.isfinite(self.profile).all() or not np.all(np.diff(self.profile[:,0])>0)):
@@ -200,7 +202,6 @@ _rim_x, _rim_y = np.cos(_angles), np.sin(_angles)
 
 
 def topview_balls(gray, rail, bounds, candidate_type, diagnostics):
-    from measurement_contract import TOPVIEW_CIRCLE_VERSION
     height, width = gray.shape
     min_radius, max_radius = 18, 32  # Observed diameter range at 1280x720.
     margin = max_radius + 8
@@ -214,9 +215,35 @@ def topview_balls(gray, rail, bounds, candidate_type, diagnostics):
     if bottom - top < 2 * min_radius:
         return [], 'roi_clipped'
     patch = cv2.GaussianBlur(gray[top:bottom, left:right], (5, 5), 1.2)
-    circles = cv2.HoughCircles(patch, cv2.HOUGH_GRADIENT, 1, 24,
-                               param1=70, param2=17, minRadius=min_radius, maxRadius=max_radius)
-    balls = []
+    # 先保持静止球的提案顺序；首轮已确认球体时，直接返回，避免改变其测量坐标。
+    # 快速移动使边缘沿运动方向拉宽，24 px 抑制距离可能只留下偏到轨唇上的圆。
+    primary_distance = 24
+    for distance, votes in ((primary_distance, 17), (8, 15)):
+        circles = cv2.HoughCircles(patch, cv2.HOUGH_GRADIENT, 1, distance,
+                                   param1=70, param2=votes, minRadius=min_radius, maxRadius=max_radius)
+        verified = _verify_topview_circles(patch, circles, left, top, rail, bounds, candidate_type)
+        if verified:
+            balls = []
+            for ball, record in sorted(verified, key=lambda item: item[0].confidence, reverse=True):
+                # 密集提案可能多次拟合同一个球。只在补搜时合并近于首轮抑制距离的
+                # 圆心；保留分开的候选，让下游继续执行歧义检查。
+                if distance < primary_distance and any(
+                        np.hypot(ball.x - other.x, record['center_y_px'] -
+                                 other.extra['measurement_y_px']) < primary_distance
+                        for other in balls):
+                    continue
+                record['hough_min_distance_px'] = distance
+                balls.append(ball)
+                diagnostics.append(record)
+            return balls, 'candidates'
+    return [], 'no_circle'
+
+
+def _verify_topview_circles(patch, circles, left, top, rail, bounds, candidate_type):
+    """两轮共用原图圆周、高光和轨沿检验；输入圆心在局部窄带内，输出圆心在全图。"""
+    from measurement_contract import TOPVIEW_CIRCLE_VERSION
+    edge = rail.edge_profile[left:left + patch.shape[1]]
+    verified = []
     for x, y, radius in (() if circles is None else circles[0]):
         if not bounds[0] <= x + left <= bounds[1]:
             continue
@@ -264,9 +291,10 @@ def topview_balls(gray, rail, bounds, candidate_type, diagnostics):
         if appearance < 35:
             continue
         confidence = .65 + .30 * supported.mean()
-        balls.append(candidate_type(cx, 2*rad, 2*rad, confidence, 'topview_circle',
-                                    dict(coordinate_version=TOPVIEW_CIRCLE_VERSION, measurement_y_px=cy,
-                                         identity_valid=True, in_search_roi=True, appearance=appearance)))
-        diagnostics.append(dict(center_px=cx, center_y_px=cy, radius_px=rad,
-                                supported_sectors=int(supported.sum()), reason='accepted'))
-    return sorted(balls, key=lambda ball: ball.confidence, reverse=True), 'candidates' if balls else 'no_circle'
+        ball = candidate_type(cx, 2*rad, 2*rad, confidence, 'topview_circle',
+                              dict(coordinate_version=TOPVIEW_CIRCLE_VERSION, measurement_y_px=cy,
+                                   identity_valid=True, in_search_roi=True, appearance=appearance))
+        record = dict(center_px=cx, center_y_px=cy, radius_px=rad,
+                      supported_sectors=int(supported.sum()), reason='accepted')
+        verified.append((ball, record))
+    return verified

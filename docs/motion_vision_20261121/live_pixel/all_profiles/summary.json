@@ -1,0 +1,201 @@
+{
+  "nano": {
+    "frames": 895,
+    "span_s": 30.00802196799941,
+    "processed": 614,
+    "pixels": 515,
+    "coverage_processed": 0.8387622149837134,
+    "processed_hz": 20.461195364851783,
+    "pixel_hz": 17.16207754543757,
+    "longest_capture_gap_ms": 742.6517700005206,
+    "counts": {
+      "tracker_or_contract": 18,
+      "skipped": 281,
+      "pixel": 515,
+      "no_circle": 65,
+      "reference_rotation_recheck_clipped": 12,
+      "upper_edge_geometry": 2,
+      "reference_rotation_recheck_weak_or_ambiguous_patch": 2
+    },
+    "stage_mean_p95_ms": {},
+    "output_interval_p95_ms": 96.29196904970739,
+    "max_output_interval_ms": 722.2721349999119
+  },
+  "legacy": {
+    "frames": 895,
+    "span_s": 30.00802196799941,
+    "processed": 895,
+    "pixels": 741,
+    "coverage_processed": 0.8279329608938547,
+    "processed_hz": 29.82535806440121,
+    "pixel_hz": 24.693397011979105,
+    "longest_capture_gap_ms": 869.3601039994974,
+    "counts": {
+      "acquiring": 30,
+      "pixel": 741,
+      "no_circle": 92,
+      "reference_rotation_recheck_clipped": 20,
+      "identity_rejected": 8,
+      "upper_edge_geometry": 2,
+      "reference_rotation_recheck_weak_or_ambiguous_patch": 2
+    },
+    "stage_mean_p95_ms": {
+      "decode_ms": [
+        8.427154189944133,
+        9.5513
+      ],
+      "reference_and_edge_ms": [
+        3.059346368715084,
+        3.4566
+      ],
+      "detector_ms": [
+        2.2362301675977654,
+        2.5593
+      ],
+      "tracker_ms": [
+        0.04936201117318436,
+        0.064
+      ],
+      "coordinates_ms": [
+        0.0798100558659218,
+        0.097
+      ],
+      "total_ms": [
+        13.851920670391063,
+        15.1908
+      ]
+    }
+  },
+  "adaptive": {
+    "frames": 895,
+    "span_s": 30.00802196799941,
+    "processed": 895,
+    "pixels": 828,
+    "coverage_processed": 0.9251396648044693,
+    "processed_hz": 29.82535806440121,
+    "pixel_hz": 27.592621762373412,
+    "longest_capture_gap_ms": 501.437291000002,
+    "counts": {
+      "acquiring": 13,
+      "pixel": 828,
+      "no_circle": 42,
+      "identity_rejected": 8,
+      "upper_edge_geometry": 2,
+      "reference_rotation_recheck_weak_or_ambiguous_patch": 2
+    },
+    "stage_mean_p95_ms": {
+      "decode_ms": [
+        8.521874860335195,
+        10.717299999999991
+      ],
+      "reference_and_edge_ms": [
+        3.6809430167597763,
+        4.430199999999999
+      ],
+      "detector_ms": [
+        2.534017877094972,
+        3.6799999999999997
+      ],
+      "tracker_ms": [
+        0.048778770949720676,
+        0.061
+      ],
+      "coordinates_ms": [
+        0.08384469273743017,
+        0.10229999999999995
+      ],
+      "total_ms": [
+        14.869460335195532,
+        18.218299999999996
+      ]
+    }
+  },
+  "digits": {
+    "frames": 895,
+    "span_s": 30.00802196799941,
+    "processed": 895,
+    "pixels": 822,
+    "coverage_processed": 0.9184357541899442,
+    "processed_hz": 29.82535806440121,
+    "pixel_hz": 27.39267522786346,
+    "longest_capture_gap_ms": 501.437291000002,
+    "counts": {
+      "acquiring": 19,
+      "pixel": 822,
+      "no_circle": 40,
+      "identity_rejected": 10,
+      "upper_edge_geometry": 3,
+      "reference_rotation_recheck_weak_or_ambiguous_patch": 1
+    },
+    "stage_mean_p95_ms": {
+      "decode_ms": [
+        8.287015642458101,
+        9.3126
+      ],
+      "reference_and_edge_ms": [
+        3.5279374301675976,
+        3.8608999999999996
+      ],
+      "detector_ms": [
+        2.4538100558659215,
+        3.6399999999999966
+      ],
+      "tracker_ms": [
+        0.048586592178770954,
+        0.057
+      ],
+      "coordinates_ms": [
+        0.07939217877094971,
+        0.091
+      ],
+      "total_ms": [
+        14.39673184357542,
+        15.873899999999995
+      ]
+    }
+  },
+  "left_print": {
+    "frames": 895,
+    "span_s": 30.00802196799941,
+    "processed": 895,
+    "pixels": 821,
+    "coverage_processed": 0.9173184357541899,
+    "processed_hz": 29.82535806440121,
+    "pixel_hz": 27.359350805445136,
+    "longest_capture_gap_ms": 501.437291000002,
+    "counts": {
+      "acquiring": 19,
+      "pixel": 821,
+      "no_circle": 41,
+      "identity_rejected": 10,
+      "upper_edge_geometry": 2,
+      "reference_rotation_recheck_weak_or_ambiguous_patch": 2
+    },
+    "stage_mean_p95_ms": {
+      "decode_ms": [
+        8.841560893854748,
+        10.901899999999996
+      ],
+      "reference_and_edge_ms": [
+        4.123699441340783,
+        5.059099999999999
+      ],
+      "detector_ms": [
+        2.735823463687151,
+        4.044099999999996
+      ],
+      "tracker_ms": [
+        0.062357541899441336,
+        0.076
+      ],
+      "coordinates_ms": [
+        0.09407597765363128,
+        0.118
+      ],
+      "total_ms": [
+        15.857501675977653,
+        19.338199999999997
+      ]
+    }
+  }
+}

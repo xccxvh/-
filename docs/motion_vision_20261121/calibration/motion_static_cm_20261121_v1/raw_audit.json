@@ -1,0 +1,177 @@
+{
+  "schema": "offline-static-cm-audit-v1",
+  "deployable": false,
+  "binding_id": "40c9aa1aa2f080c3a683c696583980b2af7b8121d6de13126bf620d77baff97f",
+  "replay_binding": {
+    "schema": "rail-binding-v1",
+    "measurement_version": "topview-circle-v1",
+    "rail_coordinate_version": "rail-reference-v1",
+    "geometry": {
+      "mode": "raw",
+      "resolution": [
+        1280,
+        720
+      ],
+      "camera_id": "icspring-usb-camera",
+      "focus_id": "topview-focused-20261120",
+      "intrinsics_sha256": null,
+      "correction_model": "none",
+      "projection": "identity"
+    },
+    "reference_image_sha256": "3c6da668646e530e87fc80368bd68fdef1be0c5f59344afd466ba7cc1505eff3",
+    "reference_config_sha256": "03fe3841c38669f37959bc38c5a95c41990c3b68ee495dcc5dd4db2690e68f56",
+    "algorithm_sha256": "06ebb8bc75c6b7ecf96f6c82cc3cdd4ee42f49391e2a1a6c3a6d2b2f2ff23f4c"
+  },
+  "coefficients": {
+    "type": "linear",
+    "a": 0.017806183643333365,
+    "b": -0.11359014268538728,
+    "domain_s_px": [
+      -328.4994184331946,
+      345.3492446659452
+    ]
+  },
+  "fit_points": [
+    {
+      "cm": -6.0,
+      "s_px": -328.4994184331946,
+      "samples": 146,
+      "total_frames": 150,
+      "coverage": 0.9733333333333334
+    },
+    {
+      "cm": 0.0,
+      "s_px": 2.287931463225022,
+      "samples": 145,
+      "total_frames": 150,
+      "coverage": 0.9666666666666667
+    },
+    {
+      "cm": 6.0,
+      "s_px": 345.3492446659452,
+      "samples": 143,
+      "total_frames": 150,
+      "coverage": 0.9533333333333334
+    }
+  ],
+  "verification": [
+    {
+      "run": "verify_m5",
+      "cm": -5,
+      "frames": 150,
+      "valid": 145,
+      "coverage": 0.9666666666666667,
+      "mae_cm": 0.1279953676260162,
+      "max_abs_cm": 0.19730219776269564,
+      "longest_missing_frames": 4,
+      "passed": true,
+      "bias_cm": -0.12799536762601615,
+      "round": 1
+    },
+    {
+      "run": "verify_p3_retry",
+      "cm": 3,
+      "frames": 150,
+      "valid": 146,
+      "coverage": 0.9733333333333334,
+      "mae_cm": 0.17886883004310236,
+      "max_abs_cm": 0.19156605709517827,
+      "longest_missing_frames": 4,
+      "passed": true,
+      "bias_cm": 0.17886883004310183,
+      "round": 1
+    },
+    {
+      "run": "verify_m3",
+      "cm": -3,
+      "frames": 150,
+      "valid": 146,
+      "coverage": 0.9733333333333334,
+      "mae_cm": 0.19789611905370041,
+      "max_abs_cm": 0.24220045456990924,
+      "longest_missing_frames": 4,
+      "passed": true,
+      "bias_cm": -0.1978961190537003,
+      "round": 1
+    },
+    {
+      "run": "verify_p5",
+      "cm": 5,
+      "frames": 150,
+      "valid": 145,
+      "coverage": 0.9666666666666667,
+      "mae_cm": 0.10125788370747137,
+      "max_abs_cm": 0.1458268943135419,
+      "longest_missing_frames": 4,
+      "passed": true,
+      "bias_cm": 0.10125788370747202,
+      "round": 1
+    },
+    {
+      "run": "verify_m5_02",
+      "cm": -5,
+      "frames": 150,
+      "valid": 137,
+      "coverage": 0.9133333333333333,
+      "mae_cm": 0.02254100536369346,
+      "max_abs_cm": 0.07871253516004995,
+      "longest_missing_frames": 7,
+      "passed": false,
+      "bias_cm": -0.008077002284197832,
+      "round": 2
+    },
+    {
+      "run": "verify_p3_02_retry",
+      "cm": 3,
+      "frames": 150,
+      "valid": 0,
+      "coverage": 0.0,
+      "mae_cm": null,
+      "max_abs_cm": null,
+      "longest_missing_frames": 150,
+      "passed": false,
+      "bias_cm": null,
+      "round": 2
+    },
+    {
+      "run": "verify_m3_02",
+      "cm": -3,
+      "frames": 150,
+      "valid": 145,
+      "coverage": 0.9666666666666667,
+      "mae_cm": 0.2824953538666094,
+      "max_abs_cm": 0.3386038106223932,
+      "longest_missing_frames": 4,
+      "passed": false,
+      "bias_cm": -0.2824953538666093,
+      "round": 2
+    },
+    {
+      "run": "verify_p5_02",
+      "cm": 5,
+      "frames": 150,
+      "valid": 146,
+      "coverage": 0.9733333333333334,
+      "mae_cm": 0.03073390006835403,
+      "max_abs_cm": 0.11353469521604787,
+      "longest_missing_frames": 4,
+      "passed": true,
+      "bias_cm": 0.02930272858697691,
+      "round": 2
+    }
+  ],
+  "zero_checks": [
+    {
+      "run": "verify_zero",
+      "cm": 0,
+      "frames": 150,
+      "valid": 145,
+      "coverage": 0.9666666666666667,
+      "mae_cm": 0.0718631675244676,
+      "max_abs_cm": 0.09465998271731448,
+      "longest_missing_frames": 4,
+      "passed": true,
+      "bias_cm": -0.0718631675244676
+    }
+  ]
+}

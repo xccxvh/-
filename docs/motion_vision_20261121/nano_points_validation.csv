@@ -1,0 +1,11 @@
+run,known_cm,frames,board_pixel,in_domain,audit_mae_cm,audit_max_error_cm,cm_valid_outputs,pc_vs_nano_pixel_flags_different,max_common_s_px_diff
+verify_m5,-5,150,145,145,0.03582,0.09848,0,0,0.0
+verify_p3_retry,3,150,146,146,0.01173,0.02196,0,0,0.0
+verify_m3,-3,150,146,146,0.06775,0.11174,0,0,0.0
+verify_p5,5,150,145,145,0.01523,0.11314,0,0,0.0
+verify_zero,0,150,145,145,0.11057,0.13191,0,0,0.0
+verify_m5_02,-5,150,137,137,0.08688,0.14664,0,0,0.0
+verify_p3_02_retry,3,150,146,146,0.03716,0.04942,0,0,0.0
+verify_m3_02,-3,150,145,145,0.1465,0.20469,0,0,0.0
+verify_p5_02,5,150,146,146,0.08134,0.17547,0,0,0.0
+fixed_O_tilt,0,895,786,786,0.43323,0.51421,0,0,0.0

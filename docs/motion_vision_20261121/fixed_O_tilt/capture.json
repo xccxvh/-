@@ -1,0 +1,20 @@
+{
+  "scene": "fixed_O_tilt",
+  "config": "config_motion_topview_20261121.json",
+  "raw_host": "/home/user/桌面/jetson_nano/7/motion_20261121/runs/fixed_O_tilt/raw.mjpg",
+  "raw_nano": "~/motion_vision_20261121/runs/fixed_O_tilt/raw.mjpg",
+  "files": {
+    "raw.mjpg": {
+      "sha256": "98f1a56007f9a966939aca87a0dffb3f63695365c557c3cfe59ef989d730a2e7",
+      "bytes": 71396950
+    },
+    "frames.csv": {
+      "sha256": "3f57faa47e612eab552b53214c1e699aeb61f29de90d9c333dfd9461a3ba2beb",
+      "bytes": 17703
+    },
+    "measurements.csv": {
+      "sha256": "b0f3a4d26140115604017d7e1ce5ddf33e12eed12528b9907125adf41b75f103",
+      "bytes": 170267
+    }
+  }
+}

@@ -1,0 +1,24 @@
+[
+  {
+    "mode": "raw",
+    "status": "insufficient_fit_samples",
+    "fit_samples": {
+      "-6": 146,
+      "0": 145,
+      "6": 0
+    },
+    "independent_mae_cm": null,
+    "independent_max_abs_cm": null
+  },
+  {
+    "mode": "points",
+    "status": "insufficient_fit_samples",
+    "fit_samples": {
+      "-6": 146,
+      "0": 145,
+      "6": 0
+    },
+    "independent_mae_cm": null,
+    "independent_max_abs_cm": null
+  }
+]

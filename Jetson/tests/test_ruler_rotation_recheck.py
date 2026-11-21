@@ -140,6 +140,90 @@ class RotationRecheckTests(unittest.TestCase):
         clipped=self.matcher(search_x=220)
         self.assertIsNone(clipped._rectified_search(self.ref,clipped.patches[0],matrix,shift))
 
+    def test_adaptive_search_and_rotation_recheck_are_independent_booleans(self):
+        # 配置文件中的字符串和整数不应隐式切换算法。关闭旋转复核时，
+        # 即使已启用自适应跟踪，发生旋转的小窗失败也不能触发旋转复核。
+        for key in ('rotation_recheck', 'adaptive_search'):
+            for value in (1, 'true', 'adaptive'):
+                with self.subTest(key=key, value=value), self.assertRaises(ValueError):
+                    UpperEdgeReference(dict(self.cfg, **{key: value}))
+        edge = UpperEdgeReference(dict(self.cfg, adaptive_search=True))
+        self.assertIsNotNone(edge.locate(self.ref))
+        tilted, _ = self.moved(2.)
+        self.assertIsNone(edge.locate(tilted))
+        self.assertIsNone(edge.matcher.transform)
+
+    def test_adaptive_track_and_same_frame_relocation(self):
+        # 通过实际配置入口连续送帧；大跳变必须在该帧内重新匹配原图模板。
+        edge = UpperEdgeReference(dict(self.cfg, adaptive_search=True, rotation_recheck=True))
+        for dx, mode in [(0, 'relocalize'), (4, 'track'), (36, 'relocalize')]:
+            image, _ = self.moved(0., (dx, 0.))
+            evidence = edge.locate(image)
+            self.assertIsNotNone(evidence)
+            self.assertEqual(evidence['registration']['registration_mode'], mode)
+            np.testing.assert_allclose(edge.matcher.to_reference(546+dx, 315),
+                                       [546., 315.], atol=1.)
+
+        # 遮挡和尺寸变化均中断历史；恢复帧即使在前次小窗外也能独立定位。
+        for invalid in (np.zeros_like(self.ref), self.ref[:-1]):
+            self.assertIsNone(edge.locate(invalid))
+            self.assertIsNone(edge.matcher.to_reference(546, 315))
+            image, _ = self.moved(0., (-35., 0.))
+            evidence = edge.locate(image)
+            self.assertEqual(evidence['registration']['registration_mode'], 'relocalize')
+            np.testing.assert_allclose(edge.matcher.to_reference(511, 315),
+                                       [546., 315.], atol=1.)
+
+    def test_cold_and_lost_relocate_70px_at_clipped_lower_search_edge(self):
+        # 使用真实模板并裁低画面，让扩展搜索窗穿过底边。模板仍完整可见
+        # 时必须在当前帧复核成功；向下移动到模板出画时必须清除映射。
+        ref = self.ref[:400]
+        tracker = RulerReference(ref, self.cfg['boxes'], search_x=96, search_y=96,
+                                 rotation_recheck=True, adaptive_search=True)
+        for dx, dy in [(70, 0), (-70, -70)]:
+            matrix = cv2.getRotationMatrix2D((546., 315.), 2., 1.)
+            matrix[:, 2] += [dx, dy]
+            image = cv2.warpAffine(ref, matrix, (ref.shape[1], ref.shape[0]))
+            result = tracker.update(image)
+            self.assertTrue(result['valid'], result)
+            self.assertTrue(result['rotation_rechecked'])
+            self.assertEqual(result['registration_mode'], 'relocalize')
+            point = matrix.dot([546., 315., 1.])
+            np.testing.assert_allclose(tracker.to_reference(*point), [546., 315.], atol=1.)
+            for _ in range(3):
+                self.assertFalse(tracker.update(np.zeros_like(ref))['valid'])
+                self.assertIsNone(tracker.transform)
+        down = cv2.warpAffine(ref, np.float32([[1, 0, 0], [0, 1, 70]]),
+                              (ref.shape[1], ref.shape[0]))
+        self.assertFalse(tracker.update(down)['valid'])
+        self.assertIsNone(tracker.transform)
+
+    def test_adaptive_warm_tracker_rejects_second_identical_ruler(self):
+        # 初次定位只有一套唯一标签。下一帧小窗外出现第二套完整副本，
+        # 两者各自都能拟合零残差姿态，必须保留大窗的身份竞争证据。
+        ref = np.full((160, 640), 127, np.uint8)
+        boxes = [(90, 70, 16, 16), (280, 70, 16, 16), (490, 70, 16, 16)]
+        rng = np.random.RandomState(25)
+        for x, y, w, h in boxes:
+            ref[y:y+h, x:x+w] = rng.randint(0, 256, (h, w))
+        tracker = RulerReference(ref, boxes, search_x=45, adaptive_search=True)
+        self.assertTrue(tracker.update(ref)['valid'])
+        duplicate = ref.copy()
+        for x, y, w, h in boxes:
+            duplicate[y:y+h, x+36:x+36+w] = ref[y:y+h, x:x+w]
+        self.assertFalse(tracker.update(duplicate)['valid'])
+        self.assertIsNone(tracker.to_reference(280, 70))
+
+    def test_adaptive_tracking_respects_absolute_search_limit(self):
+        tracker = self.matcher(adaptive_search=True)
+        # 累积小步越过绝对位移预算时也须失效，防止沿尺子重复纹理持续漂移。
+        for dx in range(0, 46, 5):
+            image, _ = self.moved(0., (dx, 0.))
+            self.assertTrue(tracker.update(image)['valid'])
+        image, _ = self.moved(0., (52., 0.))
+        self.assertFalse(tracker.update(image)['valid'])
+        self.assertIsNone(tracker.transform)
+
     def test_upper_reference_forwards_explicit_flag_only(self):
         image,_=self.moved(2.)
         default=UpperEdgeReference(self.cfg)
