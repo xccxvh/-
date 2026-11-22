@@ -1,0 +1,23 @@
+variant,clip,frames,measured,rail_valid,accepted_primary,accepted_fallback,rail_rejections
+digits,fit_p6,150,0,0,0,0,"{""reference_rotation_recheck_weak_or_ambiguous_patch"": 150}"
+digits,moving_fast_confirmed,833,432,831,0,0,"{""reference_rotation_recheck_weak_or_ambiguous_patch"": 2}"
+digits,moving_free,366,159,333,0,0,"{""reference_rotation_recheck_weak_or_ambiguous_patch"": 33}"
+digits,parked_free,528,72,320,0,0,"{""reference_rotation_recheck_weak_or_ambiguous_patch"": 192, ""reference_rotation_proposal_untrusted"": 16}"
+digits,verify_m5_02,150,143,147,0,0,"{""upper_edge_geometry"": 3}"
+mixmid,fit_p6,150,146,150,0,0,{}
+mixmid,moving_free,366,40,226,0,0,"{""reference_rotation_proposal_untrusted"": 58, ""reference_rotation_recheck_weak_or_ambiguous_patch"": 82}"
+mixmid,verify_m5_02,150,143,147,0,0,"{""upper_edge_geometry"": 3}"
+mixright,fit_p6,150,0,0,0,0,"{""reference_rotation_recheck_weak_or_ambiguous_patch"": 150}"
+mixright,moving_free,366,67,271,0,0,"{""reference_rotation_recheck_weak_or_ambiguous_patch"": 95}"
+mixright,verify_m5_02,150,143,147,0,0,"{""upper_edge_geometry"": 3}"
+print,fit_p6,150,146,150,0,0,{}
+print,moving_fast_confirmed,833,428,824,0,0,"{""reference_rotation_recheck_weak_or_ambiguous_patch"": 9}"
+print,moving_free,366,8,195,0,0,"{""reference_rotation_recheck_weak_or_ambiguous_patch"": 106, ""reference_rotation_proposal_untrusted"": 65}"
+print,parked_free,528,50,250,0,0,"{""reference_rotation_recheck_weak_or_ambiguous_patch"": 178, ""reference_rotation_proposal_untrusted"": 100}"
+print,verify_m5_02,150,143,147,0,0,"{""upper_edge_geometry"": 3}"
+dual,fit_p6,150,146,150,0,150,{}
+dual,fixed_O_tilt,725,665,718,718,0,"{""reference_rotation_recheck_weak_or_ambiguous_patch"": 7}"
+dual,moving_fast_confirmed,833,432,831,831,0,"{""reference_rotation_recheck_weak_or_ambiguous_patch"": 2}"
+dual,moving_free,366,175,342,331,11,"{""reference_rotation_recheck_weak_or_ambiguous_patch"": 24}"
+dual,parked_free,528,72,322,303,19,"{""reference_rotation_recheck_weak_or_ambiguous_patch"": 178, ""reference_rotation_proposal_untrusted"": 28}"
+dual,verify_m5_02,150,143,147,147,0,"{""upper_edge_geometry"": 3}"

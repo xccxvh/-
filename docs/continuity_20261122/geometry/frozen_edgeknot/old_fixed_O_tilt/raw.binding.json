@@ -1,0 +1,20 @@
+{
+  "schema": "rail-binding-v1",
+  "measurement_version": "topview-circle-v1",
+  "rail_coordinate_version": "rail-reference-v1",
+  "geometry": {
+    "mode": "raw",
+    "resolution": [
+      1280,
+      720
+    ],
+    "camera_id": "icspring-usb-camera",
+    "focus_id": "topview-focused-20261120",
+    "intrinsics_sha256": null,
+    "correction_model": "none",
+    "projection": "identity"
+  },
+  "reference_image_sha256": "3c6da668646e530e87fc80368bd68fdef1be0c5f59344afd466ba7cc1505eff3",
+  "reference_config_sha256": "d7732918714f5045eba0645a2bc752855ab7b920f7278ebc1a5d8030328b920a",
+  "algorithm_sha256": "f941b1394db712f7fc0636aa370f78529de97ce8dac6cafa6bc5b12f83ff718d"
+}

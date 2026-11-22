@@ -1,0 +1,10 @@
+run,frame,x,y,review_x,review_y,error_px,visual
+integrated_live_fast_observed,594,367.2409607366104,583.2255629012949,,,,on_visible_ball
+integrated_live_fast_observed,804,329.4826335128228,579.6908510910393,,,,on_visible_ball
+integrated_moving_fast_confirmed,148,519.0061169881461,603.1796811824496,518.5,600.5,2.727,on_visible_ball
+integrated_moving_fast_confirmed,149,494.4555093244318,602.2422261794319,493.5,600.5,1.987,on_visible_ball
+integrated_moving_fast_confirmed,631,381.0463353758742,588.070768013362,378.5,586.5,2.992,on_visible_ball
+integrated_moving_fast_confirmed_onsite,148,519.0061169881461,603.1796811824496,518.5,600.5,2.727,on_visible_ball
+integrated_moving_fast_confirmed_onsite,149,494.4555093244318,602.2422261794319,493.5,600.5,1.987,on_visible_ball
+integrated_moving_fast_confirmed_onsite,631,381.0463353758742,588.070768013362,378.5,586.5,2.992,on_visible_ball
+integrated_moving_fast_confirmed_onsite,848,342.04915964260425,583.6772422176462,340.5,582.5,1.946,on_visible_ball

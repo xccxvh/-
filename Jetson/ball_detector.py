@@ -36,11 +36,38 @@ class BallCandidate(object):
         }
 
 
+def enclosed_glints(gray, candidate):
+    """数出球内独立的亮斑。与圆形采样窗边界连通的亮轨沿不能作为反光点。"""
+    x = int(round(candidate.x))
+    y = int(round(candidate.extra['measurement_y_px']))
+    half = int(.78 * round(candidate.width * .5))
+    patch = gray[y-half:y+half+1, x-half:x+half+1]
+    if patch.shape != (2*half+1, 2*half+1):
+        return None
+    patch = cv2.GaussianBlur(patch, (5, 5), 1.2)
+    yy, xx = np.ogrid[-half:half+1, -half:half+1]
+    radius2 = xx*xx + yy*yy
+    inside = radius2 <= (half-1)**2
+    values = patch[inside]
+    median = np.median(values)
+    threshold = median + max(35., .65*(np.percentile(values, 97)-median))
+    mask = np.uint8(inside & (patch > threshold))
+    count, labels, stats, _ = cv2.connectedComponentsWithStats(mask)
+    touches_edge = set(np.unique(labels[radius2 >= (half-2)**2]))
+    return sum(1 for idx in range(1, count)
+               if idx not in touches_edge and stats[idx, cv2.CC_STAT_AREA] >= 3)
+
+
 class BallDetector(object):
     def __init__(self, cfg, width, height):
         self.cfg = cfg
         self.mode = cfg.get('mode', 'legacy')
-        from local_vision import PhysicalSearch
+        from local_vision import MotionCircleRecovery, PhysicalSearch
+        # 仅显式的布尔开关启用有状态补搜，帧时钟来自调用方的采集或回放时钟。
+        recovery = cfg.get('motion_blur_recovery', False)
+        if type(recovery) is not bool:
+            raise ValueError('motion_blur_recovery must be boolean')
+        self.motion_recovery = MotionCircleRecovery() if recovery and self.mode == 'topview_circle' else None
         self.search = PhysicalSearch(cfg.get('ball_search', {}))
         self.last_reason = 'not_updated'
         self.last_roi = None
@@ -274,25 +301,57 @@ class BallDetector(object):
                                            seed_threshold=seed_threshold)
         return out
 
-    def detect(self, frame, gray, rail):
+    def detect(self, frame, gray, rail, timestamp=None):
         """返回按置信度降序排列的候选列表。"""
         self.last_roi = None
         self.last_diagnostics = []
         self.last_reason = 'rail_invalid'
         if not rail.valid:
+            if self.motion_recovery is not None:
+                self.motion_recovery.reset()
             return []
         bounds = self.search.bounds(rail) if self.search.enabled else (0., float(self.W-1))
         if bounds is None:
+            if self.motion_recovery is not None:
+                self.motion_recovery.reset()
             self.last_reason = 'roi_reference_invalid'
             return []
         self.last_roi = bounds
         if self.mode in ('relative_cap', 'topview_circle'):
             if not getattr(rail, 'identity_valid', False):
+                if self.motion_recovery is not None:
+                    self.motion_recovery.reset()
                 self.last_reason = 'rail_identity_invalid'
                 return []
             if self.mode == 'topview_circle':
                 from local_vision import topview_balls
                 cands, self.last_reason = topview_balls(gray, rail, bounds, BallCandidate, self.last_diagnostics)
+                # 先读取普通 Hough 原始候选数；竞争分支即便筛成一颗也不能给运动补搜授权。
+                if self.motion_recovery is not None:
+                    hits = self.motion_recovery.update(gray, rail, bounds, cands, timestamp, BallCandidate)
+                    if hits:
+                        ball, record = hits[0]
+                        self.last_diagnostics.append(record)
+                        self.last_reason = 'candidates'
+                        return [ball]
+                if len(cands) > 1:
+                    # 只在相互竞争的圆中复核高光来源。至少一个球内有两个分离亮斑时，
+                    # 排除亮区全通向边缘的提案；有一个内亮斑或证据缺失仍保留歧义。
+                    glints = [enclosed_glints(gray, c) for c in cands]
+                    if any(n is not None and n >= 2 for n in glints):
+                        for c, n in zip(cands, glints):
+                            if n == 0:
+                                self.last_diagnostics.append(dict(center_px=c.x, reason='no_enclosed_glint'))
+                        cands = [c for c, n in zip(cands, glints) if n != 0]
+                # 当前唯一的普通实测圆可携带局部球面纹理，供已锁定目标的下一帧核验。
+                # 保存独立小图，避免 numpy 切片让跟踪器长期持有整幅相机帧。
+                if len(cands) == 1 and self.motion_recovery is not None:
+                    c = cands[0]
+                    if c.extra.get('proposal_source') != 'motion_blur':
+                        x, y = int(round(c.x)), int(round(c.extra['measurement_y_px']))
+                        patch = gray[y-27:y+28, x-27:x+28]
+                        if patch.shape == (55, 55):
+                            c.extra['surface_patch'] = patch.copy()
                 return cands
             from local_vision import relative_caps
             cands, self.last_reason = relative_caps(frame, rail, self.cfg.get('relative_cap', {}), bounds, BallCandidate, self.last_diagnostics)

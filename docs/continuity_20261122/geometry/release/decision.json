@@ -1,0 +1,67 @@
+{
+  "release": "dual guarded static calibration with same-surface NCC",
+  "thresholds": {
+    "coverage_min": 0.95,
+    "max_abs_cm": 0.3
+  },
+  "modes": {
+    "raw": {
+      "ready": true,
+      "validated": false,
+      "binding_id": "07ac9b0bded407f5dc738aadd57657f4918289d503cc6e813915081feb6da861",
+      "loader_status": "not_verified",
+      "config": "config_motion_dual_print_20261122.json",
+      "config_sha256": "fe7fb9e1e66d9e4011c264fb83b74a69f097ee8b2408e81ce8b85f869727caea",
+      "model_file": "/home/user/桌面/jetson_nano/8/continuity_20261122/geometry_ncc_final/replay/raw_candidate.json",
+      "model_sha256": "169eabeec2e1edda385aca79b3a15d1694c2d5fbed24dd9f5443e0c67f6e4a4a",
+      "fit_counts": [
+        146,
+        146,
+        146
+      ],
+      "placements_checked": 14,
+      "placements_passed": 12,
+      "failed_placements": [
+        "old_verify_m3_02",
+        "new_verify_p5"
+      ],
+      "min_coverage": 0.9533333333333334,
+      "max_abs_cm": 0.3873103557081192
+    },
+    "points": {
+      "ready": true,
+      "validated": true,
+      "binding_id": "5383532fc58169af534cd5a919bd77dd7738a02a362f30af93f7eec637500e11",
+      "loader_status": "validated",
+      "config": "config_motion_dual_points_20261122.json",
+      "config_sha256": "c6ba19e3cd0c2f48a41411a7cf17c5414d0034b25928d42c4a745a27b00d3b77",
+      "model_file": "points_validated.json",
+      "model_sha256": "2cdae22acaf3322f86c5028918ee3da65312ecfc636e9d9ecacfc37e42150b40",
+      "fit_counts": [
+        146,
+        146,
+        146
+      ],
+      "placements_checked": 14,
+      "placements_passed": 14,
+      "failed_placements": [],
+      "min_coverage": 0.9533333333333334,
+      "max_abs_cm": 0.2824460746630333
+    }
+  },
+  "blind_run": "new_verify_m5_blind",
+  "blind_checked_frames": 150,
+  "blind_points_native_cm_outputs": 145,
+  "repeated_zero_checks": [
+    "old_verify_zero",
+    "new_verify_zero"
+  ],
+  "development_checks": [
+    "new_verify_m5",
+    "new_verify_m5_repeat"
+  ],
+  "scope": "Labeled static placements. Original fitting clips train the model; two conflicting labels and fixed-O tilt retain all frames for audit. Historical second minus five is scored as a regression, outside native verification.",
+  "external_replay": "/home/user/桌面/jetson_nano/8/continuity_20261122/geometry_ncc_final/replay",
+  "provenance_sha256": "1fb05c360a8ceb2fea561a202ff3266c6c63e9f019a44d30492e6502ffe44edf",
+  "runtime_calibration_file": null
+}

@@ -1,0 +1,7 @@
+{
+  "status": "not_verified",
+  "static_pass": false,
+  "repeat_video_sha256": "d189f878898f8ba794d846ff81f77b2f85f15dd6d65c687e56ee1fbe48d46494",
+  "binding": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+  "model_sha256": "c03f63e968970cba5d151dd1879f356b44dd6bc11bf3cd94c247fa932e49c108"
+}

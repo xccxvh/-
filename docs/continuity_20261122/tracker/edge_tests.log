@@ -1,0 +1,21 @@
+test_ambiguous_weak_wrong_identity_stationary_or_reverse_return (test_tracker_edge_return.EdgeReturnTests) ... ok
+test_blur_even_strong_cannot_confirm_or_preserve_armed_exit (test_tracker_edge_return.EdgeReturnTests) ... ok
+test_both_edges_recover_only_on_third_strong_inward_circle (test_tracker_edge_return.EdgeReturnTests) ... ok
+test_cold_or_expired_or_reset_cannot_accelerate (test_tracker_edge_return.EdgeReturnTests) ... ok
+test_only_verified_inboard_motion_can_preserve_prior_hough_anchor (test_tracker_edge_return.EdgeReturnTests) ... ok
+test_compatible_candidate_wins_over_closer_wrong_identity (test_tracker_identity.TrackerIdentityTests) ... ok
+test_continuity_during_acquisition_and_tracking (test_tracker_identity.TrackerIdentityTests) ... ok
+test_explicit_outside_roi_never_valid_even_legacy_mode (test_tracker_identity.TrackerIdentityTests) ... ok
+test_failed_acquisition_clears_identity (test_tracker_identity.TrackerIdentityTests) ... ok
+test_gap_and_loss_clear_old_identity (test_tracker_identity.TrackerIdentityTests) ... ok
+test_invalid_time_reason_and_identity_unchanged (test_tracker_identity.TrackerIdentityTests) ... ok
+test_legacy_default_still_accepts_without_metadata (test_tracker_identity.TrackerIdentityTests) ... ok
+test_moderate_size_and_contrast_change_is_accepted (test_tracker_identity.TrackerIdentityTests) ... ok
+test_reasons_cover_empty_ambiguity_acquisition_and_position (test_tracker_identity.TrackerIdentityTests) ... ok
+test_rejection_preserves_velocity_and_identity_until_loss (test_tracker_identity.TrackerIdentityTests) ... ok
+test_required_metadata_and_geometry_fail_closed (test_tracker_identity.TrackerIdentityTests) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.011s
+
+OK

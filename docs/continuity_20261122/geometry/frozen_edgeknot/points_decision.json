@@ -1,0 +1,53 @@
+{
+  "status": "not_verified",
+  "static_passed": false,
+  "independent_repeat": null,
+  "grouped_validation": [
+    {
+      "cm": -5.0,
+      "samples": 288,
+      "accepted_input_samples": 288,
+      "total_frames": 300,
+      "coverage": 0.96,
+      "max_abs_cm": 0.1467984651145633,
+      "mean_abs_cm": 0.06092032397657242,
+      "out_of_range": 0,
+      "passed": true
+    },
+    {
+      "cm": -3.0,
+      "samples": 292,
+      "accepted_input_samples": 292,
+      "total_frames": 300,
+      "coverage": 0.9733333333333334,
+      "max_abs_cm": 0.2045428925573436,
+      "mean_abs_cm": 0.10695371973463948,
+      "out_of_range": 0,
+      "passed": true
+    },
+    {
+      "cm": 3.0,
+      "samples": 292,
+      "accepted_input_samples": 292,
+      "total_frames": 300,
+      "coverage": 0.9733333333333334,
+      "max_abs_cm": 0.049523900999326465,
+      "mean_abs_cm": 0.02444552245820529,
+      "out_of_range": 0,
+      "passed": true
+    },
+    {
+      "cm": 5.0,
+      "samples": 438,
+      "accepted_input_samples": 438,
+      "total_frames": 450,
+      "coverage": 0.9733333333333334,
+      "max_abs_cm": 0.28243630049328594,
+      "mean_abs_cm": 0.042508224332460535,
+      "out_of_range": 0,
+      "passed": true
+    }
+  ],
+  "binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+  "candidate_sha256": "c03f63e968970cba5d151dd1879f356b44dd6bc11bf3cd94c247fa932e49c108"
+}

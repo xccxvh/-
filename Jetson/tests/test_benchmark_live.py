@@ -328,7 +328,8 @@ class BenchmarkTests(unittest.TestCase):
             events.append('ball'); return candidates
         track = dict(x_px=333.25, valid=True, predicted=False, state='TRACKING',
                      confidence=.9, method='relative_cap', reason='tracked')
-        def update(cs, timestamp):
+        def update(cs, timestamp, search_bounds):
+            # 模拟器接受实测动态边界；调用顺序仍与板上入口相同。
             self.assertIs(cs, candidates); events.append('tracker'); return dict(track)
         rc = SimpleNamespace(enabled=True, binding={'schema': 'test-binding'}, binding_id='test-id')
         def process(out, cs, r, frame_id):

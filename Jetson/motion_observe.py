@@ -199,9 +199,15 @@ def observe(cfgfile, samples, log, realtime):
             t1 = time.monotonic()
             rail = rd.detect(gray,force=True)
             t2 = time.monotonic()
-            candidates = bd.detect(frame,gray,rail)
+            # 补检测只读取同一原帧的时间戳，日志和测速均使用与跟踪一致的时钟。
+            if cfg['ball'].get('motion_blur_recovery'):
+                candidates = bd.detect(frame, gray, rail, timestamp=ts)
+            else:
+                candidates = bd.detect(frame,gray,rail)
             t3 = time.monotonic()
-            out = tracker.update(candidates,ts)
+            # 本帧的物理搜索边界供出界重获核验；参考失效时清除边界证据。
+            bounds = bd.last_roi if cfg.get('ball_search', {}).get('enabled') else None
+            out = tracker.update(candidates, ts, bounds)
             t4 = time.monotonic()
             pos = coords.process(out,candidates,rail,i)
             end = time.monotonic()

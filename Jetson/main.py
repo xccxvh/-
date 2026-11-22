@@ -256,14 +256,20 @@ def main():
                 t_reference = time.perf_counter()
                 rail = rail_det.detect(gray, force=bool(args.serial or calib_ok or preview is not None or rail_coordinates.enabled))
                 reference_match_ms = (time.perf_counter() - t_reference) * 1000.0
-                candidates = ball_det.detect(frame, gray, rail)
                 # Replay speed must not change motion prediction. Live read
                 # time is monotonic but still not a verified sensor timestamp.
                 track_ts = (frame_idx / (source.fps_set if source.fps_set > 0 else 30.0)
                             if args.video else t_cap)
+                # 模糊提案与跟踪器共用该帧采集时刻；文件回放速度不会改变运动门控。
+                if cfg['ball'].get('motion_blur_recovery'):
+                    candidates = ball_det.detect(frame, gray, rail, timestamp=track_ts)
+                else:
+                    candidates = ball_det.detect(frame, gray, rail)
                 if capture_origin is None:
                     capture_origin = track_ts
-                out = tracker.update(candidates, track_ts)
+                # 本帧的物理搜索边界供出界重获核验；参考失效时清除边界证据。
+                bounds = ball_det.last_roi if cfg.get('ball_search', {}).get('enabled') else None
+                out = tracker.update(candidates, track_ts, bounds)
                 out["timestamp"] = time.time()
 
                 x_cm = None

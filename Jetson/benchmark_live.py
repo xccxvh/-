@@ -285,8 +285,14 @@ def run_benchmark(mode, duration, config, output):
             reference_start = time.perf_counter()
             rail = rail_detector.detect(gray, force=bool(rc.enabled))
             reference_ms = (time.perf_counter() - reference_start) * 1000.
-            candidates = ball_detector.detect(frame, gray, rail)
-            track = tracker.update(candidates, capture_time)
+            # 补检测只读取同一原帧的时间戳，日志和测速均使用与跟踪一致的时钟。
+            if cfg['ball'].get('motion_blur_recovery'):
+                candidates = ball_detector.detect(frame, gray, rail, timestamp=capture_time)
+            else:
+                candidates = ball_detector.detect(frame, gray, rail)
+            # 本帧的物理搜索边界供出界重获核验；参考失效时清除边界证据。
+            bounds = ball_detector.last_roi if cfg.get('ball_search', {}).get('enabled') else None
+            track = tracker.update(candidates, capture_time, bounds)
             coordinate_start = time.perf_counter()
             coordinate = rc.process(track, candidates, rail, count)
             coordinate_ms = (time.perf_counter() - coordinate_start) * 1000.

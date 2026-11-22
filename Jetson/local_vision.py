@@ -3,6 +3,8 @@
 
 这些参考点不是正式厘米标定。新候选坐标不能通过旧geom标定接口。
 """
+from collections import deque, namedtuple
+from numbers import Real
 import hashlib
 from pathlib import Path
 import cv2
@@ -51,11 +53,17 @@ class UpperEdgeReference(object):
         if hashlib.sha256(path.read_bytes()).hexdigest()!=cfg['sha256']:
             raise ValueError('upper-edge reference image changed')
         image=cv2.imread(str(path),cv2.IMREAD_GRAYSCALE)
-        self.matcher=RulerReference(image,cfg['boxes'],search_x=int(cfg.get('search_x',45)),
-                                    search_y=int(cfg.get('search_y',45)),
-                                    rotation_recheck=cfg.get('rotation_recheck',False),
-                                    # 原样透传，缺省关闭，由匹配器严格校验布尔类型。
-                                    adaptive_search=cfg.get('adaptive_search',False))
+        # 两套模板从同一张已验哈希的照片取样，复用原配准器及全部搜索和身份门限。
+        options = dict(search_x=int(cfg.get('search_x',45)), search_y=int(cfg.get('search_y',45)),
+                       rotation_recheck=cfg.get('rotation_recheck',False),
+                       adaptive_search=cfg.get('adaptive_search',False))
+        self.matcher = RulerReference(image, cfg['boxes'], **options)
+        self.other_matcher = None
+        self.reference_set = 'primary'
+        if 'fallback_boxes' in cfg:
+            if len(cfg['boxes']) != 3 or len(cfg['fallback_boxes']) != 3:
+                raise ValueError('dual reference requires two complete three-patch sets')
+            self.other_matcher = RulerReference(image, cfg['fallback_boxes'], **options)
         self.profile=np.asarray(cfg['upper_edge_points'],dtype=float)
         if (self.profile.ndim!=2 or self.profile.shape[1]!=2 or len(self.profile)<3 or
                 not np.isfinite(self.profile).all() or not np.all(np.diff(self.profile[:,0])>0)):
@@ -68,6 +76,27 @@ class UpperEdgeReference(object):
 
     def locate(self, gray):
         info=self.matcher.update(gray)
+        if self.other_matcher is not None:
+            if not info['valid'] and gray is not None and gray.shape == self.matcher.shape and gray.dtype == np.uint8:
+                # 仅身份失败才复查另一套完整纹理。交接时清空旧姿态，当前帧独立重定位。
+                self.other_matcher.transform = None
+                self.other_matcher._last_rectified = False
+                other = self.other_matcher.update(gray)
+                if other['valid']:
+                    # 拒绝强且有竞争峰的原模板，避免备用裁框绕开当前帧的身份歧义。
+                    _, scores, margins = self.matcher._raw_peaks(gray)
+                    tied = any(s >= self.matcher.min_score and m < self.matcher.min_margin
+                               for s, m in zip(scores, margins))
+                    if tied:
+                        self.other_matcher.transform = None
+                        self.reason = 'reference_competing_patch'
+                        return None
+                    self.matcher, self.other_matcher = self.other_matcher, self.matcher
+                    self.reference_set = 'fallback' if self.reference_set == 'primary' else 'primary'
+                    info = other
+            if info['valid']:
+                info['reference_set'] = self.reference_set
+                info['registration_mode'] = self.reference_set + '/' + info.get('registration_mode','registered')
         self.reason='reference_'+info['reason']
         if not info['valid']:return None
         inv,translation=self.matcher.transform
@@ -298,3 +327,125 @@ def _verify_topview_circles(patch, circles, left, top, rail, bounds, candidate_t
                       supported_sectors=int(supported.sum()), reason='accepted')
         verified.append((ball, record))
     return verified
+
+
+_CircleObservation = namedtuple('_CircleObservation', 'time x height radius patch')
+
+
+class MotionCircleRecovery(object):
+    """用连续普通圆测量授权短时补搜；所有位置输出仍来自当帧的已验证圆周。"""
+
+    def __init__(self):
+        self.history = deque(maxlen=3)
+        self.previous_fallback = None
+
+    def reset(self):
+        self.history.clear()
+        self.previous_fallback = None
+
+    def update(self, gray, rail, bounds, normal, timestamp, candidate_type):
+        if (not isinstance(timestamp, Real) or isinstance(timestamp, bool) or
+                not np.isfinite(timestamp) or not rail.valid or not rail.identity_valid):
+            self.reset()
+            return []
+        h = self.history
+        previous = self.previous_fallback
+        if previous and not .012 <= timestamp - previous[0] <= .080:
+            self.reset()
+            previous = None
+        if h and not .012 <= timestamp - h[-1].time <= (.100 if previous else .080):
+            self.reset()
+            previous = None
+        if normal:
+            # 歧义或补搜后再次出现普通圆时从头积累，避免拼接不同物体的历史。
+            if previous or len(normal) != 1:
+                self.reset()
+            if len(normal) == 1:
+                ball = normal[0]
+                x = int(round(ball.x))
+                y = int(round(ball.extra['measurement_y_px']))
+                patch = gray[y-24:y+25, x-24:x+25]
+                if patch.shape == (49, 49):
+                    h.append(_CircleObservation(timestamp, ball.x - bounds[0],
+                             ball.extra['measurement_y_px'] - rail.edge_profile[x],
+                             ball.width / 2, patch.copy()))
+                else:
+                    self.reset()
+            return []
+
+        # 至少三次连续的普通测量才能核对两段速度是否同向。用左界相对坐标
+        # 去除纸尺的平移。任一补搜失败即注销授权；首个补搜不刷新普通圆时钟。
+        anchors = tuple(h)
+        self.reset()
+        if len(anchors) != 3:
+            return []
+        first, middle, last = anchors
+        v1 = (middle.x - first.x) / (middle.time - first.time)
+        v2 = (last.x - middle.x) / (last.time - middle.time)
+        age = timestamp - last.time
+        if (age > (.100 if previous else .075) or v1*v2 <= 0 or
+                min(abs(v1), abs(v2)) < 150 or max(abs(v1), abs(v2)) > 1200 or
+                not .45 <= v2/v1 <= 2.2):
+            return []
+        expected = last.x + bounds[0] + age*v2
+        if not bounds[0] <= expected <= bounds[1]:
+            return []
+        cx = int(round(expected))
+        cy = int(round(rail.edge_profile[cx] + last.height))
+        search = gray[cy-34:cy+35, cx-36:cx+37]
+        if search.shape != (69, 73):
+            return []
+        peaks = []
+        for anchor, minimum_score in ((middle, .78), (last, .88)):
+            response = cv2.matchTemplate(search, anchor.patch, cv2.TM_CCOEFF_NORMED)
+            _, score, _, (u, v) = cv2.minMaxLoc(response)
+            if score < minimum_score or u in (0, 24) or v in (0, 20):
+                return []
+            peaks.append((cx-12+u, cy-10+v))
+        if np.hypot(peaks[1][0]-peaks[0][0], peaks[1][1]-peaks[0][1]) > 7:
+            return []
+        # 两张实测外观分别复核当前帧。只在一致的小窗中提议圆，再用原有
+        # 拟合器检查圆周、轨沿、ROI 和高光；模板峰及线性预测均不作为测量。
+        x, y = peaks[-1]
+        left, top = max(0, x-42), max(0, y-42)
+        patch = cv2.GaussianBlur(gray[top:y+43, left:x+43], (5, 5), 1.2)
+        seeds = _motion_glint_seeds(patch, rail.edge_profile[left:left+patch.shape[1]] - top)
+        hits = _verify_topview_circles(patch, seeds, left, top, rail, bounds, candidate_type)
+        if not hits:
+            return []
+        ball, record = max(hits, key=lambda hit: hit[0].confidence)
+        rel_x = ball.x - bounds[0]
+        if (any(np.hypot(ball.x-u, record['center_y_px']-v) > 7 for u, v in peaks) or
+                not .5 <= (rel_x-last.x)/(age*v2) <= 1.8):
+            return []
+        if previous:
+            if not .5 <= (rel_x-previous[1])/((timestamp-previous[0])*v2) <= 1.8:
+                return []
+        else:
+            h.extend(anchors)
+            self.previous_fallback = (timestamp, rel_x)
+        # 只有通过当帧全部复核的实测候选才携带来源，供调用方识别观测路径。
+        ball.extra['proposal_source'] = 'motion_blur'
+        record['proposal_source'] = 'motion_blur'
+        return [(ball, record)]
+
+
+def _motion_glint_seeds(patch, edge):
+    """只接受窄窗内唯一的一对横向高光。多对竞争或单个高光均不生成初值。"""
+    glints = cv2.morphologyEx(patch, cv2.MORPH_TOPHAT, np.ones((11, 1), np.uint8))
+    _, _, stats, centers = cv2.connectedComponentsWithStats((glints > 38).astype(np.uint8))
+    streaks = []
+    for (_, _, w, h, area), (x, y) in zip(stats[1:], centers[1:]):
+        if (16 <= w <= 56 and 3 <= h <= 13 and w >= 2*h and area >= 35 and
+                10 <= edge[int(x)] - y <= 52):
+            streaks.append((x, y, w))
+    pair = None
+    for x, y, w in streaks:
+        for u, v, width in streaks:
+            if 7 <= v-y <= 16 and abs(u-x) <= 7 and min(w, width) >= .65*max(w, width):
+                if pair is not None:
+                    return None
+                pair = ((x+u)/2, v+1)
+    if pair is None:
+        return None
+    return np.asarray([[(pair[0], pair[1], radius) for radius in (24, 27)]], np.float32)

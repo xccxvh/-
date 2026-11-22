@@ -84,6 +84,8 @@ class BufferBoundaryTests(unittest.TestCase):
                                 (197,171,(32,7)),(190,164,(32,7)),
                                 (443,469,(32,7)),(450,476,(32,7))]:
             ref=UpperEdgeReference.__new__(UpperEdgeReference)
+            # 单模板夹具未运行构造函数，显式声明没有备用参考。
+            ref.other_matcher = None
             ref.matcher=Matcher();ref.profile=np.array([[200.,200.],[320.,200.],[440.,200.]])
             ref.max_adjust=5;ref.support_margin=80
             im=np.full((360,640,3),(190,110,40),np.uint8);im[200:220]=210

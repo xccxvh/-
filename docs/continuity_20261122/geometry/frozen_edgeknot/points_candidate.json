@@ -1,0 +1,4713 @@
+{
+  "schema": "rail-calibration-v1",
+  "binding": {
+    "schema": "rail-binding-v1",
+    "measurement_version": "topview-circle-v1",
+    "rail_coordinate_version": "rail-reference-v1",
+    "geometry": {
+      "mode": "points",
+      "resolution": [
+        1280,
+        720
+      ],
+      "camera_id": "icspring-usb-camera",
+      "focus_id": "topview-focused-20261120",
+      "intrinsics_sha256": "89245c1b97980d92d0b940ad38ae20371196cf21f0fb6232479cd19ed7cb081b",
+      "correction_model": "opencv-pinhole-brown5-v1",
+      "projection": "P=K"
+    },
+    "reference_image_sha256": "3c6da668646e530e87fc80368bd68fdef1be0c5f59344afd466ba7cc1505eff3",
+    "reference_config_sha256": "d7732918714f5045eba0645a2bc752855ab7b920f7278ebc1a5d8030328b920a",
+    "algorithm_sha256": "f941b1394db712f7fc0636aa370f78529de97ce8dac6cafa6bc5b12f83ff718d"
+  },
+  "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+  "method": "linear",
+  "fit_sessions": [
+    {
+      "schema": "rail-sampling-session-v1",
+      "binding": {
+        "schema": "rail-binding-v1",
+        "measurement_version": "topview-circle-v1",
+        "rail_coordinate_version": "rail-reference-v1",
+        "geometry": {
+          "mode": "points",
+          "resolution": [
+            1280,
+            720
+          ],
+          "camera_id": "icspring-usb-camera",
+          "focus_id": "topview-focused-20261120",
+          "intrinsics_sha256": "89245c1b97980d92d0b940ad38ae20371196cf21f0fb6232479cd19ed7cb081b",
+          "correction_model": "opencv-pinhole-brown5-v1",
+          "projection": "P=K"
+        },
+        "reference_image_sha256": "3c6da668646e530e87fc80368bd68fdef1be0c5f59344afd466ba7cc1505eff3",
+        "reference_config_sha256": "d7732918714f5045eba0645a2bc752855ab7b920f7278ebc1a5d8030328b920a",
+        "algorithm_sha256": "f941b1394db712f7fc0636aa370f78529de97ce8dac6cafa6bc5b12f83ff718d"
+      },
+      "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+      "known_position": true,
+      "cm": -6,
+      "start_frame": 0,
+      "end_frame": 149,
+      "prediction_contract": "column",
+      "rows": [
+        {
+          "frame": 0,
+          "rail_s_px": null,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": false,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 1,
+          "rail_s_px": null,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": false,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 2,
+          "rail_s_px": null,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": false,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 3,
+          "rail_s_px": null,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": false,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 4,
+          "rail_s_px": -363.98074042145004,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 5,
+          "rail_s_px": -364.0331895735266,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 6,
+          "rail_s_px": -363.55672244813394,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 7,
+          "rail_s_px": -364.68062379030187,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 8,
+          "rail_s_px": -363.99684310410026,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 9,
+          "rail_s_px": -363.9556736277298,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 10,
+          "rail_s_px": -363.5516224349892,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 11,
+          "rail_s_px": -364.07008724694964,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 12,
+          "rail_s_px": -364.05544334365794,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 13,
+          "rail_s_px": -363.98772646743663,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 14,
+          "rail_s_px": -363.1732749182412,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 15,
+          "rail_s_px": -363.9431755421997,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 16,
+          "rail_s_px": -363.96355939087226,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 17,
+          "rail_s_px": -363.85135131436596,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 18,
+          "rail_s_px": -363.0709053998231,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 19,
+          "rail_s_px": -363.5599572570129,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 20,
+          "rail_s_px": -363.4404606755841,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 21,
+          "rail_s_px": -363.73260728189615,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 22,
+          "rail_s_px": -363.40391239191234,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 23,
+          "rail_s_px": -364.0183788420375,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 24,
+          "rail_s_px": -362.84888983912504,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 25,
+          "rail_s_px": -361.27388560532546,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 26,
+          "rail_s_px": -362.2483941287486,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 27,
+          "rail_s_px": -363.37422364540373,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 28,
+          "rail_s_px": -365.5340786202145,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 29,
+          "rail_s_px": -363.7599579671146,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 30,
+          "rail_s_px": -363.7464734530917,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 31,
+          "rail_s_px": -363.9319332527942,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 32,
+          "rail_s_px": -363.9431755421997,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 33,
+          "rail_s_px": -363.1907527324501,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 34,
+          "rail_s_px": -360.1540480814619,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 35,
+          "rail_s_px": -362.5561238446847,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 36,
+          "rail_s_px": -363.11288963019433,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 37,
+          "rail_s_px": -363.87821852714745,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 38,
+          "rail_s_px": -363.96354857309314,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 39,
+          "rail_s_px": -363.5117534317787,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 40,
+          "rail_s_px": -363.70537237117213,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 41,
+          "rail_s_px": -363.97044871070443,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 42,
+          "rail_s_px": -362.6731157260551,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 43,
+          "rail_s_px": -363.990011900007,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 44,
+          "rail_s_px": -363.620477119185,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 45,
+          "rail_s_px": -361.8888180044109,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 46,
+          "rail_s_px": -363.7690176600897,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 47,
+          "rail_s_px": -364.00421833397525,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 48,
+          "rail_s_px": -363.6838797611116,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 49,
+          "rail_s_px": -363.5736516821174,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 50,
+          "rail_s_px": -363.3325534952944,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 51,
+          "rail_s_px": -360.54632244982207,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 52,
+          "rail_s_px": -363.9366100258652,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 53,
+          "rail_s_px": -360.2045705417684,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 54,
+          "rail_s_px": -363.1078119353299,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 55,
+          "rail_s_px": -363.4683905665052,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 56,
+          "rail_s_px": -364.1316418367861,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 57,
+          "rail_s_px": -362.6791258255889,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 58,
+          "rail_s_px": -362.1415738580773,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 59,
+          "rail_s_px": -363.0866266389744,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 60,
+          "rail_s_px": -358.4463266454935,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 61,
+          "rail_s_px": -363.80068522044184,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 62,
+          "rail_s_px": -363.24237613316564,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 63,
+          "rail_s_px": -363.35173787549394,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 64,
+          "rail_s_px": -363.9817108602706,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 65,
+          "rail_s_px": -364.08391408097236,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 66,
+          "rail_s_px": -360.5192141591289,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 67,
+          "rail_s_px": -363.12295723441457,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 68,
+          "rail_s_px": -355.9129283600878,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 69,
+          "rail_s_px": -363.54074719395476,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 70,
+          "rail_s_px": -356.9552706792889,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 71,
+          "rail_s_px": -362.713971286618,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 72,
+          "rail_s_px": -363.1298387071665,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 73,
+          "rail_s_px": -363.6426113442122,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 74,
+          "rail_s_px": -363.25862397072217,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 75,
+          "rail_s_px": -363.9251583871339,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 76,
+          "rail_s_px": -363.3190430859945,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 77,
+          "rail_s_px": -363.7097730831061,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 78,
+          "rail_s_px": -364.03295394747596,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 79,
+          "rail_s_px": -361.27388560532546,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 80,
+          "rail_s_px": -362.5958925492324,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 81,
+          "rail_s_px": -363.1239070466958,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 82,
+          "rail_s_px": -363.4885844476377,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 83,
+          "rail_s_px": -362.81939193906743,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 84,
+          "rail_s_px": -363.12899107757215,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 85,
+          "rail_s_px": -360.06320424541684,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 86,
+          "rail_s_px": -363.39754935088456,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 87,
+          "rail_s_px": -360.64168575265717,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 88,
+          "rail_s_px": -363.87821852714745,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 89,
+          "rail_s_px": -363.55164454682125,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 90,
+          "rail_s_px": -367.301246444975,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 91,
+          "rail_s_px": -362.5627668872711,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 92,
+          "rail_s_px": -363.63814954020097,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 93,
+          "rail_s_px": -362.84074756224294,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 94,
+          "rail_s_px": -362.23612805883073,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 95,
+          "rail_s_px": -363.90595687325,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 96,
+          "rail_s_px": -363.94745964142857,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 97,
+          "rail_s_px": -364.12612149058083,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 98,
+          "rail_s_px": -364.1932991357654,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 99,
+          "rail_s_px": -363.46991004129615,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 100,
+          "rail_s_px": -359.55403423176256,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 101,
+          "rail_s_px": -362.77650870713103,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 102,
+          "rail_s_px": -363.7396472296728,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 103,
+          "rail_s_px": -362.70067162563834,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 104,
+          "rail_s_px": -363.54597512927336,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 105,
+          "rail_s_px": -362.4090495040444,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 106,
+          "rail_s_px": -357.1901347656083,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 107,
+          "rail_s_px": -363.9261300101202,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 108,
+          "rail_s_px": -363.6989045123773,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 109,
+          "rail_s_px": -363.83708197558155,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 110,
+          "rail_s_px": -362.0802795398631,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 111,
+          "rail_s_px": -361.7016024105468,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 112,
+          "rail_s_px": -363.70044334826497,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 113,
+          "rail_s_px": -363.5512778754241,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 114,
+          "rail_s_px": -363.8355672004777,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 115,
+          "rail_s_px": -363.025751450843,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 116,
+          "rail_s_px": -358.7307025759559,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 117,
+          "rail_s_px": -356.9358685987626,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 118,
+          "rail_s_px": -364.1865379468906,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 119,
+          "rail_s_px": -363.5043816618555,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 120,
+          "rail_s_px": -363.7768958747256,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 121,
+          "rail_s_px": -363.6285779598079,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 122,
+          "rail_s_px": -362.1734107779523,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 123,
+          "rail_s_px": -359.48983033545414,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 124,
+          "rail_s_px": -362.39520545736434,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 125,
+          "rail_s_px": -368.11301767305514,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 126,
+          "rail_s_px": -363.9771411470469,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 127,
+          "rail_s_px": -363.7715299563987,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 128,
+          "rail_s_px": -361.1435711083767,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 129,
+          "rail_s_px": -363.83708197558155,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 130,
+          "rail_s_px": -363.13720836405986,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 131,
+          "rail_s_px": -363.63602204165954,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 132,
+          "rail_s_px": -363.30780025833576,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 133,
+          "rail_s_px": -363.5647345195738,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 134,
+          "rail_s_px": -363.3422386775698,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 135,
+          "rail_s_px": -360.46284788646517,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 136,
+          "rail_s_px": -359.25942762340674,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 137,
+          "rail_s_px": -363.22879092526813,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 138,
+          "rail_s_px": -363.8229603863102,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 139,
+          "rail_s_px": -363.74246977667104,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 140,
+          "rail_s_px": -362.8313690788469,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 141,
+          "rail_s_px": -364.0546167754644,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 142,
+          "rail_s_px": -362.75523411097,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 143,
+          "rail_s_px": -362.73233300910044,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 144,
+          "rail_s_px": -363.68996756986974,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 145,
+          "rail_s_px": -363.71322846916934,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 146,
+          "rail_s_px": -364.00421833397525,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 147,
+          "rail_s_px": -363.6022750791586,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 148,
+          "rail_s_px": -363.7097730831061,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 149,
+          "rail_s_px": -359.9057195437715,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        }
+      ],
+      "source": {
+        "video_path": "/home/user/桌面/jetson_nano/7/motion_20261121/runs/fit_m6/raw.mjpg",
+        "video_sha256": "be06e519b878cfdbe5baab470085031c6df4a2082ecc21e09966961f3dc13a92",
+        "csv_path": "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_edgeknot/old_fit_m6/points.csv",
+        "csv_sha256": "b6b7cb9f0e7b00969de348a233af8abc9ea4a140efd92744b77fdac163a61e7d",
+        "binding_path": "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_edgeknot/old_fit_m6/points.binding.json",
+        "binding_sha256": "85aa2cdc2f187c47a88c92bff0193b91239014178d8df938f48c1cc4383ccc15"
+      },
+      "confirmation": "operator --known-position: physical object held at the stated cm for the full inclusive interval",
+      "sampling_summary": {
+        "cm": -6.0,
+        "samples": 146,
+        "total_frames": 150,
+        "coverage": 0.9733333333333334
+      }
+    },
+    {
+      "schema": "rail-sampling-session-v1",
+      "binding": {
+        "schema": "rail-binding-v1",
+        "measurement_version": "topview-circle-v1",
+        "rail_coordinate_version": "rail-reference-v1",
+        "geometry": {
+          "mode": "points",
+          "resolution": [
+            1280,
+            720
+          ],
+          "camera_id": "icspring-usb-camera",
+          "focus_id": "topview-focused-20261120",
+          "intrinsics_sha256": "89245c1b97980d92d0b940ad38ae20371196cf21f0fb6232479cd19ed7cb081b",
+          "correction_model": "opencv-pinhole-brown5-v1",
+          "projection": "P=K"
+        },
+        "reference_image_sha256": "3c6da668646e530e87fc80368bd68fdef1be0c5f59344afd466ba7cc1505eff3",
+        "reference_config_sha256": "d7732918714f5045eba0645a2bc752855ab7b920f7278ebc1a5d8030328b920a",
+        "algorithm_sha256": "f941b1394db712f7fc0636aa370f78529de97ce8dac6cafa6bc5b12f83ff718d"
+      },
+      "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+      "known_position": true,
+      "cm": 0,
+      "start_frame": 0,
+      "end_frame": 149,
+      "prediction_contract": "column",
+      "rows": [
+        {
+          "frame": 0,
+          "rail_s_px": null,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": false,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 1,
+          "rail_s_px": null,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": false,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 2,
+          "rail_s_px": null,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": false,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 3,
+          "rail_s_px": null,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": false,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 4,
+          "rail_s_px": 3.2875340782158484,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 5,
+          "rail_s_px": 2.313895804630108,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 6,
+          "rail_s_px": 4.162167843694043,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 7,
+          "rail_s_px": 2.583429630154537,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 8,
+          "rail_s_px": 3.681256328287951,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 9,
+          "rail_s_px": 2.121795046229383,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 10,
+          "rail_s_px": 2.3205356411964253,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 11,
+          "rail_s_px": 2.1107482466190572,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 12,
+          "rail_s_px": 4.205239481660417,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 13,
+          "rail_s_px": 2.5318669118737738,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 14,
+          "rail_s_px": 2.2516726339432127,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 15,
+          "rail_s_px": 2.2514513556537192,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 16,
+          "rail_s_px": 5.117805497160038,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 17,
+          "rail_s_px": 3.269245275902829,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 18,
+          "rail_s_px": 2.313895804630108,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 19,
+          "rail_s_px": 2.745453665894007,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 20,
+          "rail_s_px": 2.0987478411167535,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 21,
+          "rail_s_px": 2.6736939015475567,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 22,
+          "rail_s_px": 2.7643922551876106,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 23,
+          "rail_s_px": 2.831289318222248,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 24,
+          "rail_s_px": 3.0383867282745096,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 25,
+          "rail_s_px": 2.368278493819783,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 26,
+          "rail_s_px": 4.643470283708047,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 27,
+          "rail_s_px": 3.3839981738954066,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 28,
+          "rail_s_px": 2.2514513556537192,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 29,
+          "rail_s_px": 3.0124872619003242,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 30,
+          "rail_s_px": 2.1177998293363145,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 31,
+          "rail_s_px": 5.399533368535681,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 32,
+          "rail_s_px": 1.9557557639346337,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 33,
+          "rail_s_px": 2.2879429252774175,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 34,
+          "rail_s_px": 2.1673114310092165,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 35,
+          "rail_s_px": 2.363569415001746,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 36,
+          "rail_s_px": 2.338173048794466,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 37,
+          "rail_s_px": 2.6276410232317806,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 38,
+          "rail_s_px": 2.821103466933066,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 39,
+          "rail_s_px": 2.2907722345402983,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 40,
+          "rail_s_px": 1.9082593380833983,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 41,
+          "rail_s_px": 2.950243653234001,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 42,
+          "rail_s_px": 3.166391427789457,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 43,
+          "rail_s_px": 2.182136549251095,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 44,
+          "rail_s_px": 2.2772408566699665,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 45,
+          "rail_s_px": 2.3513361435147484,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 46,
+          "rail_s_px": 2.043679775648532,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 47,
+          "rail_s_px": 3.1067096255816824,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 48,
+          "rail_s_px": 2.3456754775814384,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 49,
+          "rail_s_px": 2.2514513556537192,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 50,
+          "rail_s_px": 3.3801728237250175,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 51,
+          "rail_s_px": 2.3709786615812076,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 52,
+          "rail_s_px": 3.1638378506826585,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 53,
+          "rail_s_px": 2.1629405142778744,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 54,
+          "rail_s_px": 2.1390171035134915,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 55,
+          "rail_s_px": 2.196049689511538,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 56,
+          "rail_s_px": 3.063842530808357,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 57,
+          "rail_s_px": 2.3269829111585842,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 58,
+          "rail_s_px": 2.7690938730710095,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 59,
+          "rail_s_px": 2.0760206586343655,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 60,
+          "rail_s_px": 2.4481380863633477,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 61,
+          "rail_s_px": 4.020934118092152,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 62,
+          "rail_s_px": 4.650787747684077,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 63,
+          "rail_s_px": 2.3784332248777322,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 64,
+          "rail_s_px": 2.098866949662368,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 65,
+          "rail_s_px": 2.771114683985662,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 66,
+          "rail_s_px": 3.5643782744488988,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 67,
+          "rail_s_px": 3.8520351599010776,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 68,
+          "rail_s_px": 2.364838048787776,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 69,
+          "rail_s_px": 3.46297296398541,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 70,
+          "rail_s_px": 2.287766131625667,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 71,
+          "rail_s_px": 2.089285953463855,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 72,
+          "rail_s_px": 2.749001240791467,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 73,
+          "rail_s_px": 2.8415420996442293,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 74,
+          "rail_s_px": 2.402685239543758,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 75,
+          "rail_s_px": 2.1416200209153113,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 76,
+          "rail_s_px": 3.227584618542004,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 77,
+          "rail_s_px": 4.668134282883106,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 78,
+          "rail_s_px": 2.759679206111289,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 79,
+          "rail_s_px": 2.2866149769328366,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 80,
+          "rail_s_px": 2.151549397998917,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 81,
+          "rail_s_px": 4.6891360441040675,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 82,
+          "rail_s_px": 2.011078269036137,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 83,
+          "rail_s_px": 2.703343426952127,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 84,
+          "rail_s_px": 2.375211840748066,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 85,
+          "rail_s_px": 2.5455735564180335,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 86,
+          "rail_s_px": 2.3569392465853185,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 87,
+          "rail_s_px": 3.25575592594324,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 88,
+          "rail_s_px": 2.0017390809242386,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 89,
+          "rail_s_px": 2.4286559068368296,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 90,
+          "rail_s_px": 2.215310593585884,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 91,
+          "rail_s_px": 3.1067096255816824,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 92,
+          "rail_s_px": 2.069950805201235,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 93,
+          "rail_s_px": 2.2514513556537192,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 94,
+          "rail_s_px": 2.06271610434827,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 95,
+          "rail_s_px": 2.1106533142720285,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 96,
+          "rail_s_px": 2.3644515150943883,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 97,
+          "rail_s_px": 2.2492173648341827,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 98,
+          "rail_s_px": 3.166391427789457,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 99,
+          "rail_s_px": 3.1157899842798207,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 100,
+          "rail_s_px": 2.4483461982446433,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 101,
+          "rail_s_px": 3.1067096255816824,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 102,
+          "rail_s_px": 2.2290274371953798,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 103,
+          "rail_s_px": 2.4507088309502407,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 104,
+          "rail_s_px": 3.1157899842798207,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 105,
+          "rail_s_px": 5.023565889363492,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 106,
+          "rail_s_px": 1.9307193106643297,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 107,
+          "rail_s_px": 2.1815262077222606,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 108,
+          "rail_s_px": 3.4606949181725235,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 109,
+          "rail_s_px": 4.11299574266463,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 110,
+          "rail_s_px": 2.582882600847664,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 111,
+          "rail_s_px": 2.2514513556537192,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 112,
+          "rail_s_px": 3.2278558631716407,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 113,
+          "rail_s_px": 2.4404347507875683,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 114,
+          "rail_s_px": 2.357556378804817,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 115,
+          "rail_s_px": 2.429147772639609,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 116,
+          "rail_s_px": 2.421859905557741,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 117,
+          "rail_s_px": 3.1162048877653055,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 118,
+          "rail_s_px": 4.423376561999158,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 119,
+          "rail_s_px": 3.5236693369861847,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 120,
+          "rail_s_px": 3.822269057313402,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 121,
+          "rail_s_px": 3.3599473741165204,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 122,
+          "rail_s_px": 3.0561594531761958,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 123,
+          "rail_s_px": 2.314951736210057,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 124,
+          "rail_s_px": 2.5229101457617693,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 125,
+          "rail_s_px": 2.4830458407879776,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 126,
+          "rail_s_px": 3.0827456171432237,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 127,
+          "rail_s_px": 3.454110687056047,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 128,
+          "rail_s_px": 2.281639349483281,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 129,
+          "rail_s_px": 3.166391427789457,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 130,
+          "rail_s_px": 2.6873621054651964,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 131,
+          "rail_s_px": 4.272735171796836,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 132,
+          "rail_s_px": 2.048481196413304,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 133,
+          "rail_s_px": 2.417290604827209,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 134,
+          "rail_s_px": 5.339003666013364,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 135,
+          "rail_s_px": 2.2590861544117398,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 136,
+          "rail_s_px": 2.3685143732842313,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 137,
+          "rail_s_px": 2.390364925528201,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 138,
+          "rail_s_px": 2.4263612381011344,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 139,
+          "rail_s_px": 2.3165644070271276,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 140,
+          "rail_s_px": 2.513470553901705,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 141,
+          "rail_s_px": 3.5329553892618932,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 142,
+          "rail_s_px": 2.41279677982438,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 143,
+          "rail_s_px": 2.1278762174673576,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 144,
+          "rail_s_px": 2.536478432683962,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 145,
+          "rail_s_px": 3.1184863849971114,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 146,
+          "rail_s_px": 2.314117097866166,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 147,
+          "rail_s_px": 2.4810935315672675,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 148,
+          "rail_s_px": 2.3293890999463835,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 149,
+          "rail_s_px": 5.399533368535681,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        }
+      ],
+      "source": {
+        "video_path": "/home/user/桌面/jetson_nano/7/motion_20261121/runs/fit_zero/raw.mjpg",
+        "video_sha256": "0e6fec9cb1cd008ec6569056baefe3cf66642e0aeaccc75bfab40260000d1c1e",
+        "csv_path": "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_edgeknot/old_fit_zero/points.csv",
+        "csv_sha256": "d4b9c48b44b6186355c28acca5ff3a6baed7286651a0f56e50680922c915c5ec",
+        "binding_path": "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_edgeknot/old_fit_zero/points.binding.json",
+        "binding_sha256": "85aa2cdc2f187c47a88c92bff0193b91239014178d8df938f48c1cc4383ccc15"
+      },
+      "confirmation": "operator --known-position: physical object held at the stated cm for the full inclusive interval",
+      "sampling_summary": {
+        "cm": 0.0,
+        "samples": 146,
+        "total_frames": 150,
+        "coverage": 0.9733333333333334
+      }
+    },
+    {
+      "schema": "rail-sampling-session-v1",
+      "binding": {
+        "schema": "rail-binding-v1",
+        "measurement_version": "topview-circle-v1",
+        "rail_coordinate_version": "rail-reference-v1",
+        "geometry": {
+          "mode": "points",
+          "resolution": [
+            1280,
+            720
+          ],
+          "camera_id": "icspring-usb-camera",
+          "focus_id": "topview-focused-20261120",
+          "intrinsics_sha256": "89245c1b97980d92d0b940ad38ae20371196cf21f0fb6232479cd19ed7cb081b",
+          "correction_model": "opencv-pinhole-brown5-v1",
+          "projection": "P=K"
+        },
+        "reference_image_sha256": "3c6da668646e530e87fc80368bd68fdef1be0c5f59344afd466ba7cc1505eff3",
+        "reference_config_sha256": "d7732918714f5045eba0645a2bc752855ab7b920f7278ebc1a5d8030328b920a",
+        "algorithm_sha256": "f941b1394db712f7fc0636aa370f78529de97ce8dac6cafa6bc5b12f83ff718d"
+      },
+      "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+      "known_position": true,
+      "cm": 6,
+      "start_frame": 0,
+      "end_frame": 149,
+      "prediction_contract": "column",
+      "rows": [
+        {
+          "frame": 0,
+          "rail_s_px": null,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": false,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 1,
+          "rail_s_px": null,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": false,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 2,
+          "rail_s_px": null,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": false,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 3,
+          "rail_s_px": null,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": false,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 4,
+          "rail_s_px": 393.1116355765358,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 5,
+          "rail_s_px": 395.8148262086638,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 6,
+          "rail_s_px": 389.7769324689091,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 7,
+          "rail_s_px": 395.40363051517164,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 8,
+          "rail_s_px": 390.07924631672296,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 9,
+          "rail_s_px": 395.9886909505855,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 10,
+          "rail_s_px": 390.0867335512667,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 11,
+          "rail_s_px": 395.2834543567647,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 12,
+          "rail_s_px": 390.53221847331736,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 13,
+          "rail_s_px": 389.64816014679894,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 14,
+          "rail_s_px": 395.7400788505885,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 15,
+          "rail_s_px": 389.92117795026667,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 16,
+          "rail_s_px": 391.7360239441177,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 17,
+          "rail_s_px": 389.80015712918106,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 18,
+          "rail_s_px": 389.05863175430005,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 19,
+          "rail_s_px": 391.0346338098989,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 20,
+          "rail_s_px": 389.92117795026667,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 21,
+          "rail_s_px": 390.5616415927369,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 22,
+          "rail_s_px": 389.83753894658287,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 23,
+          "rail_s_px": 390.1383997759935,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 24,
+          "rail_s_px": 388.9050536361611,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 25,
+          "rail_s_px": 390.04411391704775,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 26,
+          "rail_s_px": 389.00580574206714,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 27,
+          "rail_s_px": 390.00809482638243,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 28,
+          "rail_s_px": 389.84684528238085,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 29,
+          "rail_s_px": 389.27104172185733,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 30,
+          "rail_s_px": 390.186772792464,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 31,
+          "rail_s_px": 390.2668701894176,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 32,
+          "rail_s_px": 389.4464248568918,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 33,
+          "rail_s_px": 390.1340861639116,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 34,
+          "rail_s_px": 395.24083721624277,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 35,
+          "rail_s_px": 395.09303135963614,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 36,
+          "rail_s_px": 389.4869841026139,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 37,
+          "rail_s_px": 394.8543895068837,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 38,
+          "rail_s_px": 392.77662798046913,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 39,
+          "rail_s_px": 390.5409181009184,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 40,
+          "rail_s_px": 394.76049888869915,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 41,
+          "rail_s_px": 392.98563364530315,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 42,
+          "rail_s_px": 389.1235998395767,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 43,
+          "rail_s_px": 395.7678294073748,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 44,
+          "rail_s_px": 389.3350051897938,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 45,
+          "rail_s_px": 389.3680164748236,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 46,
+          "rail_s_px": 392.2091343628075,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 47,
+          "rail_s_px": 390.1240440277261,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 48,
+          "rail_s_px": 392.83921291465975,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 49,
+          "rail_s_px": 395.2798459989586,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 50,
+          "rail_s_px": 389.89740874221866,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 51,
+          "rail_s_px": 390.63179384669587,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 52,
+          "rail_s_px": 389.1210515336888,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 53,
+          "rail_s_px": 392.822539398852,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 54,
+          "rail_s_px": 396.004197935623,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 55,
+          "rail_s_px": 394.91820431975196,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 56,
+          "rail_s_px": 386.3428317866769,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 57,
+          "rail_s_px": 389.89740874221866,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 58,
+          "rail_s_px": 395.2439056904854,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 59,
+          "rail_s_px": 393.06498769495863,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 60,
+          "rail_s_px": 389.43227760051644,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 61,
+          "rail_s_px": 390.79028947525813,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 62,
+          "rail_s_px": 389.9308333867369,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 63,
+          "rail_s_px": 389.7338536783579,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 64,
+          "rail_s_px": 390.1067579255494,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 65,
+          "rail_s_px": 389.81009858902877,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 66,
+          "rail_s_px": 389.89204682924634,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 67,
+          "rail_s_px": 390.6110352387687,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 68,
+          "rail_s_px": 390.17935915344907,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 69,
+          "rail_s_px": 388.97476612075883,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 70,
+          "rail_s_px": 389.79692626303563,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 71,
+          "rail_s_px": 393.25017189626146,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 72,
+          "rail_s_px": 394.25138796094575,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 73,
+          "rail_s_px": 388.9109645067838,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 74,
+          "rail_s_px": 389.41466261354,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 75,
+          "rail_s_px": 389.05439362852917,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 76,
+          "rail_s_px": 389.7638749643777,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 77,
+          "rail_s_px": 395.73032922721734,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 78,
+          "rail_s_px": 389.2075768207589,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 79,
+          "rail_s_px": 389.74988813005984,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 80,
+          "rail_s_px": 390.2080419823241,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 81,
+          "rail_s_px": 394.77414710733825,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 82,
+          "rail_s_px": 391.6929716115356,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 83,
+          "rail_s_px": 389.551557885983,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 84,
+          "rail_s_px": 390.116226260078,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 85,
+          "rail_s_px": 389.16681119764155,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 86,
+          "rail_s_px": 389.41466261354,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 87,
+          "rail_s_px": 389.134444716901,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 88,
+          "rail_s_px": 389.98309967923683,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 89,
+          "rail_s_px": 390.0253798622049,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 90,
+          "rail_s_px": 389.3641776577405,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 91,
+          "rail_s_px": 389.39970500756783,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 92,
+          "rail_s_px": 389.8718192701728,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 93,
+          "rail_s_px": 389.8564586741711,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 94,
+          "rail_s_px": 390.03250155955834,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 95,
+          "rail_s_px": 390.0077181619773,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 96,
+          "rail_s_px": 390.4685275038967,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 97,
+          "rail_s_px": 389.39970500756783,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 98,
+          "rail_s_px": 389.63092898944893,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 99,
+          "rail_s_px": 391.08718400879843,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 100,
+          "rail_s_px": 392.4542580755012,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 101,
+          "rail_s_px": 395.6458714694357,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 102,
+          "rail_s_px": 391.8239157446729,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 103,
+          "rail_s_px": 389.8553467553368,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 104,
+          "rail_s_px": 394.8536239226956,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 105,
+          "rail_s_px": 393.5035242292674,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 106,
+          "rail_s_px": 394.8909805900921,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 107,
+          "rail_s_px": 392.7538379579165,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 108,
+          "rail_s_px": 389.362576196372,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 109,
+          "rail_s_px": 389.26145780555277,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 110,
+          "rail_s_px": 392.8690323779113,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 111,
+          "rail_s_px": 390.2763228445871,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 112,
+          "rail_s_px": 390.11959421157377,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 113,
+          "rail_s_px": 394.7984196021858,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 114,
+          "rail_s_px": 395.5023994351881,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 115,
+          "rail_s_px": 389.3215598542322,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 116,
+          "rail_s_px": 389.4636602019887,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 117,
+          "rail_s_px": 393.7310748342827,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 118,
+          "rail_s_px": 391.49648734331134,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 119,
+          "rail_s_px": 389.16805846739595,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 120,
+          "rail_s_px": 394.43716709193035,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 121,
+          "rail_s_px": 396.382559608066,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 122,
+          "rail_s_px": 389.786907746684,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 123,
+          "rail_s_px": 389.6082596313038,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 124,
+          "rail_s_px": 392.91891289774895,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 125,
+          "rail_s_px": 389.1495060148313,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 126,
+          "rail_s_px": 390.4738110242602,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 127,
+          "rail_s_px": 388.4491647336305,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 128,
+          "rail_s_px": 388.91445246846285,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 129,
+          "rail_s_px": 393.0577169246445,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 130,
+          "rail_s_px": 395.2666919582088,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 131,
+          "rail_s_px": 394.3537124925966,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 132,
+          "rail_s_px": 391.43436554731295,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 133,
+          "rail_s_px": 389.75777115316413,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 134,
+          "rail_s_px": 389.7496255587438,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 135,
+          "rail_s_px": 389.34864793502265,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 136,
+          "rail_s_px": 387.69630151970335,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 137,
+          "rail_s_px": 390.03673175933477,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 138,
+          "rail_s_px": 389.9060568118097,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 139,
+          "rail_s_px": 389.6897908007968,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 140,
+          "rail_s_px": 392.5769666497186,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 141,
+          "rail_s_px": 390.6699357760593,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 142,
+          "rail_s_px": 395.897293648595,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 143,
+          "rail_s_px": 389.4303323765702,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 144,
+          "rail_s_px": 387.5172992009799,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 145,
+          "rail_s_px": 392.91839800687677,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 146,
+          "rail_s_px": 391.7745496799649,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 147,
+          "rail_s_px": 392.9617411914486,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 148,
+          "rail_s_px": 395.9824796170867,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        },
+        {
+          "frame": 149,
+          "rail_s_px": 388.62626800929723,
+          "rail_binding_id": "4cbfeb0f99dfecc1b19ccdd0f12615fc5a9e65774093705b0e33ce3ef660196c",
+          "predicted": false,
+          "pixel_valid": true,
+          "reference_valid": true,
+          "calibration_valid": false,
+          "cm_valid": false
+        }
+      ],
+      "source": {
+        "video_path": "/home/user/桌面/jetson_nano/7/motion_20261121/runs/fit_p6/raw.mjpg",
+        "video_sha256": "0be7c0f8ef434cc1f6d6be4b59d5aacf64fd4b2460302cf5a75e8665fe32f6aa",
+        "csv_path": "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_edgeknot/old_fit_p6/points.csv",
+        "csv_sha256": "f75b07d08fc169c8f6a07c66b9fdfcff8c82ff9ec28ba7f811ea21398504e303",
+        "binding_path": "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_edgeknot/old_fit_p6/points.binding.json",
+        "binding_sha256": "85aa2cdc2f187c47a88c92bff0193b91239014178d8df938f48c1cc4383ccc15"
+      },
+      "confirmation": "operator --known-position: physical object held at the stated cm for the full inclusive interval",
+      "sampling_summary": {
+        "cm": 6.0,
+        "samples": 146,
+        "total_frames": 150,
+        "coverage": 0.9733333333333334
+      }
+    }
+  ],
+  "model": {
+    "type": "linear",
+    "a": 0.015918020520255753,
+    "b": -0.1539610740024757,
+    "domain_s_px": [
+      -363.54336116161403,
+      390.1114920928137
+    ]
+  },
+  "points": [
+    {
+      "cm": -6.0,
+      "s_px": -363.54336116161403,
+      "samples": 146,
+      "total_frames": 150,
+      "coverage": 0.9733333333333334
+    },
+    {
+      "cm": 0.0,
+      "s_px": 2.4482421423039957,
+      "samples": 146,
+      "total_frames": 150,
+      "coverage": 0.9733333333333334
+    },
+    {
+      "cm": 6.0,
+      "s_px": 390.1114920928137,
+      "samples": 146,
+      "total_frames": 150,
+      "coverage": 0.9733333333333334
+    }
+  ],
+  "fit_stats": {
+    "max_fit_residual_cm": 0.11498990534272578,
+    "note": "training residual only; not independent validation"
+  },
+  "validation": {
+    "sessions": [],
+    "metrics": [],
+    "passed": false,
+    "thresholds": {
+      "min_samples": 20,
+      "min_coverage": 0.95,
+      "max_abs_cm": 0.3
+    }
+  },
+  "ready": true,
+  "validated": false
+}

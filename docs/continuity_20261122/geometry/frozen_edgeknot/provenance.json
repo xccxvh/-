@@ -1,0 +1,23 @@
+{
+  "files": {
+    "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/motion_observe.py": "264bc229d7da5f56701fd7198324455d505ad8c00ab9bde569346dfa01c921b9",
+    "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/local_vision.py": "caab6cd1428bf1b1677111c281e3b4ce0d53ddf7c066bda5e71356a72cc59f32",
+    "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/ball_detector.py": "345531fcd9d4423965d68f13becbbc58a0e9a57406489849e09b12b19b208756",
+    "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/ball_tracker.py": "601115226d658bf298da5e53309f66385b7d46bb252e31845a48ae88ea5fd31e",
+    "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/rail_detector.py": "f4c246b96236e177e61e5e2e1d9f90bf2c831728ffefb867a50829b31ed32a1d",
+    "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/ruler_reference.py": "0ec8c8a2dd873e0243226e58d69d2924eb6e0870b6859bf23aefa26ae985926f",
+    "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/camera_geometry.py": "0bf7037919abf8310789e0e70fdaaa34ebe0efe8d8bf81d435b6c25ad573d284",
+    "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/rail_coordinates.py": "9f7ca56abfcf55a2283b704504c949f20cff2757754b5b0bb705ca9a30fddbb1",
+    "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/measurement_contract.py": "58e1edd879f363b40535f2227211bbee4010d57d9a9ccbdb7e21530c76ede8fd",
+    "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/rail_calibration.py": "8cb741e9a54c62f59b0120a9c984eb1dc44d5259c6333389e953832283838af0",
+    "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/calibrate_rail.py": "24baa000d803d19f02a3c96b20f333706b996a0fff41447d5e2b63f213dfb20a",
+    "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/config_motion_left_print_edgeknot_20261122.json": "9a90e381cfe16f075646431c6fcaf9761544a1597a98c1465dd44d9f88dbda11",
+    "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/config_motion_left_points_edgeknot_20261122.json": "f63712d04dcdb38becfb75f0be17d813e471a5eb0eb1d20dbc652d77065eb7f2",
+    "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/assets/topview_20261120/moving_reference.png": "3c6da668646e530e87fc80368bd68fdef1be0c5f59344afd466ba7cc1505eff3",
+    "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/assets/topview_20261120/camera_intrinsics.json": "89245c1b97980d92d0b940ad38ae20371196cf21f0fb6232479cd19ed7cb081b"
+  },
+  "opencv": "4.8.1",
+  "numpy": "1.24.4",
+  "raw_config": "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/config_motion_left_print_edgeknot_20261122.json",
+  "points_config": "/home/user/h_contest_vision_repository/docs/continuity_20261122/geometry/frozen_source/Jetson/config_motion_left_points_edgeknot_20261122.json"
+}
