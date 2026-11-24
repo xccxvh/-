@@ -56,6 +56,15 @@ typedef enum {
 #ifndef BALL_CONTROL_DEFAULT_KD
 #define BALL_CONTROL_DEFAULT_KD         (0.30f)
 #endif
+/*
+ * PD 输出倾角硬限幅，单位 °。
+ *
+ * 首次静态闭环按现场安全行程设为 ±1°；确认方向和机械余量后再逐步放宽。
+ * Servo 模块还有自己的机械限幅和 20°/s 速率限制。
+ */
+#ifndef BALL_CONTROL_MAX_BEAM_DEG
+#define BALL_CONTROL_MAX_BEAM_DEG       (1.0f)
+#endif
 
 /* 故障码，写入调试信息；0 表示无故障。 */
 #define BALL_FAULT_NONE                 (0U)

@@ -20,7 +20,7 @@
  *         K2 = 切换 5°/7.5°/10° 档位（运行中忽略）；
  * - SIM/UART：K2 = 切换场景/目标位置；
  *   K1 = 使能/关闭 AUTO，但仅当 BALL_TEST_ALLOW_AUTO=1 时生效；
- *   本版本默认 0（只监测，K1 不进入闭环）。
+ *   本版本默认 1（静态滚球联调允许 K1 进入闭环）；设为 0 则只监测。
  * - 任意模式：先按住 K1 再按 K2 = 切换到下一个模式。
  *
  * 显示与日志：
@@ -72,12 +72,11 @@ typedef struct {
 /*
  * 是否允许 SIM/UART 模式下按 K1 进入 AUTO。
  *
- * 本次“UART0 通信适配 + 手动舵机测试”只做监测，默认 0：
- * UART/SIM 下按 K1 不会进入 PD 闭环；MANUAL/ROLL 模式的按键功能不受影响。
- * 需要恢复自动稳球测试时改为 1。
+ * 本次静态滚球联调使用 UART 监测 + K1 启动 AUTO，因此设为 1；
+ * 设为 0 时 UART/SIM 下 K1 只监测、不进入 PD 闭环。
  */
 #ifndef BALL_TEST_ALLOW_AUTO
-#define BALL_TEST_ALLOW_AUTO            (0U)
+#define BALL_TEST_ALLOW_AUTO            (1U)
 #endif
 
 /* 上电默认模式；本次任务要求默认仍由 main.c 选择循迹，不自动进入滚球测试。 */

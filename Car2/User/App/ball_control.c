@@ -27,9 +27,6 @@
  * 调试建议：先 Kd=0 逐步加 Kp 到能收敛，再加入 Kd 消除振荡。
  */
 
-/* PD 输出的摆杆倾角硬限幅；题目初期建议 ±2°，机械安全由 Servo 模块再限一层。 */
-#define BALL_CONTROL_MAX_BEAM_DEG           (2.0f)
-
 /* 视觉有效期：与 VISION_LINK_TIMEOUT_MS 保持一致，便于两处同时解释。 */
 #define BALL_CONTROL_VISION_TIMEOUT_MS      (150U)
 

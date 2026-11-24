@@ -14,7 +14,8 @@
  * 实测要点（来自 ServoTest 副工程）：
  * - 本板 TIMA0 的 CC1 高电平时间 = “周期 - 比较值”，因此写比较值时要用
  *   16000 - 脉宽计数，不能直接写脉宽。
- * - 零位由 SERVO_NEUTRAL_ANGLE_DEG 定义（当前标定值 106°），该角度下摆杆水平。
+ * - 零位由 SERVO_NEUTRAL_ANGLE_DEG 定义（当前初调 110°，约 1722 us）；
+ *   该位置左端仍略高，需 MANUAL 复核后写回。
  *
  * 分层约束：
  * - 本模块只负责“摆杆目标倾角 -> 舵机角度 -> PWM 比较值”的映射、限幅和
@@ -69,7 +70,7 @@ typedef struct {
  * 行为：
  * - 把 TIMA0 从 SysConfig 默认的 80 kHz 重新配置为 50 Hz 舵机时序；
  * - 只保留 CC1（PA9）输出，避免 PA8 继续输出无关脉冲；
- * - 立即把舵机写到零位 SERVO_NEUTRAL_ANGLE_DEG（当前 106°，摆杆水平），
+ * - 立即把舵机写到零位 SERVO_NEUTRAL_ANGLE_DEG（当前初调 110°），
  *   然后启动计数器。
  *
  * 调用时机：
@@ -151,7 +152,7 @@ void Servo_SetDirection(float sign);
  * - 在 MANUAL 模式给出一个已知摆杆倾角（例如 +1.0°），用量角器/手机水平仪
  *   测量摆杆实际倾角 θ_actual；
  * - ratio = 舵机角度增量 / θ_actual；
- * - 例如命令 +1.0° 时舵机从 104.0° 转到 105.5°，实际摆杆只倾斜 0.5°，
+ * - 例如命令 +1.0° 时舵机从 110.0° 转到 111.5°，实际摆杆只倾斜 0.5°，
  *   则 ratio 应设为 3.0。
  *
  * 说明：本函数只改内存参数，掉电不保存；最终标定值应写回
@@ -165,7 +166,7 @@ float Servo_GetBeamRatio(void);
 /* 返回当前摆杆倾角安全上限，单位 °。 */
 float Servo_GetBeamLimit(void);
 
-/* 返回当前舵机零位角度，单位 °（当前配置 106°）。 */
+/* 返回当前舵机零位角度，单位 °（当前初调 110°）。 */
 float Servo_GetNeutralAngle(void);
 
 /*

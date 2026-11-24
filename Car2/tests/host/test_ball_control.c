@@ -172,20 +172,24 @@ static void test_pd_signs(void)
 
     theta = run_static_case(0.0f, -2.0f);
     check_true(BallControl_GetState() == BALL_STATE_AUTO, "enable AUTO with fresh vision");
-    check_near(theta, 1.2f, 0.05f, "x=-2 cm -> +1.2 deg (accelerate +x)");
+    check_near(theta, BALL_CONTROL_MAX_BEAM_DEG, 0.01f,
+               "x=-2 cm -> +max deg (accelerate +x)");
 
     theta = run_static_case(0.0f, 2.0f);
-    check_near(theta, -1.2f, 0.05f, "x=+2 cm -> -1.2 deg (accelerate -x)");
+    check_near(theta, -BALL_CONTROL_MAX_BEAM_DEG, 0.01f,
+               "x=+2 cm -> -max deg (accelerate -x)");
 
     theta = run_static_case(0.0f, 0.0f);
     check_near(theta, 0.0f, 0.02f, "x=0, v=0 -> level");
 
     theta = run_static_case(5.0f, 3.0f);
-    check_near(theta, 1.2f, 0.05f, "target +5, x=+3 -> +1.2 deg");
+    check_near(theta, BALL_CONTROL_MAX_BEAM_DEG, 0.01f,
+               "target +5, x=+3 -> +max deg");
 
     /* 误差过大时必须被 ±2° 限幅。 */
     theta = run_static_case(0.0f, -20.0f);
-    check_near(theta, 2.0f, 0.01f, "PD output clamped to +2.0 deg");
+    check_near(theta, BALL_CONTROL_MAX_BEAM_DEG, 0.01f,
+               "PD output clamped to configured max");
 }
 
 /* ===================== 安全保护 ===================== */
