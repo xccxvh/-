@@ -1,0 +1,5 @@
+scene,mode,processed,captured,inside,correct,outside_valid,pc_validity_differences,pc_max_xy_delta_px,total_ms_mean,total_ms_p95,extra_ms_mean,extra_ms_p95,valid,duration_s,capture_fps,processed_hz,valid_hz,rail_valid,max_valid_interval_ms,read_to_output_ms_mean,read_to_output_ms_p95
+moving_final,A,677,895,487,374,0,0,2.2737367544323206e-13,60.004,72.087,0.0,0.0,,,,,,,,,
+moving_final,C,677,895,487,398,0,0,2.2737367544323206e-13,63.961,85.998,4.431,21.536,,,,,,,,,
+live_static_A,A,834,895,,,,,,52.782,59.394,0.0,0.0,830,30.0,29.8,27.8,27.667,834,71.499,69.883,85.668
+live_static_C,C,846,895,,,,,,52.048,53.978,0.561,0.755,842,30.006,29.794,28.194,28.061,846,71.639,67.661,83.061
