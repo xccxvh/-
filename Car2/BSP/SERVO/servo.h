@@ -40,10 +40,11 @@
 /*
  * Servo_SetBeamLimit() 允许的绝对上限（°）。
  *
- * 当前最大测试档位 15°，这里留出余量到 20°；
- * 真正的机械行程仍由 SERVO_MECH_MIN_DEG/MAX_DEG 和现场检查约束。
+ * 开环滚动最大档位 15°，自由舵机角度测试需要 ±30°，
+ * 这里放宽到 35° 留出余量；真正的机械行程仍由
+ * SERVO_MECH_MIN_DEG/MAX_DEG 和现场检查约束。
  */
-#define SERVO_BEAM_LIMIT_MAX_DEG        (20.0f)
+#define SERVO_BEAM_LIMIT_MAX_DEG        (35.0f)
 
 /*
  * 舵机模块运行状态快照，供 LCD、串口遥测和上层调试读取。

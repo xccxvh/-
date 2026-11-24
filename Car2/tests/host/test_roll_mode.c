@@ -321,6 +321,51 @@ static void test_max_level(void)
                "MANUAL still clamps beam to default limit");
 }
 
+/* ===================== 自由舵机角度模式（SERVO） ===================== */
+
+static void test_servo_mode(void)
+{
+    uint8_t i;
+
+    host_time_reset();
+    BallTest_AppInit();
+    BallTest_SetMode(BALL_TEST_MODE_SERVO);
+
+    check_near(Servo_GetBeamLimit(), BALL_TEST_SERVO_LIMIT_DEG, 0.001f,
+               "SERVO mode allows +/-30 deg");
+
+    tap_key(USER_KEY_K1);
+    check_near(Servo_GetBeamAngle(), BALL_TEST_SERVO_STEP_DEG, 0.01f,
+               "SERVO K1 +3 deg");
+
+    tap_key(USER_KEY_K2);
+    check_near(Servo_GetBeamAngle(), 0.0f, 0.01f, "SERVO K2 back to 0");
+
+    tap_key(USER_KEY_K2);
+    check_near(Servo_GetBeamAngle(), -BALL_TEST_SERVO_STEP_DEG, 0.01f,
+               "SERVO K2 -3 deg");
+
+    /* 从 -3° 连续按 K1，最多停在 +30°。 */
+    for (i = 0U; i < 11U; i++) {
+        tap_key(USER_KEY_K1);
+    }
+    check_near(Servo_GetBeamAngle(), BALL_TEST_SERVO_LIMIT_DEG, 0.01f,
+               "SERVO clamps at +30 deg");
+
+    tap_key(USER_KEY_K1);
+    check_near(Servo_GetBeamAngle(), BALL_TEST_SERVO_LIMIT_DEG, 0.01f,
+               "SERVO stays at +30 deg");
+
+    tap_key(USER_KEY_K2);
+    check_near(Servo_GetBeamAngle(), BALL_TEST_SERVO_LIMIT_DEG -
+               BALL_TEST_SERVO_STEP_DEG, 0.01f,
+               "SERVO K2 steps down from limit");
+
+    BallTest_SetMode(BALL_TEST_MODE_UART);
+    check_near(Servo_GetBeamLimit(), SERVO_BEAM_LIMIT_DEFAULT_DEG, 0.001f,
+               "leaving SERVO restores default limit");
+}
+
 int main(void)
 {
     printf("=== roll mode host tests ===\n");
@@ -329,6 +374,7 @@ int main(void)
     test_continuous_cycle();
     test_stop_during_positive();
     test_max_level();
+    test_servo_mode();
 
     printf("=== %d checks, %d failures ===\n", g_checks, g_failures);
     return (g_failures == 0) ? 0 : 1;

@@ -7,8 +7,9 @@
  * 本应用与 line_following 并列，由 User/main.c 的编译期宏选择，二者不会同时
  * 运行，也不会修改循迹代码。
  *
- * 支持四种测试模式（可在运行时用 K1+K2 循环切换）：
+ * 支持五种测试模式（可在运行时用 K1+K2 循环切换）：
  * - MANUAL：不启用 PD，手动以 0.1° 步长微调摆杆，用于平衡点标定（任务一）；
+ * - SERVO：自由舵机角度测试，K1 +3°、K2 -3°，范围相对零位 ±30°；
  * - ROLL：开环 5°/7.5°/10° 自动左右滚动，按 K1 启动后会循环执行
  *   +θ -> 0 -> -θ -> 0，直到再按一次 K1 停止（任务二）；
  * - SIM：用模拟钢珠位置验证 PD 控制逻辑，无需 Jetson；
@@ -18,6 +19,7 @@
  * - MANUAL：K1 = +BALL_TEST_MANUAL_STEP_DEG，K2 = -BALL_TEST_MANUAL_STEP_DEG；
  * - ROLL：K1 = 启动连续左右滚动（运行中再按 = 立即停止并回平衡点），
  *         K2 = 切换 5°/7.5°/10° 档位（运行中忽略）；
+ * - SERVO：K1 = +3°，K2 = -3°，相对零位限制在 ±30°；
  * - SIM/UART：K2 = 切换场景/目标位置；
  *   K1 = 使能/关闭 AUTO，但仅当 BALL_TEST_ALLOW_AUTO=1 时生效；
  *   本版本默认 1（静态滚球联调允许 K1 进入闭环）；设为 0 则只监测。
@@ -39,7 +41,8 @@ typedef enum {
     BALL_TEST_MODE_MANUAL = 0,
     BALL_TEST_MODE_SIM = 1,
     BALL_TEST_MODE_UART = 2,
-    BALL_TEST_MODE_ROLL = 3
+    BALL_TEST_MODE_ROLL = 3,
+    BALL_TEST_MODE_SERVO = 4      /* 自由舵机角度：K1 +3°，K2 -3°，范围 ±30° */
 } ball_test_mode_t;
 
 /*
@@ -92,6 +95,19 @@ typedef struct {
  */
 #ifndef BALL_TEST_MANUAL_STEP_DEG
 #define BALL_TEST_MANUAL_STEP_DEG       (0.1f)
+#endif
+
+/*
+ * SERVO 自由舵机角度测试：
+ * - 每次按键变化 3°；
+ * - 相对零位的范围 -30° ~ +30°；
+ * - 进入模式时把 Servo 摆杆软限幅临时放宽到 30°，退出时恢复默认。
+ */
+#ifndef BALL_TEST_SERVO_STEP_DEG
+#define BALL_TEST_SERVO_STEP_DEG        (3.0f)
+#endif
+#ifndef BALL_TEST_SERVO_LIMIT_DEG
+#define BALL_TEST_SERVO_LIMIT_DEG       (30.0f)
 #endif
 
 /*

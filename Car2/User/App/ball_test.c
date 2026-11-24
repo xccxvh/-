@@ -9,15 +9,15 @@
  *
  * 本文件是“整机入口”，只负责：
  * - 初始化 LCD、按键、舵机、视觉链路和 PD 控制器；
- * - 按当前测试模式提供输入（手动微调 / 开环 5/7.5/10° / 模拟视觉 / 真实 UART）；
+ * - 按当前测试模式提供输入（手动微调 / 自由舵机 ±30° / 开环 5/7.5/10° / 模拟视觉 / 真实 UART）；
  * - 处理按键、刷新 LCD、发送遥测。
  *
  * 真正的 PD 算法在 App/ball_control.c，底层 PWM 在 BSP/SERVO/servo.c，
  * 三者严格分层，便于单独修改和测试。
  *
- * 本次新增的开环滚动（ROLL）是纯时间驱动的状态机，K1 启动后循环
- * 执行左右倾斜，直到再次按 K1 停止：
- * 平衡点 -> +θ -> 平衡点 -> -θ -> 平衡点，只执行一次，不使用视觉反馈。
+ * 开环滚动（ROLL）是纯时间驱动的状态机，K1 启动后循环
+ * 执行左右倾斜，直到再次按 K1 停止。
+ * SERVO 模式用于不依赖视觉的自由舵机角度检查：K1 +3°、K2 -3°，范围 ±30°。
  *
  * 时序：
  * - 模拟视觉 33 ms 注入一次，接近 Jetson 30 FPS；
@@ -86,7 +86,7 @@ typedef enum {
 /* ===================== 内部状态 ===================== */
 
 static ball_test_mode_t s_mode = BALL_TEST_MODE_UART;
-static float    s_manual_target_deg = 0.0f;  /* MANUAL 模式下以 0.1° 微调的目标 */
+static float    s_manual_target_deg = 0.0f;  /* MANUAL 0.1° / SERVO 3° 微调目标 */
 static uint8_t  s_sim_case = 0U;
 static uint8_t  s_target_index = 0U;
 
@@ -175,6 +175,8 @@ static const char *ball_test_mode_name(ball_test_mode_t mode)
         return "UART";
     case BALL_TEST_MODE_ROLL:
         return "ROLL";
+    case BALL_TEST_MODE_SERVO:
+        return "SERVO";
     default:
         return "?";
     }
@@ -598,8 +600,9 @@ static void ball_test_roll_task(void)
 /*
  * 手动微调摆杆倾角，单位 °。
  *
- * 正向受 Servo 当前摆杆限幅约束（默认 5.0°），底层还有 20°/s 斜率限制。
- * 标定时用 0.1° 或 0.2° 步长逐步逼近平衡点。
+ * 受 Servo 当前摆杆限幅约束（MANUAL 默认 5°，SERVO 模式 30°），
+ * 底层还有 20°/s 斜率限制。
+ * MANUAL 用 0.1° 步长逼近平衡点；SERVO 用 3° 步长做自由舵机角度测试。
  */
 static void ball_test_manual_adjust(float delta_deg)
 {
@@ -676,6 +679,9 @@ static void ball_test_next_mode(void)
 
     switch (s_mode) {
     case BALL_TEST_MODE_MANUAL:
+        next = BALL_TEST_MODE_SERVO;
+        break;
+    case BALL_TEST_MODE_SERVO:
         next = BALL_TEST_MODE_SIM;
         break;
     case BALL_TEST_MODE_SIM:
@@ -717,6 +723,9 @@ static void ball_test_handle_keys(void)
             ball_test_advance_target();
         } else if (s_mode == BALL_TEST_MODE_ROLL) {
             ball_test_advance_roll_level();
+        } else if (s_mode == BALL_TEST_MODE_SERVO) {
+            /* SERVO：K2 每次 -3°。 */
+            ball_test_manual_adjust(-BALL_TEST_SERVO_STEP_DEG);
         } else {
             /* MANUAL：K2 反向微调，便于零位标定时来回试探。 */
             ball_test_manual_adjust(-BALL_TEST_MANUAL_STEP_DEG);
@@ -727,6 +736,9 @@ static void ball_test_handle_keys(void)
         if (s_mode == BALL_TEST_MODE_MANUAL) {
             /* MANUAL：K1 正向微调 0.1°/0.2°。 */
             ball_test_manual_adjust(BALL_TEST_MANUAL_STEP_DEG);
+        } else if (s_mode == BALL_TEST_MODE_SERVO) {
+            /* SERVO：K1 每次 +3°。 */
+            ball_test_manual_adjust(BALL_TEST_SERVO_STEP_DEG);
         } else if (s_mode == BALL_TEST_MODE_ROLL) {
             /* ROLL：K1 启动连续滚动；运行中按下立即停止并回平衡点。 */
             if (s_roll_running) {
@@ -871,7 +883,9 @@ static void ball_test_lcd_build(void)
      * - MANUAL/ROLL 显示绝对舵机角度和实际摆杆倾角，便于平衡点标定；
      * - SIM/UART 显示钢珠位置、速度和误差。
      */
-    if ((s_mode == BALL_TEST_MODE_MANUAL) || (s_mode == BALL_TEST_MODE_ROLL)) {
+    if ((s_mode == BALL_TEST_MODE_MANUAL) ||
+        (s_mode == BALL_TEST_MODE_ROLL) ||
+        (s_mode == BALL_TEST_MODE_SERVO)) {
         snprintf(s_lcd_lines[1], sizeof(s_lcd_lines[1]), "Servo:%s Act:%s",
                  servo, actual);
     } else {
@@ -902,6 +916,9 @@ static void ball_test_lcd_build(void)
         snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Target:%s", t);
     } else if (s_mode == BALL_TEST_MODE_MANUAL) {
         snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Manual:%s", b);
+    } else if (s_mode == BALL_TEST_MODE_SERVO) {
+        ball_test_fmt2(t, s_manual_target_deg);
+        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "SrvAng:%s", t);
     } else {
         ball_test_fmt2(t, ball_test_roll_level_angle());
         snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Lvl:%u/%u %s",
@@ -910,7 +927,13 @@ static void ball_test_lcd_build(void)
                  t);
     }
 
-    if (s_mode == BALL_TEST_MODE_ROLL) {
+    if (s_mode == BALL_TEST_MODE_SERVO) {
+        snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]),
+                 "Rng:-%d/+%d Step:%d",
+                 (int)BALL_TEST_SERVO_LIMIT_DEG,
+                 (int)BALL_TEST_SERVO_LIMIT_DEG,
+                 (int)BALL_TEST_SERVO_STEP_DEG);
+    } else if (s_mode == BALL_TEST_MODE_ROLL) {
         /* ROLL 模式没有视觉帧，改为显示各阶段保持时间，方便现场核对参数。 */
         snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "Pos:%lums Neg:%lums",
                  (unsigned long)BALL_TEST_ROLL_POSITIVE_HOLD_MS,
@@ -1030,11 +1053,12 @@ void BallTest_SetMode(ball_test_mode_t mode)
     BallControl_Enable(false);
 
     /*
-     * 离开任何模式都先恢复默认 5.0° 限幅。
-     * ROLL 测试只在 K1 启动的那一次执行中临时放宽到 5°，
-     * 停止、结束、中止或切换模式后都会回到这里的安全值。
+     * 自由舵机模式需要 ±30°，其余模式恢复默认 5° 安全限幅。
+     * ROLL 仍在 K1 启动时单独放宽到 15°，停止/结束后恢复默认。
      */
-    Servo_SetBeamLimit(SERVO_BEAM_LIMIT_DEFAULT_DEG);
+    Servo_SetBeamLimit((mode == BALL_TEST_MODE_SERVO) ?
+                       BALL_TEST_SERVO_LIMIT_DEG :
+                       SERVO_BEAM_LIMIT_DEFAULT_DEG);
 
     s_mode = mode;
     s_manual_target_deg = 0.0f;
@@ -1047,9 +1071,11 @@ void BallTest_SetMode(ball_test_mode_t mode)
     s_have_forwarded = false;
     s_last_forwarded_seq = 0U;
 
-    if ((mode == BALL_TEST_MODE_MANUAL) || (mode == BALL_TEST_MODE_ROLL)) {
+    if ((mode == BALL_TEST_MODE_MANUAL) ||
+        (mode == BALL_TEST_MODE_ROLL) ||
+        (mode == BALL_TEST_MODE_SERVO)) {
         /*
-         * MANUAL 和 ROLL 都复用 BallControl 的手动保持通道：
+         * MANUAL / SERVO / ROLL 都复用 BallControl 的手动保持通道：
          * - 摆杆回平衡点 0°；
          * - 后续由手动微调或开环状态机周期性下发目标；
          * - 仍然受 Servo 的斜率和机械限幅保护。

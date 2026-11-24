@@ -88,4 +88,35 @@
 [BALL] mode=MANUAL target=0.00 Kp=+0.60 Kd=+0.30
 [PASS] leaving ROLL restores default beam limit (actual=5.00)
 [PASS] MANUAL still clamps beam to default limit (actual=5.00)
-=== 40 checks, 0 failures ===
+
+[BALL] G3519 ball balance control init
+[BALL] mode=UART target=0.00 Kp=+0.60 Kd=+0.30
+[BALL] servo PA9/TIMA0 50Hz, vision UART0 PA10/PA11 115200
+[BALL] K1=enable/step/run, K2=case/level, K1+K2=mode
+[BALL] mode=SERVO target=0.00 Kp=+0.60 Kd=+0.30
+[PASS] SERVO mode allows +/-30 deg (actual=30.00)
+[CAL] beam=+3.00 -> servo target=+113.00 current=+110.02 deg
+[PASS] SERVO K1 +3 deg (actual=3.00)
+[CAL] beam=+0.00 -> servo target=+110.00 current=+110.02 deg
+[PASS] SERVO K2 back to 0 (actual=0.00)
+[CAL] beam=-3.00 -> servo target=+107.00 current=+109.98 deg
+[PASS] SERVO K2 -3 deg (actual=-3.00)
+[CAL] beam=+0.00 -> servo target=+110.00 current=+109.98 deg
+[CAL] beam=+3.00 -> servo target=+113.00 current=+110.02 deg
+[CAL] beam=+6.00 -> servo target=+116.00 current=+110.06 deg
+[CAL] beam=+9.00 -> servo target=+119.00 current=+110.10 deg
+[CAL] beam=+12.00 -> servo target=+122.00 current=+110.14 deg
+[CAL] beam=+15.00 -> servo target=+125.00 current=+110.18 deg
+[CAL] beam=+18.00 -> servo target=+128.00 current=+110.22 deg
+[CAL] beam=+21.00 -> servo target=+131.00 current=+110.26 deg
+[CAL] beam=+24.00 -> servo target=+134.00 current=+110.30 deg
+[CAL] beam=+27.00 -> servo target=+137.00 current=+110.34 deg
+[CAL] beam=+30.00 -> servo target=+140.00 current=+110.38 deg
+[PASS] SERVO clamps at +30 deg (actual=30.00)
+[CAL] beam=+30.00 -> servo target=+140.00 current=+110.42 deg
+[PASS] SERVO stays at +30 deg (actual=30.00)
+[CAL] beam=+27.00 -> servo target=+137.00 current=+110.46 deg
+[PASS] SERVO K2 steps down from limit (actual=27.00)
+[BALL] mode=UART target=0.00 Kp=+0.60 Kd=+0.30
+[PASS] leaving SERVO restores default limit (actual=5.00)
+=== 48 checks, 0 failures ===
