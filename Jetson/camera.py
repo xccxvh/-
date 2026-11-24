@@ -55,6 +55,17 @@ class Camera(object):
     def __init__(self, cfg):
         self.cfg = cfg
         dev = cfg.get("device", 0)
+        # 该机位在自动曝光下纸尺纹理可能变弱。先切手动，再设置曝光和增益，
+        # 使时钟探查和正式采集从相同设置开始；历史配置沿用设备状态。
+        # V4L2 曝光单位是 100 微秒。设置失败应在开始反馈前报告。
+        exposure = cfg.get("manual_exposure")
+        if exposure is not None:
+            device = "/dev/video%d" % dev if isinstance(dev, int) else dev
+            ctl = ["v4l2-ctl", "--device", device]
+            subprocess.check_call(ctl + ["--set-ctrl=exposure_auto=1"])
+            subprocess.check_call(ctl + ["--set-ctrl=exposure_absolute=%d,gain=%d" %
+                                         (exposure["time_100us"], exposure["gain"])])
+
         # 仅正式采集模式可请求探查；run 返回后探查进程已释放设备。
         width, height = int(cfg.get("width", 1280)), int(cfg.get("height", 720))
         fourcc = cfg.get("fourcc", "MJPG")

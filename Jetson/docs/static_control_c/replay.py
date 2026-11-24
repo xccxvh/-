@@ -47,14 +47,23 @@ def write_rows(path, records):
         w.writerows(records)
 
 
-def components():
-    cfg = json.loads(CFG.read_text())
+def components(config=CFG):
+    cfg = json.loads(config.read_text())
     ref = cfg['rail']['upper_reference']
     ref['image'] = str(JET/ref['image'])
     geo = CameraGeometry(cfg['camera_geometry'], 1280, 720, JET)
     # 采样与结果模型的文件路径不参与测量绑定；所有采样均在未加载厘米模型时进行。
     cfg['rail_coordinates']['calibration_file'] = None
-    return (StaticControlCoordinates(cfg, geo, JET), RailDetector(cfg['rail'],1280,720),
+    if 'digit_boxes' in ref:
+        # 使用与生产入口相同的工厂；历史配置保持旧的参考和原有 C 绑定。
+        from static_control_reference import make_rail_detector
+        from static_reference_geometry import StaticReferenceCoordinates
+        coords = StaticReferenceCoordinates(cfg, geo, JET)
+        detector = make_rail_detector(cfg['rail'], 1280, 720)
+    else:
+        coords = StaticControlCoordinates(cfg, geo, JET)
+        detector = RailDetector(cfg['rail'], 1280, 720)
+    return (coords, detector,
             BallDetector(dict(cfg['ball'], ball_search=cfg['ball_search']),1280,720),
             MotionCandidates(), BallTracker(cfg['tracking'],1280,720))
 
@@ -69,9 +78,9 @@ def events(folder, nominal):
 
 
 def replay_clip(task):
-    dest, tag, folder, expected, dynamic, truth, schedule = task
+    dest, tag, folder, expected, dynamic, truth, schedule, config = task
     cv2.setNumThreads(1)
-    coords, rd, bd, motion, tracker = components()
+    coords, rd, bd, motion, tracker = components(config)
     video = folder/'raw.mjpg'
     assert sha256(video) == expected
     nominal = tag == 'old_fit_m6'
@@ -95,6 +104,11 @@ def replay_clip(task):
                  reference_valid=p['reference_valid'], calibration_valid=p['calibration_valid'],
                  cm_valid=p['cm_valid'], rail_s_px=p['rail_s_px'], rail_binding_id=coords.binding_id,
                  x_px=p['measurement_x_px'], y_px=p['measurement_y_px'])
+        if 'static_reference' in coords.binding:
+            # 留存各段实际走过的参考路径，便于区分旧参考通过与数字补测。
+            registration = getattr(rail, 'registration', None) or {}
+            r.update(rail_reason=rail.reason, reference_set=registration.get('reference_set'),
+                     registration_mode=registration.get('registration_mode'))
         if dynamic:
             # 用同一帧的 POINTS 内参、尺配准和轴分别投影实测/标注中心；动态真值仅为图像中心。
             if source != 'motion':
@@ -121,9 +135,10 @@ def replay_clip(task):
     return tag, result, coords.binding, clock
 
 
-def run(data, dest, target):
+def run(data, dest, target, config=CFG):
     dest.mkdir(parents=True, exist_ok=False)
-    binding = components()[0].binding
+    config_hash = sha256(config)
+    binding = components(config)[0].binding
     side = dest/'binding.json'
     save(side, binding)
     historical = rows(archive('docs/continuity_20261122/geometry/release/checks.csv'))
@@ -136,7 +151,7 @@ def run(data, dest, target):
     for p in placements:
         group, name = p['run'].split('_',1)
         folder = data/('7/motion_20261121' if group=='old' else '8/continuity_20261122')/'runs'/name
-        todo.append((dest, p['run'], folder, p['video_sha256'], False, None, None))
+        todo.append((dest, p['run'], folder, p['video_sha256'], False, None, None, config))
         metadata[p['run']] = (p, folder)
     fit, verify, all_sessions, checks = [], [], {}, []
     with ProcessPoolExecutor(max_workers=4) as pool:
@@ -162,16 +177,22 @@ def run(data, dest, target):
         values = [map_position(model['model'], r['rail_s_px']) for r in ss['rows']
                   if r['pixel_valid'] and r['reference_valid'] and r['predicted'] is False and r['rail_s_px'] is not None]
         errors = [abs(v-c['cm']) for v in values if v is not None]
-        c.update(axis_samples=len(values), mapped=len(errors), mae_cm=np.mean(errors), max_cm=max(errors))
+        c.update(axis_samples=len(values), mapped=len(errors), mae_cm=float(np.mean(errors)) if errors else None,
+                 max_cm=max(errors) if errors else None)
         c['passed'] = None if c['role']=='fit' else len(errors)>=143 and max(errors)<=.3 and len(errors)==len(values)
     write_rows(dest/'placements.csv', checks)
-    assert components()[0].binding==binding and model['validated'] and all(c['passed'] is not False for c in checks)
+    if sha256(config) != config_hash or components(config)[0].binding != binding:
+        raise RuntimeError('configuration or bound source changed during replay')
+    # 按完整录像逐摆放门控；失败的开发片也保留在表内，不以跨摆放的均值覆盖。
+    if not model['validated'] or any(c['passed'] is False for c in checks):
+        save(dest/'rejected_candidate.json', model)
+        raise ValueError('placement validation failed; see placements.csv and rejected_candidate.json')
     save(target, model)
     assert RailCalibration(str(target), binding).validated
     return model
 
 
-def dynamic(data, dest, model):
+def dynamic(data, dest, model, config=CFG):
     scene='moving_final'
     folder=data/'8/continuity_20261122/runs'/scene
     manifests=rows(archive('docs/vision_candidate_fusion/results/frozen/processed/inputs.csv'))
@@ -183,7 +204,7 @@ def dynamic(data, dest, model):
     schedule={int(r['frame']):float(r['timestamp']) for r in rows((folder/'measurements.csv').read_bytes())}
     metrics=[]
     for tag, selected in [('processed',schedule),('all_frames',None)]:
-        _, result, actual, _ = replay_clip((dest, 'moving_'+tag, folder, inputs['video'], True, truth, selected))
+        _, result, actual, _ = replay_clip((dest, 'moving_'+tag, folder, inputs['video'], True, truth, selected, config))
         assert actual==model['binding']
         # 原始冻结实验在同一日程下的全部 C 运动输出应逐帧复现。
         frozen=rows(archive('docs/vision_candidate_fusion/results/frozen/'+tag+'/frames.csv'))
@@ -213,6 +234,10 @@ if __name__=='__main__':
     p.add_argument('data', type=Path)
     p.add_argument('new_evidence_dir', type=Path)
     p.add_argument('new_model', type=Path)
+    p.add_argument('--config', type=Path, default=CFG, help='与生产入口一致的配置；默认复现原方案 C')
     a=p.parse_args()
-    model=run(a.data.resolve(),a.new_evidence_dir.resolve(),a.new_model.resolve())
-    dynamic(a.data.resolve(),a.new_evidence_dir.resolve(),model)
+    config=a.config.resolve()
+    model=run(a.data.resolve(),a.new_evidence_dir.resolve(),a.new_model.resolve(),config)
+    # 旧动态对照锁定旧参考的逐帧输出，数字参考的正式任务仅验收已知静态刻度。
+    if 'static_reference' not in model['binding']:
+        dynamic(a.data.resolve(),a.new_evidence_dir.resolve(),model,config)

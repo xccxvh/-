@@ -61,6 +61,19 @@ class CameraTimestampTests(unittest.TestCase):
         with patch('camera.time.perf_counter', side_effect=lambda: self.clock):
             cam._capture_loop()
 
+    def test_manual_exposure_applies_to_configured_camera_before_stream(self):
+        # 在设备独占探查与正式打开前恢复实测曝光和增益，避免重插后自动曝光漂移。
+        events = []
+        with patch('camera.subprocess.check_call', side_effect=lambda cmd: events.append(cmd)):
+            self.make_camera(dict(verify_v4l2_time=True,
+                                  manual_exposure=dict(time_100us=300, gain=0)))
+        self.assertEqual(events, [
+            ['v4l2-ctl', '--device', '/dev/video3', '--set-ctrl=exposure_auto=1'],
+            ['v4l2-ctl', '--device', '/dev/video3', '--set-ctrl=exposure_absolute=300,gain=0']])
+        with patch('camera.subprocess.check_call') as set_controls:
+            self.make_camera()
+            set_controls.assert_not_called()
+
     def test_fresh_consumer_skips_already_queued_frame(self):
         # 处理耗时长于采集周期时，丢掉等待过的图像，不借用其曝光时间。
         cam = self.make_camera()

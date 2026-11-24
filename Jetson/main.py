@@ -133,6 +133,12 @@ def main():
         W, H = source.width, source.height
         geometry = CameraGeometry(cfg.get('camera_geometry', {}), W, H, BASE)
         coordinates_type = StaticControlCoordinates if use_motion else RailCoordinates
+        detector_type = RailDetector
+        if use_motion and 'digit_boxes' in cfg['rail'].get('upper_reference', {}):
+            # 纸尺数字复核和专属标定成对加载，同一帧仅建立一套轨道姿态。
+            from static_control_reference import make_rail_detector
+            from static_reference_geometry import StaticReferenceCoordinates
+            detector_type, coordinates_type = make_rail_detector, StaticReferenceCoordinates
         rail_coordinates = coordinates_type(cfg, geometry, BASE)
         if rail_coordinates.enabled and preview is not None:
             ap.error('rail coordinates and legacy preview cannot be combined')
@@ -141,7 +147,7 @@ def main():
         if preview is not None and geometry.mode != 'raw':
             ap.error('legacy preview cannot use corrected image/point coordinates')
 
-        rail_det = RailDetector(cfg["rail"], W, H)
+        rail_det = detector_type(cfg["rail"], W, H)
         ball_cfg = dict(cfg["ball"])
         if "ball_search" in cfg:
             ball_cfg["ball_search"] = cfg["ball_search"]
