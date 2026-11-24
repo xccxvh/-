@@ -1,0 +1,23 @@
+{
+  "baseline": "253f56c9e054d5c791a12b93a6dd79fca9f17922",
+  "frames_baseline": 1043,
+  "frames_current": 1043,
+  "pixel_valid_frames": 666,
+  "compared_fields": [
+    "x_px",
+    "valid",
+    "confidence",
+    "state",
+    "predicted",
+    "method",
+    "rail_valid",
+    "candidate_count",
+    "detector_reason",
+    "tracker_reason",
+    "roi_min_px",
+    "roi_max_px"
+  ],
+  "differences": [],
+  "independent_validation": false,
+  "note": "Development video regression only; valid count is not accuracy."
+}

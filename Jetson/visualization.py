@@ -5,6 +5,7 @@
 处理帧率、识别状态。
 """
 import cv2
+import numpy as np
 
 STATE_COLORS = {
     "DETECTED": (0, 255, 0),
@@ -49,8 +50,13 @@ def draw_overlay(frame, rail, candidates, track, fps, algo_ms,
     if rail is not None and rail.valid:
         y0 = int(rail.y_at(0)*sy)
         y1 = int(rail.y_at(source_w - 1)*sy)
-        cv2.line(vis, (0, y0), (W - 1, y1), (0, 255, 0), thickness)
-        if show_band:
+        if hasattr(rail, 'edge_profile'):
+            xs = np.arange(0, source_w, 4)
+            points = np.column_stack((xs*sx, rail.edge_profile[xs]*sy)).astype(np.int32)
+            cv2.polylines(vis, [points], False, (0, 255, 0), thickness)
+        else:
+            cv2.line(vis, (0, y0), (W - 1, y1), (0, 255, 0), thickness)
+        if show_band and not hasattr(rail, 'edge_profile'):
             up = int(0.05 * H)
             down = int(0.012 * H)
             cv2.line(vis, (0, y0 - up), (W - 1, y1 - up), (0, 110, 0), 1)
@@ -58,6 +64,8 @@ def draw_overlay(frame, rail, candidates, track, fps, algo_ms,
 
     for c in (candidates or [])[:5]:
         yl = int(rail.y_at(c.x)*sy) if (rail is not None and rail.valid) else H // 2
+        if hasattr(rail, 'edge_profile'):
+            yl = int(np.interp(c.x, np.arange(source_w), rail.edge_profile)*sy)
         if c.method == "color":
             color = (0, 255, 255)
         elif c.method == "geom":

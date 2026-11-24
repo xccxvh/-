@@ -1,0 +1,8 @@
+4.1.1 3.6.9 1.19.5
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/home/jetson/ball_vision_geometry_20261116_v2/camera_geometry.py", line 184, in __init__
+    _validate_image_maps(self._maps, K, D, width, height)
+  File "/home/jetson/ball_vision_geometry_20261116_v2/camera_geometry.py", line 132, in _validate_image_maps
+    raise ValueError(reason + ': max_error_px={:.9g}, limit_px={:.9g}'.format(error, limit))
+ValueError: image map Brown validation failed: max_error_px=0.147116333, limit_px=0.000122070312

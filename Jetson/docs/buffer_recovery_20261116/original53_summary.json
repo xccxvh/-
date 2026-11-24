@@ -1,0 +1,23 @@
+{
+  "baseline": {
+    "counts": {
+      "core_miss": 1,
+      "outside_rejected": 15,
+      "core_correct": 32,
+      "buffer_miss": 5
+    },
+    "mean_error_px": 1.3191364497252458,
+    "max_error_px": 3.160551799057714
+  },
+  "new": {
+    "counts": {
+      "core_miss": 1,
+      "outside_rejected": 15,
+      "core_correct": 32,
+      "buffer_correct": 3,
+      "buffer_miss": 2
+    },
+    "mean_error_px": 1.1308708781985348,
+    "max_error_px": 3.406107023374261
+  }
+}

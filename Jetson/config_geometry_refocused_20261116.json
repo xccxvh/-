@@ -1,0 +1,187 @@
+{
+  "camera": {
+    "device": "/dev/video0",
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "fourcc": "MJPG",
+    "buffer_size": 8
+  },
+  "rail": {
+    "y_band": [
+      0.38,
+      0.53
+    ],
+    "x_margin": 0.12,
+    "grad_threshold": 45,
+    "slope_limit": 0.35,
+    "ransac_iters": 300,
+    "ransac_tol": 3.0,
+    "refresh_frames": 3,
+    "min_inlier_ratio": 0.25,
+    "expected_y_ratio": 0.455,
+    "max_dev_ratio": 0.06,
+    "track_window_ratio": 0.05,
+    "upper_reference": {
+      "enabled": true,
+      "image": "assets/reference_refocused_20261116.png",
+      "sha256": "84d9b21c1498d918da5893596fddd7dd861785da7f27419102ca0347f5ac2ae6",
+      "boxes": [
+        [
+          195,
+          320,
+          95,
+          28
+        ],
+        [
+          520,
+          336,
+          105,
+          33
+        ],
+        [
+          850,
+          347,
+          105,
+          33
+        ]
+      ],
+      "upper_edge_points": [
+        [
+          171,
+          297
+        ],
+        [
+          259,
+          302
+        ],
+        [
+          546,
+          315
+        ],
+        [
+          864,
+          326
+        ],
+        [
+          978,
+          329
+        ]
+      ],
+      "search_x": 45,
+      "search_y": 45,
+      "max_edge_adjust_px": 5,
+      "support_margin_px": 80,
+      "image_context": {
+        "image_space": "raw_image",
+        "resolution": [
+          1280,
+          720
+        ],
+        "camera_id": "icspring-usb-camera",
+        "focus_id": "manual-refocused-20261116-evening",
+        "intrinsics_sha256": null
+      },
+      "rotation_recheck": true
+    }
+  },
+  "ball": {
+    "use_color": true,
+    "use_geometry": true,
+    "blue_minus_red": 30,
+    "blue_min": 140,
+    "envelope_threshold": 100,
+    "band_above_ratio": 0.05,
+    "band_below_ratio": 0.012,
+    "dev_threshold_ratio": 0.008,
+    "min_width_ratio": 0.018,
+    "max_width_ratio": 0.075,
+    "min_height_ratio": 0.004,
+    "max_height_ratio": 0.035,
+    "min_aspect": 1.3,
+    "max_aspect": 8.0,
+    "min_area_ratio": 0.00015,
+    "typical_width_ratio": 0.038,
+    "typical_height_ratio": 0.018,
+    "color_only_scale": 0.5,
+    "x_margin": 0.12,
+    "mode": "relative_cap",
+    "relative_cap": {
+      "contrast_min": 18,
+      "min_width_px": 12,
+      "max_width_px": 65,
+      "max_height_px": 28,
+      "min_area_px": 40,
+      "rim_exclusion_px": 3
+    }
+  },
+  "tracking": {
+    "max_jump_ratio": 0.12,
+    "uncertain_frames": 4,
+    "lost_frames": 15,
+    "velocity_alpha": 0.5,
+    "confidence_threshold": 0.55,
+    "acquire_frames": 5,
+    "identity_check": true
+  },
+  "calibration": {
+    "file": null
+  },
+  "output": {
+    "recordings_dir": "recordings",
+    "logs_dir": "logs"
+  },
+  "ball_search": {
+    "enabled": true,
+    "target_min_cm": -5,
+    "target_max_cm": 5,
+    "recovery_margin_cm": 2,
+    "anchors": [
+      [
+        -7,
+        171
+      ],
+      [
+        -5,
+        259
+      ],
+      [
+        0,
+        546
+      ],
+      [
+        5,
+        864
+      ],
+      [
+        7,
+        978
+      ]
+    ],
+    "purpose": "temporary_ruler_ROI_only_NOT_formal_cm_calibration"
+  },
+  "camera_geometry": {
+    "mode": "raw",
+    "undistort_enabled": false,
+    "camera_id": "icspring-usb-camera",
+    "focus_id": "manual-refocused-20261116-evening",
+    "intrinsics_file": null
+  },
+  "rail_coordinates": {
+    "enabled": true,
+    "left_px": [
+      259,
+      302
+    ],
+    "origin_px": [
+      546,
+      315
+    ],
+    "right_px": [
+      864,
+      326
+    ],
+    "calibration_file": null
+  },
+  "geometry_notes": "Current manual reference only. camera_id/focus_id are operator setup records, not automatically measured focus. No intrinsics or validated cm model yet; UART disabled."
+}

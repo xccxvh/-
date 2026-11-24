@@ -1,0 +1,96 @@
+{
+  "snapshot": "/home/user/桌面/jetson_nano/8/continuity_20261122/geometry_final_dual/Jetson",
+  "identical_to_checkout": true,
+  "production_repeat_parity_frames": 150,
+  "repeat_missing": {
+    "acquiring": 10,
+    "identity_rejected": 18,
+    "candidate_ambiguous": 1
+  },
+  "modes": {
+    "raw": {
+      "binding_id": "640a37e20d79659bb678173928f828a535386634fb3737900fbbe136ccc9fbe6",
+      "model_file": "/home/user/桌面/jetson_nano/8/continuity_20261122/geometry_final_dual/replay/raw_candidate.json",
+      "model_sha256": "24960feca7d55e4331216a8db646953871cf89bae508d5696141cbaea10a4740",
+      "loader_status": "not_verified",
+      "ready": true,
+      "validated": false,
+      "fit_counts": [
+        146,
+        146,
+        146
+      ],
+      "historical_valid": 1164,
+      "historical_frames": 1200,
+      "historical_max_abs_cm": 0.33806899406921165,
+      "failed_runs": [
+        "old_verify_m3_02",
+        "new_verify_m5",
+        "new_verify_p5",
+        "new_verify_m5_repeat"
+      ],
+      "repeat": {
+        "mode": "raw",
+        "run": "new_verify_m5_repeat",
+        "role": "verify",
+        "cm": "-5",
+        "frames": "150",
+        "valid": "121",
+        "coverage": "0.8066666666666666",
+        "mae_cm": "0.15458638462802352",
+        "max_abs_cm": "0.20084843535466845",
+        "longest_missing_frames": "12",
+        "passed": "False"
+      },
+      "old_tilt": {
+        "frames": 895,
+        "valid": 820,
+        "signed_mean": -0.4253975847655914,
+        "median": -0.42904801432032214,
+        "max_abs": 0.5270225619320137,
+        "span": 0.25834859881610023
+      }
+    },
+    "points": {
+      "binding_id": "0d746f2e36d25609e9c687cc26e6fdd11bce32f0496ec82e780d29d5b2987676",
+      "model_file": "/home/user/桌面/jetson_nano/8/continuity_20261122/geometry_final_dual/replay/points_candidate.json",
+      "model_sha256": "002d7980f1a132daeb8d40125e1b6f66adc0355cdf42f25670dd0263885a1890",
+      "loader_status": "not_verified",
+      "ready": true,
+      "validated": false,
+      "fit_counts": [
+        146,
+        146,
+        146
+      ],
+      "historical_valid": 1164,
+      "historical_frames": 1200,
+      "historical_max_abs_cm": 0.204415218254955,
+      "failed_runs": [
+        "new_verify_m5",
+        "new_verify_m5_repeat"
+      ],
+      "repeat": {
+        "mode": "points",
+        "run": "new_verify_m5_repeat",
+        "role": "verify",
+        "cm": "-5",
+        "frames": "150",
+        "valid": "121",
+        "coverage": "0.8066666666666666",
+        "mae_cm": "0.10095645256802391",
+        "max_abs_cm": "0.15391167180792564",
+        "longest_missing_frames": "12",
+        "passed": "False"
+      },
+      "old_tilt": {
+        "frames": 895,
+        "valid": 820,
+        "signed_mean": -0.42889240974094445,
+        "median": -0.43244048058631224,
+        "max_abs": 0.5232477309226486,
+        "span": 0.2401747286199183
+      }
+    }
+  }
+}

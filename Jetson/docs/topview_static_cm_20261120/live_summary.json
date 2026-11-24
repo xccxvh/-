@@ -1,0 +1,12 @@
+{
+  "source": "Nano USB camera -> existing raw MJPEG -> lossless local FIFO -> main.py; 30 Hz replay timebase; supplementary live check",
+  "frames": 150,
+  "valid": 146,
+  "median_cm": 3.1101132154320683,
+  "range_cm": [
+    3.100036406917336,
+    3.147185213940643
+  ],
+  "feedback_valid": 0,
+  "sha256_csv": "e6985bcaed594701540d31f51549ffbc335ac95935b392841fe2a003a45c9b6e"
+}

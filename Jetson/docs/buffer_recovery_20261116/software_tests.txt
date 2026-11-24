@@ -1,0 +1,62 @@
+----------------------------------------------------------------------
+Ran 170 tests in 5.455s
+
+OK
+{
+  "status": "complete"
+}
+frames=3 labeled=0 valid=0 output=/tmp/tmpralpcxkj/run
+source: /dev/video0  1280x720  fps=30.0
+calibration: not ready
+
+--- summary ---
+frames: 3, elapsed: 0.0s, avg fps: 983.7
+states: {'DETECTED': 0, 'UNCERTAIN': 0, 'LOST': 3}
+algo_ms: mean=0.85 p95=1.04 max=1.04
+queue_wait_ms: mean=871.96 p95=1004.18 max=1004.18
+capture_to_result_ms: mean=872.81 p95=1005.22 max=1005.22 (n=3)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=0.91 p95=1.11 max=1.11
+csv: /tmp/tmpga7aoktm/track_run_20261116_195415.csv
+source: /dev/video0  1280x720  fps=30.0
+calibration: not ready
+reference cm PREVIEW: experimental, UART disabled
+
+--- summary ---
+frames: 3, elapsed: 0.0s, avg fps: 882.1
+states: {'DETECTED': 0, 'UNCERTAIN': 0, 'LOST': 3}
+algo_ms: mean=0.95 p95=1.33 max=1.33
+queue_wait_ms: mean=871.65 p95=1003.69 max=1003.69
+capture_to_result_ms: mean=872.60 p95=1005.02 max=1005.02 (n=3)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=1.03 p95=1.40 max=1.40
+csv: /tmp/tmp4ddmg0my/track_run_20261116_195415.csv
+source: dummy  1280x720  fps=0.5
+calibration: not ready
+
+--- summary ---
+frames: 3, elapsed: 0.0s, avg fps: 1097.2
+states: {'DETECTED': 0, 'UNCERTAIN': 0, 'LOST': 3}
+algo_ms: mean=0.73 p95=0.83 max=0.83
+queue_wait_ms: mean=871.10 p95=1003.48 max=1003.48
+capture_to_result_ms: mean=871.83 p95=1004.31 max=1004.31 (n=3)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=0.81 p95=0.90 max=0.90
+csv: /tmp/tmp2rk0z1_i/track_run_20261116_195415.csv
+source: /dev/video0  1280x720  fps=30.0
+calibration: not ready
+reference cm PREVIEW: experimental, UART disabled
+
+--- summary ---
+frames: 4, elapsed: 0.0s, avg fps: 1073.0
+states: {'DETECTED': 3, 'UNCERTAIN': 0, 'LOST': 1}
+algo_ms: mean=0.36 p95=0.86 max=0.86
+queue_wait_ms: mean=0.00 p95=0.01 max=0.01
+capture_to_result_ms: mean=0.36 p95=0.87 max=0.87 (n=4)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=0.44 p95=0.94 max=0.94
+csv: /tmp/tmp992oom57/track_run_20261116_195415.csv

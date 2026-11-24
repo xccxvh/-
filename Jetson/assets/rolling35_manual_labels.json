@@ -1,0 +1,2780 @@
+{
+  "source_video": "/home/user/桌面/jetson_nano/raw_rolling_20261116_35s.avi",
+  "audit_type": "separate_agent_visual_audit_not_human_independent_ground_truth",
+  "labeler": "assistant_visual_review",
+  "method": "Sequential OpenCV read() decoding; frames 0,20,...,1040 inspected visually on native-width contact sheets and enlarged crops. No detector outputs, segmentation, tracking, or interpolated labels used. Coordinates manually transcribed by assistant.",
+  "coordinates": "Original 1280x720 frame pixels; zero-based x right, y down; frame indices zero-based sequential decoded order.",
+  "actual_decoded_frames": 1043,
+  "sample_count": 53,
+  "sample_step": 20,
+  "fps_user_reported": 29.8,
+  "fps_container_reported": 60,
+  "frame_count_container_reported": 2100,
+  "timing_note": "Container metadata conflicts with actual decode. User-provided 29.8 FPS is not independently measured here. No timestamp-based seeking used.",
+  "tolerance_note": "6 px is approximate visual annotation tolerance, not an empirically validated error bound. Partial occlusion prevents observing full silhouette.",
+  "status_definitions": {
+    "visible": "Enough arc visible to estimate horizontal center; may be partially occluded.",
+    "uncertain": "Ball-like evidence but center not reliable; x null.",
+    "occluded": "Known ball location hidden and center not visually recoverable; x null.",
+    "not_visible": "No identifiable ball in inspected frame; x null."
+  },
+  "labels": [
+    {
+      "frame": 0,
+      "x_px": 567,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0000.png",
+      "contact_sheet": "contact_01.jpg"
+    },
+    {
+      "frame": 20,
+      "x_px": 158,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0020.png",
+      "contact_sheet": "contact_01.jpg"
+    },
+    {
+      "frame": 40,
+      "x_px": 150,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0040.png",
+      "contact_sheet": "contact_01.jpg"
+    },
+    {
+      "frame": 60,
+      "x_px": 531,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0060.png",
+      "contact_sheet": "contact_01.jpg"
+    },
+    {
+      "frame": 80,
+      "x_px": 906,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium",
+      "note": "Very shallow silver cap; center estimated from visible arc extent, not highlight alone. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0080.png",
+      "contact_sheet": "contact_01.jpg"
+    },
+    {
+      "frame": 100,
+      "x_px": 654,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0100.png",
+      "contact_sheet": "contact_01.jpg"
+    },
+    {
+      "frame": 120,
+      "x_px": 200,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0120.png",
+      "contact_sheet": "contact_01.jpg"
+    },
+    {
+      "frame": 140,
+      "x_px": 125,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0140.png",
+      "contact_sheet": "contact_01.jpg"
+    },
+    {
+      "frame": 160,
+      "x_px": 440,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0160.png",
+      "contact_sheet": "contact_01.jpg"
+    },
+    {
+      "frame": 180,
+      "x_px": 878,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium",
+      "note": "Very shallow silver cap; center estimated from visible arc extent, not highlight alone. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0180.png",
+      "contact_sheet": "contact_02.jpg"
+    },
+    {
+      "frame": 200,
+      "x_px": 724,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0200.png",
+      "contact_sheet": "contact_02.jpg"
+    },
+    {
+      "frame": 220,
+      "x_px": 233,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0220.png",
+      "contact_sheet": "contact_02.jpg"
+    },
+    {
+      "frame": 240,
+      "x_px": 98,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0240.png",
+      "contact_sheet": "contact_02.jpg"
+    },
+    {
+      "frame": 260,
+      "x_px": 342,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0260.png",
+      "contact_sheet": "contact_02.jpg"
+    },
+    {
+      "frame": 280,
+      "x_px": 847,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium",
+      "note": "Very shallow silver cap; center estimated from visible arc extent, not highlight alone. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0280.png",
+      "contact_sheet": "contact_02.jpg"
+    },
+    {
+      "frame": 300,
+      "x_px": 823,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium",
+      "note": "Very shallow silver cap; center estimated from visible arc extent, not highlight alone. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0300.png",
+      "contact_sheet": "contact_02.jpg"
+    },
+    {
+      "frame": 320,
+      "x_px": 335,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0320.png",
+      "contact_sheet": "contact_02.jpg"
+    },
+    {
+      "frame": 340,
+      "x_px": 99,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0340.png",
+      "contact_sheet": "contact_02.jpg"
+    },
+    {
+      "frame": 360,
+      "x_px": 250,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0360.png",
+      "contact_sheet": "contact_03.jpg"
+    },
+    {
+      "frame": 380,
+      "x_px": 754,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0380.png",
+      "contact_sheet": "contact_03.jpg"
+    },
+    {
+      "frame": 400,
+      "x_px": 879,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium",
+      "note": "Very shallow silver cap; center estimated from visible arc extent, not highlight alone. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0400.png",
+      "contact_sheet": "contact_03.jpg"
+    },
+    {
+      "frame": 420,
+      "x_px": 452,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0420.png",
+      "contact_sheet": "contact_03.jpg"
+    },
+    {
+      "frame": 440,
+      "x_px": 126,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0440.png",
+      "contact_sheet": "contact_03.jpg"
+    },
+    {
+      "frame": 460,
+      "x_px": 196,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0460.png",
+      "contact_sheet": "contact_03.jpg"
+    },
+    {
+      "frame": 480,
+      "x_px": 638,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0480.png",
+      "contact_sheet": "contact_03.jpg"
+    },
+    {
+      "frame": 500,
+      "x_px": 898,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium",
+      "note": "Very shallow silver cap; center estimated from visible arc extent, not highlight alone. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0500.png",
+      "contact_sheet": "contact_03.jpg"
+    },
+    {
+      "frame": 520,
+      "x_px": 567,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0520.png",
+      "contact_sheet": "contact_03.jpg"
+    },
+    {
+      "frame": 540,
+      "x_px": 166,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0540.png",
+      "contact_sheet": "contact_04.jpg"
+    },
+    {
+      "frame": 560,
+      "x_px": 146,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0560.png",
+      "contact_sheet": "contact_04.jpg"
+    },
+    {
+      "frame": 580,
+      "x_px": 501,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0580.png",
+      "contact_sheet": "contact_04.jpg"
+    },
+    {
+      "frame": 600,
+      "x_px": 888,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium",
+      "note": "Very shallow silver cap; center estimated from visible arc extent, not highlight alone. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0600.png",
+      "contact_sheet": "contact_04.jpg"
+    },
+    {
+      "frame": 620,
+      "x_px": 705,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0620.png",
+      "contact_sheet": "contact_04.jpg"
+    },
+    {
+      "frame": 640,
+      "x_px": 239,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0640.png",
+      "contact_sheet": "contact_04.jpg"
+    },
+    {
+      "frame": 660,
+      "x_px": 117,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0660.png",
+      "contact_sheet": "contact_04.jpg"
+    },
+    {
+      "frame": 680,
+      "x_px": 383,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0680.png",
+      "contact_sheet": "contact_04.jpg"
+    },
+    {
+      "frame": 700,
+      "x_px": 849,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium",
+      "note": "Very shallow silver cap; center estimated from visible arc extent, not highlight alone. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0700.png",
+      "contact_sheet": "contact_04.jpg"
+    },
+    {
+      "frame": 720,
+      "x_px": 788,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0720.png",
+      "contact_sheet": "contact_05.jpg"
+    },
+    {
+      "frame": 740,
+      "x_px": 319,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0740.png",
+      "contact_sheet": "contact_05.jpg"
+    },
+    {
+      "frame": 760,
+      "x_px": 111,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0760.png",
+      "contact_sheet": "contact_05.jpg"
+    },
+    {
+      "frame": 780,
+      "x_px": 290,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0780.png",
+      "contact_sheet": "contact_05.jpg"
+    },
+    {
+      "frame": 800,
+      "x_px": 787,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium",
+      "note": "Very shallow silver cap; center estimated from visible arc extent, not highlight alone. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0800.png",
+      "contact_sheet": "contact_05.jpg"
+    },
+    {
+      "frame": 820,
+      "x_px": 849,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium",
+      "note": "Very shallow silver cap; center estimated from visible arc extent, not highlight alone. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0820.png",
+      "contact_sheet": "contact_05.jpg"
+    },
+    {
+      "frame": 840,
+      "x_px": 391,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0840.png",
+      "contact_sheet": "contact_05.jpg"
+    },
+    {
+      "frame": 860,
+      "x_px": 115,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0860.png",
+      "contact_sheet": "contact_05.jpg"
+    },
+    {
+      "frame": 880,
+      "x_px": 232,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0880.png",
+      "contact_sheet": "contact_05.jpg"
+    },
+    {
+      "frame": 900,
+      "x_px": 694,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0900.png",
+      "contact_sheet": "contact_06.jpg"
+    },
+    {
+      "frame": 920,
+      "x_px": 882,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium",
+      "note": "Very shallow silver cap; center estimated from visible arc extent, not highlight alone. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0920.png",
+      "contact_sheet": "contact_06.jpg"
+    },
+    {
+      "frame": 940,
+      "x_px": 510,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0940.png",
+      "contact_sheet": "contact_06.jpg"
+    },
+    {
+      "frame": 960,
+      "x_px": 147,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0960.png",
+      "contact_sheet": "contact_06.jpg"
+    },
+    {
+      "frame": 980,
+      "x_px": 183,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_0980.png",
+      "contact_sheet": "contact_06.jpg"
+    },
+    {
+      "frame": 1000,
+      "x_px": 584,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_1000.png",
+      "contact_sheet": "contact_06.jpg"
+    },
+    {
+      "frame": 1020,
+      "x_px": 896,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium",
+      "note": "Very shallow silver cap; center estimated from visible arc extent, not highlight alone. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_1020.png",
+      "contact_sheet": "contact_06.jpg"
+    },
+    {
+      "frame": 1040,
+      "x_px": 631,
+      "status": "visible",
+      "occlusion": "partial_by_ruler",
+      "tolerance_px": 6,
+      "confidence": "medium_high",
+      "note": "Silver ball cap visible above ruler; horizontal center estimated visually from arc. Lower ball hidden by ruler.",
+      "labeler": "assistant_visual_review",
+      "evidence": "crop_1040.png",
+      "contact_sheet": "contact_06.jpg"
+    }
+  ],
+  "temporary_roi_anchors": {
+    "frame": 1040,
+    "scope": "Frame 1040 only (last sampled frame), temporary ROI placement only. Camera perspective and ruler motion preclude reuse as global metric calibration.",
+    "ruler_ticks": [
+      {
+        "cm": 5,
+        "x_px": 227,
+        "y_top_px": 223
+      },
+      {
+        "cm": 7,
+        "x_px": 319,
+        "y_top_px": 223
+      },
+      {
+        "cm": 12,
+        "x_px": 613,
+        "y_top_px": 230
+      },
+      {
+        "cm": 17,
+        "x_px": 930,
+        "y_top_px": 236
+      },
+      {
+        "cm": 19,
+        "x_px": 1041,
+        "y_top_px": 239
+      }
+    ],
+    "tolerance_px": 3,
+    "confidence": "medium_high",
+    "note": "x marks long centimeter tick, not printed numeral center; y is visible top boundary at that tick.",
+    "evidence": [
+      "frame_1040.png",
+      "ruler_1040_2x.png",
+      "ruler_1040_annotated.png"
+    ],
+    "visible_upper_boundary": {
+      "identity": "ruler top edge / occlusion boundary, NOT independently verified physical rail edge",
+      "polyline_xy": [
+        [
+          227,
+          223
+        ],
+        [
+          319,
+          223
+        ],
+        [
+          613,
+          230
+        ],
+        [
+          930,
+          236
+        ],
+        [
+          1041,
+          239
+        ]
+      ],
+      "tolerance_px": 3,
+      "local_reference": {
+        "x_px": 613,
+        "y_px": 230
+      },
+      "note": "Boundary is sloped/curved; one horizontal y does not describe entire ROI."
+    },
+    "physical_upper_rail": {
+      "status": "occluded",
+      "y_px": null,
+      "confidence": "low",
+      "note": "Mechanical upper rail is not separately identifiable behind ruler. Do not substitute visible ruler boundary as measured physical rail."
+    }
+  },
+  "ruler_reference_frame0": {
+    "frame": 0,
+    "labeler": "assistant_visual_review",
+    "scope": "Frame 0 only; manually reread from frame 0, not reused or shifted from frame 1040. ROI-only temporary anchors.",
+    "coordinate_definition": "Original full-frame pixels. x is long centimeter tick; y is visible ruler top edge at that tick (top of tick), not printed numeral or ruler bottom edge.",
+    "ruler_ticks": [
+      {
+        "cm": 5,
+        "x_px": 229,
+        "y_px": 224,
+        "status": "visible",
+        "tolerance_px": 3,
+        "confidence": "medium_high"
+      },
+      {
+        "cm": 7,
+        "x_px": 319,
+        "y_px": 223,
+        "status": "visible",
+        "tolerance_px": 3,
+        "confidence": "medium_high"
+      },
+      {
+        "cm": 12,
+        "x_px": 614,
+        "y_px": 230,
+        "status": "visible",
+        "tolerance_px": 3,
+        "confidence": "medium_high"
+      },
+      {
+        "cm": 17,
+        "x_px": 929,
+        "y_px": 234,
+        "status": "visible",
+        "tolerance_px": 3,
+        "confidence": "medium_high"
+      },
+      {
+        "cm": 19,
+        "x_px": 1038,
+        "y_px": 239,
+        "status": "visible",
+        "tolerance_px": 3,
+        "confidence": "medium_high"
+      }
+    ],
+    "evidence": [
+      "crop_0000.png",
+      "ruler_0000_2x.png",
+      "ruler_0000_annotated.png"
+    ],
+    "note": "Separate-agent visual audit, not human-independent ground truth. Approximate tolerance; physical upper rail remains obscured."
+  },
+  "ruler_upper_edge_samples": {
+    "identity": "Visible ruler top boundary, not ruler lower edge or independently observed mechanical rail.",
+    "coordinates": "Original 1280x720 frame pixels; y increases downward. x values also read per frame to follow moving centimeter ticks.",
+    "method": "Assistant visually inspected all 53 three-panel coordinate-grid contact rows and transcribed 159 upper-edge points. No automated edge detection, segmentation, detector output, interpolation, or reuse of frame-1040 anchors.",
+    "tolerance_px": 3,
+    "tolerance_note": "Approximate visual tolerance, not validated measurement uncertainty. Lower-edge coordinates were not measured in this addition.",
+    "sample_count": 53,
+    "point_count": 159,
+    "samples": [
+      {
+        "frame": 0,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 319,
+            "y_px": 223,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 614,
+            "y_px": 230,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 929,
+            "y_px": 234,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_01.png",
+        "grid_evidence": "upper_edge_grid_01.png",
+        "clean_evidence": "crop_0000.png"
+      },
+      {
+        "frame": 20,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 311,
+            "y_px": 221,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 603,
+            "y_px": 227,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 920,
+            "y_px": 232,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_01.png",
+        "grid_evidence": "upper_edge_grid_01.png",
+        "clean_evidence": "crop_0020.png"
+      },
+      {
+        "frame": 40,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 303,
+            "y_px": 214,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 595,
+            "y_px": 222,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 910,
+            "y_px": 227,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_01.png",
+        "grid_evidence": "upper_edge_grid_01.png",
+        "clean_evidence": "crop_0040.png"
+      },
+      {
+        "frame": 60,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 298,
+            "y_px": 200,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 585,
+            "y_px": 210,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 903,
+            "y_px": 219,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_01.png",
+        "grid_evidence": "upper_edge_grid_01.png",
+        "clean_evidence": "crop_0060.png"
+      },
+      {
+        "frame": 80,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 312,
+            "y_px": 207,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 603,
+            "y_px": 215,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 920,
+            "y_px": 224,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium",
+            "note": "Ball cap lies adjacent to or behind ruler top; annotated ruler boundary, not ball silhouette."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_01.png",
+        "grid_evidence": "upper_edge_grid_01.png",
+        "clean_evidence": "crop_0080.png"
+      },
+      {
+        "frame": 100,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 318,
+            "y_px": 222,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 611,
+            "y_px": 228,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 926,
+            "y_px": 233,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_01.png",
+        "grid_evidence": "upper_edge_grid_01.png",
+        "clean_evidence": "crop_0100.png"
+      },
+      {
+        "frame": 120,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 317,
+            "y_px": 224,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 612,
+            "y_px": 230,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 927,
+            "y_px": 234,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_01.png",
+        "grid_evidence": "upper_edge_grid_01.png",
+        "clean_evidence": "crop_0120.png"
+      },
+      {
+        "frame": 140,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 303,
+            "y_px": 217,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 595,
+            "y_px": 226,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 912,
+            "y_px": 230,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_01.png",
+        "grid_evidence": "upper_edge_grid_01.png",
+        "clean_evidence": "crop_0140.png"
+      },
+      {
+        "frame": 160,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 296,
+            "y_px": 200,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 585,
+            "y_px": 210,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 902,
+            "y_px": 220,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_01.png",
+        "grid_evidence": "upper_edge_grid_01.png",
+        "clean_evidence": "crop_0160.png"
+      },
+      {
+        "frame": 180,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 312,
+            "y_px": 204,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 602,
+            "y_px": 215,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 920,
+            "y_px": 224,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_02.png",
+        "grid_evidence": "upper_edge_grid_02.png",
+        "clean_evidence": "crop_0180.png"
+      },
+      {
+        "frame": 200,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 314,
+            "y_px": 222,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 606,
+            "y_px": 228,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 923,
+            "y_px": 232,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_02.png",
+        "grid_evidence": "upper_edge_grid_02.png",
+        "clean_evidence": "crop_0200.png"
+      },
+      {
+        "frame": 220,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 318,
+            "y_px": 224,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 612,
+            "y_px": 231,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 927,
+            "y_px": 234,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_02.png",
+        "grid_evidence": "upper_edge_grid_02.png",
+        "clean_evidence": "crop_0220.png"
+      },
+      {
+        "frame": 240,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 303,
+            "y_px": 217,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 594,
+            "y_px": 224,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 911,
+            "y_px": 230,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_02.png",
+        "grid_evidence": "upper_edge_grid_02.png",
+        "clean_evidence": "crop_0240.png"
+      },
+      {
+        "frame": 260,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 296,
+            "y_px": 201,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 583,
+            "y_px": 211,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 902,
+            "y_px": 222,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_02.png",
+        "grid_evidence": "upper_edge_grid_02.png",
+        "clean_evidence": "crop_0260.png"
+      },
+      {
+        "frame": 280,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 308,
+            "y_px": 202,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 599,
+            "y_px": 211,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 917,
+            "y_px": 223,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_02.png",
+        "grid_evidence": "upper_edge_grid_02.png",
+        "clean_evidence": "crop_0280.png"
+      },
+      {
+        "frame": 300,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 315,
+            "y_px": 214,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 608,
+            "y_px": 222,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 923,
+            "y_px": 229,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_02.png",
+        "grid_evidence": "upper_edge_grid_02.png",
+        "clean_evidence": "crop_0300.png"
+      },
+      {
+        "frame": 320,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 319,
+            "y_px": 224,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium",
+            "note": "Ball cap lies adjacent to or behind ruler top; annotated ruler boundary, not ball silhouette."
+          },
+          {
+            "cm": 12,
+            "x_px": 613,
+            "y_px": 230,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 928,
+            "y_px": 233,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_02.png",
+        "grid_evidence": "upper_edge_grid_02.png",
+        "clean_evidence": "crop_0320.png"
+      },
+      {
+        "frame": 340,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 304,
+            "y_px": 218,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 594,
+            "y_px": 224,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 912,
+            "y_px": 230,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_02.png",
+        "grid_evidence": "upper_edge_grid_02.png",
+        "clean_evidence": "crop_0340.png"
+      },
+      {
+        "frame": 360,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 302,
+            "y_px": 203,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 590,
+            "y_px": 213,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 907,
+            "y_px": 222,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_03.png",
+        "grid_evidence": "upper_edge_grid_03.png",
+        "clean_evidence": "crop_0360.png"
+      },
+      {
+        "frame": 380,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 304,
+            "y_px": 202,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 594,
+            "y_px": 212,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 909,
+            "y_px": 222,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_03.png",
+        "grid_evidence": "upper_edge_grid_03.png",
+        "clean_evidence": "crop_0380.png"
+      },
+      {
+        "frame": 400,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 313,
+            "y_px": 209,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 604,
+            "y_px": 217,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 920,
+            "y_px": 226,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_03.png",
+        "grid_evidence": "upper_edge_grid_03.png",
+        "clean_evidence": "crop_0400.png"
+      },
+      {
+        "frame": 420,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 319,
+            "y_px": 223,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 614,
+            "y_px": 229,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 930,
+            "y_px": 234,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_03.png",
+        "grid_evidence": "upper_edge_grid_03.png",
+        "clean_evidence": "crop_0420.png"
+      },
+      {
+        "frame": 440,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 309,
+            "y_px": 221,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 600,
+            "y_px": 228,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 915,
+            "y_px": 234,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_03.png",
+        "grid_evidence": "upper_edge_grid_03.png",
+        "clean_evidence": "crop_0440.png"
+      },
+      {
+        "frame": 460,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 302,
+            "y_px": 211,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 592,
+            "y_px": 219,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 909,
+            "y_px": 227,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_03.png",
+        "grid_evidence": "upper_edge_grid_03.png",
+        "clean_evidence": "crop_0460.png"
+      },
+      {
+        "frame": 480,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 297,
+            "y_px": 200,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 584,
+            "y_px": 210,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 901,
+            "y_px": 223,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_03.png",
+        "grid_evidence": "upper_edge_grid_03.png",
+        "clean_evidence": "crop_0480.png"
+      },
+      {
+        "frame": 500,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 310,
+            "y_px": 209,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 602,
+            "y_px": 216,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 919,
+            "y_px": 226,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium",
+            "note": "Ball cap lies adjacent to or behind ruler top; annotated ruler boundary, not ball silhouette."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_03.png",
+        "grid_evidence": "upper_edge_grid_03.png",
+        "clean_evidence": "crop_0500.png"
+      },
+      {
+        "frame": 520,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 319,
+            "y_px": 222,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 612,
+            "y_px": 230,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 927,
+            "y_px": 234,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_03.png",
+        "grid_evidence": "upper_edge_grid_03.png",
+        "clean_evidence": "crop_0520.png"
+      },
+      {
+        "frame": 540,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 312,
+            "y_px": 222,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 605,
+            "y_px": 228,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 922,
+            "y_px": 232,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_04.png",
+        "grid_evidence": "upper_edge_grid_04.png",
+        "clean_evidence": "crop_0540.png"
+      },
+      {
+        "frame": 560,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 303,
+            "y_px": 217,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 594,
+            "y_px": 223,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 912,
+            "y_px": 230,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_04.png",
+        "grid_evidence": "upper_edge_grid_04.png",
+        "clean_evidence": "crop_0560.png"
+      },
+      {
+        "frame": 580,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 296,
+            "y_px": 200,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 583,
+            "y_px": 210,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 902,
+            "y_px": 222,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_04.png",
+        "grid_evidence": "upper_edge_grid_04.png",
+        "clean_evidence": "crop_0580.png"
+      },
+      {
+        "frame": 600,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 313,
+            "y_px": 208,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 604,
+            "y_px": 216,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 920,
+            "y_px": 226,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_04.png",
+        "grid_evidence": "upper_edge_grid_04.png",
+        "clean_evidence": "crop_0600.png"
+      },
+      {
+        "frame": 620,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 317,
+            "y_px": 222,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 610,
+            "y_px": 229,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 926,
+            "y_px": 233,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_04.png",
+        "grid_evidence": "upper_edge_grid_04.png",
+        "clean_evidence": "crop_0620.png"
+      },
+      {
+        "frame": 640,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 319,
+            "y_px": 223,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 612,
+            "y_px": 229,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 929,
+            "y_px": 233,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_04.png",
+        "grid_evidence": "upper_edge_grid_04.png",
+        "clean_evidence": "crop_0640.png"
+      },
+      {
+        "frame": 660,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 303,
+            "y_px": 218,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 593,
+            "y_px": 224,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 911,
+            "y_px": 230,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_04.png",
+        "grid_evidence": "upper_edge_grid_04.png",
+        "clean_evidence": "crop_0660.png"
+      },
+      {
+        "frame": 680,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 296,
+            "y_px": 201,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 583,
+            "y_px": 211,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 902,
+            "y_px": 223,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_04.png",
+        "grid_evidence": "upper_edge_grid_04.png",
+        "clean_evidence": "crop_0680.png"
+      },
+      {
+        "frame": 700,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 311,
+            "y_px": 204,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 602,
+            "y_px": 213,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 919,
+            "y_px": 224,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_04.png",
+        "grid_evidence": "upper_edge_grid_04.png",
+        "clean_evidence": "crop_0700.png"
+      },
+      {
+        "frame": 720,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 316,
+            "y_px": 217,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 610,
+            "y_px": 224,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 925,
+            "y_px": 230,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_05.png",
+        "grid_evidence": "upper_edge_grid_05.png",
+        "clean_evidence": "crop_0720.png"
+      },
+      {
+        "frame": 740,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 319,
+            "y_px": 223,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium",
+            "note": "Ball cap lies adjacent to or behind ruler top; annotated ruler boundary, not ball silhouette."
+          },
+          {
+            "cm": 12,
+            "x_px": 613,
+            "y_px": 230,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 929,
+            "y_px": 233,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_05.png",
+        "grid_evidence": "upper_edge_grid_05.png",
+        "clean_evidence": "crop_0740.png"
+      },
+      {
+        "frame": 760,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 303,
+            "y_px": 217,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 595,
+            "y_px": 224,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 912,
+            "y_px": 230,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_05.png",
+        "grid_evidence": "upper_edge_grid_05.png",
+        "clean_evidence": "crop_0760.png"
+      },
+      {
+        "frame": 780,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 299,
+            "y_px": 202,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium",
+            "note": "Ball cap lies adjacent to or behind ruler top; annotated ruler boundary, not ball silhouette."
+          },
+          {
+            "cm": 12,
+            "x_px": 588,
+            "y_px": 212,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 906,
+            "y_px": 223,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_05.png",
+        "grid_evidence": "upper_edge_grid_05.png",
+        "clean_evidence": "crop_0780.png"
+      },
+      {
+        "frame": 800,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 307,
+            "y_px": 203,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 597,
+            "y_px": 212,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 914,
+            "y_px": 223,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_05.png",
+        "grid_evidence": "upper_edge_grid_05.png",
+        "clean_evidence": "crop_0800.png"
+      },
+      {
+        "frame": 820,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 314,
+            "y_px": 212,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 606,
+            "y_px": 220,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 923,
+            "y_px": 228,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_05.png",
+        "grid_evidence": "upper_edge_grid_05.png",
+        "clean_evidence": "crop_0820.png"
+      },
+      {
+        "frame": 840,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 320,
+            "y_px": 223,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 614,
+            "y_px": 229,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 929,
+            "y_px": 234,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_05.png",
+        "grid_evidence": "upper_edge_grid_05.png",
+        "clean_evidence": "crop_0840.png"
+      },
+      {
+        "frame": 860,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 304,
+            "y_px": 219,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 595,
+            "y_px": 224,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 913,
+            "y_px": 231,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_05.png",
+        "grid_evidence": "upper_edge_grid_05.png",
+        "clean_evidence": "crop_0860.png"
+      },
+      {
+        "frame": 880,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 302,
+            "y_px": 208,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 591,
+            "y_px": 215,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 909,
+            "y_px": 225,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_05.png",
+        "grid_evidence": "upper_edge_grid_05.png",
+        "clean_evidence": "crop_0880.png"
+      },
+      {
+        "frame": 900,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 302,
+            "y_px": 200,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 590,
+            "y_px": 210,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 908,
+            "y_px": 221,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_06.png",
+        "grid_evidence": "upper_edge_grid_06.png",
+        "clean_evidence": "crop_0900.png"
+      },
+      {
+        "frame": 920,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 313,
+            "y_px": 209,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 603,
+            "y_px": 216,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 920,
+            "y_px": 226,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_06.png",
+        "grid_evidence": "upper_edge_grid_06.png",
+        "clean_evidence": "crop_0920.png"
+      },
+      {
+        "frame": 940,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 319,
+            "y_px": 224,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 614,
+            "y_px": 230,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 929,
+            "y_px": 234,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_06.png",
+        "grid_evidence": "upper_edge_grid_06.png",
+        "clean_evidence": "crop_0940.png"
+      },
+      {
+        "frame": 960,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 310,
+            "y_px": 222,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 600,
+            "y_px": 228,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 916,
+            "y_px": 232,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_06.png",
+        "grid_evidence": "upper_edge_grid_06.png",
+        "clean_evidence": "crop_0960.png"
+      },
+      {
+        "frame": 980,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 302,
+            "y_px": 212,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 591,
+            "y_px": 219,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 910,
+            "y_px": 227,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_06.png",
+        "grid_evidence": "upper_edge_grid_06.png",
+        "clean_evidence": "crop_0980.png"
+      },
+      {
+        "frame": 1000,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 297,
+            "y_px": 200,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 584,
+            "y_px": 210,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium",
+            "note": "Ball cap lies adjacent to or behind ruler top; annotated ruler boundary, not ball silhouette."
+          },
+          {
+            "cm": 17,
+            "x_px": 903,
+            "y_px": 222,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_06.png",
+        "grid_evidence": "upper_edge_grid_06.png",
+        "clean_evidence": "crop_1000.png"
+      },
+      {
+        "frame": 1020,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 313,
+            "y_px": 207,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 604,
+            "y_px": 215,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 17,
+            "x_px": 921,
+            "y_px": 225,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_06.png",
+        "grid_evidence": "upper_edge_grid_06.png",
+        "clean_evidence": "crop_1020.png"
+      },
+      {
+        "frame": 1040,
+        "points": [
+          {
+            "cm": 7,
+            "x_px": 319,
+            "y_px": 223,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          },
+          {
+            "cm": 12,
+            "x_px": 613,
+            "y_px": 230,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium",
+            "note": "Ball cap lies adjacent to or behind ruler top; annotated ruler boundary, not ball silhouette."
+          },
+          {
+            "cm": 17,
+            "x_px": 930,
+            "y_px": 236,
+            "status": "visible",
+            "tolerance_px": 3,
+            "confidence": "medium_high",
+            "note": "Visible ruler upper boundary at centimeter tick; slight blur makes y approximate."
+          }
+        ],
+        "labeler": "assistant_visual_review",
+        "evidence": "upper_edge_annotated_06.png",
+        "grid_evidence": "upper_edge_grid_06.png",
+        "clean_evidence": "crop_1040.png"
+      }
+    ]
+  },
+  "priority_reference_audit": {
+    "labeler": "assistant_visual_review",
+    "frame0_confirmation": {
+      "method": "Reinspected clean frame-0 crop and enlarged long centimeter ticks; original visual readings retained. Compared draft only after original annotations existed.",
+      "tolerance_px": 3,
+      "anchors": [
+        {
+          "cm": 5,
+          "confirmed_x_px": 229,
+          "draft_x_px": 235,
+          "draft_minus_confirmed_px": 6
+        },
+        {
+          "cm": 7,
+          "confirmed_x_px": 319,
+          "draft_x_px": 325,
+          "draft_minus_confirmed_px": 6
+        },
+        {
+          "cm": 12,
+          "confirmed_x_px": 614,
+          "draft_x_px": 615,
+          "draft_minus_confirmed_px": 1
+        },
+        {
+          "cm": 17,
+          "confirmed_x_px": 929,
+          "draft_x_px": 930,
+          "draft_minus_confirmed_px": 1
+        },
+        {
+          "cm": 19,
+          "confirmed_x_px": 1038,
+          "draft_x_px": 1045,
+          "draft_minus_confirmed_px": 7
+        }
+      ],
+      "recommendation": "For temporary ROI config, use frame-0 tick x values 229,319,614,929,1038. Draft 12cm/17cm agree within 3px; draft 5cm/7cm/19cm lie 6,6,7px to the right of confirmed long ticks.",
+      "evidence": "frame0_anchor_draft_comparison.png"
+    },
+    "ruler12_y_comparison": [
+      {
+        "frame": 0,
+        "manual_x_px": 614,
+        "manual_y_px": 230,
+        "user_supplied_approx_detected_y_px": 229,
+        "manual_minus_detected_px": 1,
+        "within_manual_tolerance": true,
+        "tolerance_px": 3
+      },
+      {
+        "frame": 500,
+        "manual_x_px": 602,
+        "manual_y_px": 216,
+        "user_supplied_approx_detected_y_px": 217,
+        "manual_minus_detected_px": -1,
+        "within_manual_tolerance": true,
+        "tolerance_px": 3
+      },
+      {
+        "frame": 1000,
+        "manual_x_px": 584,
+        "manual_y_px": 210,
+        "user_supplied_approx_detected_y_px": 211,
+        "manual_minus_detected_px": -1,
+        "within_manual_tolerance": true,
+        "tolerance_px": 3
+      }
+    ],
+    "y_evidence": "ruler12_y_priority_audit.png",
+    "limitations": "Visible ruler upper boundary only. Separate-agent visual audit; not human GT. Calibration not valid. Detection numbers supplied by user for comparison only; no detector outputs read or used to revise manual labels. All prior ball and ruler annotations unchanged."
+  }
+}

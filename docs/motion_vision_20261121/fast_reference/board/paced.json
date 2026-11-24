@@ -1,0 +1,22 @@
+{
+  "paced_digits_r1": {
+    "captured": 895,
+    "processed": 372,
+    "valid": 169,
+    "coverage": 0.4543010752688172,
+    "processed_hz": 12.396319610391433,
+    "valid_hz": 5.631661328376754,
+    "output_gap_ms": 1999.1559370009782,
+    "latency_p95_ms": 144.3582
+  },
+  "paced_digits_fast": {
+    "captured": 895,
+    "processed": 684,
+    "valid": 367,
+    "coverage": 0.5365497076023392,
+    "processed_hz": 22.793190898910254,
+    "valid_hz": 12.229679912134596,
+    "output_gap_ms": 1704.193228000804,
+    "latency_p95_ms": 98.76345
+  }
+}

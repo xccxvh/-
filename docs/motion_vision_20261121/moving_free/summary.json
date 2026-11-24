@@ -1,0 +1,138 @@
+{
+  "nano": {
+    "frames": 895,
+    "span_s": 30.00872748799975,
+    "processed": 366,
+    "pixels": 159,
+    "coverage_processed": 0.4344262295081967,
+    "processed_hz": 12.196451853760227,
+    "pixel_hz": 5.298458592207312,
+    "longest_capture_gap_ms": 2182.9334369995195,
+    "counts": {
+      "acquiring": 65,
+      "no_circle": 106,
+      "skipped": 529,
+      "pixel": 159,
+      "reference_rotation_recheck_weak_or_ambiguous_patch": 33,
+      "identity_rejected": 3
+    },
+    "stage_mean_p95_ms": {
+      "decode_ms": [
+        17.08310382513661,
+        18.2005
+      ],
+      "reference_and_edge_ms": [
+        67.9291775956284,
+        84.622
+      ],
+      "detector_ms": [
+        13.368368852459017,
+        20.1975
+      ],
+      "tracker_ms": [
+        0.13489344262295083,
+        0.183
+      ],
+      "coordinates_ms": [
+        0.3388743169398907,
+        0.46975
+      ],
+      "total_ms": [
+        98.85445355191257,
+        118.559
+      ],
+      "read_to_output_ms": [
+        116.12655464480875,
+        145.18075
+      ]
+    },
+    "output_interval_p95_ms": 1021.7463071001032,
+    "max_output_interval_ms": 2186.482602999604
+  },
+  "before": {
+    "frames": 895,
+    "span_s": 30.00872748799975,
+    "processed": 895,
+    "pixels": 0,
+    "coverage_processed": 0.0,
+    "processed_hz": 29.824656855506564,
+    "pixel_hz": 0.0,
+    "longest_capture_gap_ms": 30008.72748799975,
+    "counts": {
+      "reference_rotation_recheck_clipped": 204,
+      "reference_rotation_recheck_weak_or_ambiguous_patch": 415,
+      "reference_rotation_proposal_untrusted": 274,
+      "acquiring": 2
+    },
+    "stage_mean_p95_ms": {
+      "decode_ms": [
+        9.549878212290503,
+        12.826099999999997
+      ],
+      "reference_and_edge_ms": [
+        2.0990893854748602,
+        2.957699999999999
+      ],
+      "detector_ms": [
+        0.012878212290502794,
+        0.008
+      ],
+      "tracker_ms": [
+        0.018412290502793294,
+        0.025
+      ],
+      "coordinates_ms": [
+        0.015705027932960896,
+        0.022
+      ],
+      "total_ms": [
+        11.695948603351955,
+        16.028999999999996
+      ]
+    }
+  },
+  "after": {
+    "frames": 895,
+    "span_s": 30.00872748799975,
+    "processed": 895,
+    "pixels": 13,
+    "coverage_processed": 0.01452513966480447,
+    "processed_hz": 29.824656855506564,
+    "pixel_hz": 0.43320730628110093,
+    "longest_capture_gap_ms": 27448.19650000045,
+    "counts": {
+      "acquiring": 79,
+      "reference_rotation_recheck_weak_or_ambiguous_patch": 538,
+      "reference_rotation_proposal_untrusted": 200,
+      "no_circle": 64,
+      "identity_rejected": 1,
+      "pixel": 13
+    },
+    "stage_mean_p95_ms": {
+      "decode_ms": [
+        9.693793296089385,
+        13.613299999999995
+      ],
+      "reference_and_edge_ms": [
+        7.798794413407822,
+        13.1632
+      ],
+      "detector_ms": [
+        0.5166446927374302,
+        3.0850999999999997
+      ],
+      "tracker_ms": [
+        0.02371173184357542,
+        0.04989999999999986
+      ],
+      "coordinates_ms": [
+        0.029034636871508385,
+        0.092
+      ],
+      "total_ms": [
+        18.061997765363127,
+        27.144899999999993
+      ]
+    }
+  }
+}

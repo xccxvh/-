@@ -1,0 +1,19 @@
+{
+  "frames": 149,
+  "pixel_valid": 145,
+  "reference_valid": 149,
+  "cm_valid": 0,
+  "diagnostic_unvalidated_cm_mean": -2.039216813456615,
+  "diagnostic_unvalidated_cm_max_abs_error_against_operator_minus2": 0.04593519564584714,
+  "diagnostic_cm_std": 0.0029819200537215484,
+  "rail_s_std_px": 0.1717347779020978,
+  "reference_rotation_deg_minmax": [
+    0.0,
+    0.0
+  ],
+  "rail_angle_deg_minmax": [
+    2.271699296901994,
+    2.271699296901994
+  ],
+  "note": "Uses failed-validation model only for offline diagnostic arithmetic; cm_valid remains false. Reported physical angle magnitude ~3.7deg; not equivalent to image angle. Ball location differs from previous +3cm; not same-point tilt validation."
+}

@@ -1,0 +1,31 @@
+几何工具使用说明（默认原图，尚未完成实物厘米标定）
+
+1. 无棋盘格：camera_geometry.mode=raw、undistort_enabled=false。A4蓝板不提供可信K/D。
+   当前机位配置：config_geometry_refocused_20261116.json。
+   camera_id/focus_id是人工记录标识；程序无法自动察觉手动调焦或相机被碰。
+   相机、焦距、参考图或分辨率改变后需更新标识、参考并重新验证标定。
+
+2. 有棋盘格以后（必须填写真实内角点与格长，以下为参数格式）：
+   python3 calibrate_camera.py --images 实拍图目录 --cols 内角点列数 --rows 内角点行数 --square-mm 实测毫米 --camera-id 当前相机标识 --focus-id 当前对焦标识 --output 新内参.json
+   至少12张不同姿态图。重投影合格不代表滚球厘米精度合格。
+   points模式保持原图检测，只矫正对应点并重估相似变换。
+   image模式使用预计算映射整帧矫正，要求重建同空间参考图、上缘和ROI；不能改名冒充已矫正。
+
+3. 已知位置采样：人工固定钢珠，录制全画面原始视频；用main逐帧离线回放产生对应CSV和binding。
+   不用异步标注录像的帧号代替原视频帧号；标注视频可能降采样或丢帧。
+   python3 main.py --config config_geometry_refocused_20261116.json --video 原始.avi --fps 实际采集帧率 --csv --label 位置标签
+   python3 calibrate_rail.py collect --video 原始.avi --csv 对应.csv --known-position --cm 真实相对厘米 --start-frame 起始帧 --end-frame 终止帧 --output 新采样.json
+   区间两端包含；完整区间必须已知静止，不能选滚动后的未知位置。
+   同名.binding.json自动读取。拟合-5/0/+5；独立检查-3/+3；不能使用ROI锚点当标定。
+   python3 calibrate_rail.py fit --binding-file 对应.binding.json --sessions 负5.json 零.json 正5.json --output 未验证模型.json
+   python3 calibrate_rail.py verify --binding-file 对应.binding.json --model 未验证模型.json --sessions 负3.json 正3.json --output 验证模型.json
+   验证通过后才在rail_coordinates.calibration_file指定新模型。仅拟合不会cm_valid。
+   模型不外推；只有±5训练时，缓冲区仍可输出像素，但不能输出范围外厘米。
+
+4. 倾角验证：球固定同刻度，0/约+2/约-2/回0分别录制。用户仅能大致量角时必须注明估测，不冒充精确±2°。
+   rail_angle_deg和reference_rotation_deg是图像角度，不能标记为机械倾角。
+   像素、参考、模型、厘米有效性独立记录；UART保持禁用。
+
+5. 性能：benchmark_live.py --mode A/B/C --duration 30 --config 配置 --output 新目录。
+   A无显示无录像；B显示；C标注录像。必须独占Nano性能测试，不能并发另一个计算任务。
+   timestamp_verified=false；延迟从采集线程read返回算起，不包含曝光和USB此前传输。

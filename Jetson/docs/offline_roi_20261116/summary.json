@@ -1,0 +1,78 @@
+{
+  "frames": 1043,
+  "media_fps": 29.8,
+  "source_sha256": "1b0f4f9df73245b73dae25248f426fb20049a7427545abaa28a314bdf817d2bb",
+  "labels_scope": "separate_agent_visual_audit_not_human_independent_ground_truth",
+  "unlabeled_frames": 990,
+  "labeled_frames": 53,
+  "encoded_frames": 1043,
+  "versions": {
+    "Baseline": {
+      "reported_valid_frames": 0,
+      "rail_valid_frames": 1043,
+      "sample_counts": {
+        "core_miss": 33,
+        "outside_outside_rejected": 15,
+        "buffer_miss": 5
+      },
+      "sample_correct_error_mean_px": null,
+      "sample_correct_error_max_px": null,
+      "algo_mean_ms_desktop": 4.0156752895491294,
+      "longest_invalid_run_all_frames_not_core_only": 1043
+    },
+    "V1": {
+      "reported_valid_frames": 0,
+      "rail_valid_frames": 1043,
+      "sample_counts": {
+        "core_miss": 33,
+        "outside_outside_rejected": 15,
+        "buffer_miss": 5
+      },
+      "sample_correct_error_mean_px": null,
+      "sample_correct_error_max_px": null,
+      "algo_mean_ms_desktop": 4.175011796740735,
+      "longest_invalid_run_all_frames_not_core_only": 1043
+    },
+    "V2": {
+      "reported_valid_frames": 0,
+      "rail_valid_frames": 1043,
+      "sample_counts": {
+        "core_miss": 33,
+        "outside_outside_rejected": 15,
+        "buffer_miss": 5
+      },
+      "sample_correct_error_mean_px": null,
+      "sample_correct_error_max_px": null,
+      "algo_mean_ms_desktop": 4.18881496452366,
+      "longest_invalid_run_all_frames_not_core_only": 1043
+    },
+    "V3": {
+      "reported_valid_frames": 627,
+      "rail_valid_frames": 1043,
+      "sample_counts": {
+        "core_miss": 1,
+        "outside_outside_rejected": 15,
+        "core_correct": 32,
+        "buffer_miss": 5
+      },
+      "sample_correct_error_mean_px": 1.3191364497252458,
+      "sample_correct_error_max_px": 3.160551799057714,
+      "algo_mean_ms_desktop": 5.1886484602030425,
+      "longest_invalid_run_all_frames_not_core_only": 43
+    },
+    "V4": {
+      "reported_valid_frames": 627,
+      "rail_valid_frames": 1043,
+      "sample_counts": {
+        "core_miss": 1,
+        "outside_outside_rejected": 15,
+        "core_correct": 32,
+        "buffer_miss": 5
+      },
+      "sample_correct_error_mean_px": 1.3191364497252458,
+      "sample_correct_error_max_px": 3.160551799057714,
+      "algo_mean_ms_desktop": 4.870010102597655,
+      "longest_invalid_run_all_frames_not_core_only": 43
+    }
+  }
+}

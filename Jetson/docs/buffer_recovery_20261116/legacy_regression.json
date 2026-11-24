@@ -1,0 +1,376 @@
+{
+  "status": "pass",
+  "scope": "Supplemental different-pose legacy branch preservation regression ONLY.",
+  "limitations": [
+    "NOT a substitute for the missing original four static videos (205/189 frames).",
+    "NOT certification of relative-cap, centimeter accuracy, or hardware performance.",
+    "Validity counts describe algorithm outputs, not ground-truth correctness."
+  ],
+  "method": {
+    "decode": "Sequential read from 0 through 148, then verify EOF; no seeking.",
+    "isolation": "Old/new in separate sequential subprocesses; original config for both.",
+    "candidates": "Exact ordered comparison of all candidate attributes including nested extra.",
+    "tracker": "Exact comparison of every output field except additive reason.",
+    "input_check": "Raw SHA256 before/after and per-decoded-frame SHA256 equality.",
+    "rail": "force=True each frame, matching original collect_window.",
+    "time": "index/max(fps,1), sidecar actual_fps > 1 overrides container FPS."
+  },
+  "old_source": "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson",
+  "new_source": "/home/user/h_contest_vision_repository/Jetson",
+  "config_path": "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/config_fusion_v2.json",
+  "config_sha256": "e8c1a7bb405b91a832fba42d8d2b66445db0a112aa07a1745e072ea133a8646f",
+  "original_config": {
+    "camera": {
+      "device": "/dev/video0",
+      "width": 1280,
+      "height": 720,
+      "fps": 30,
+      "fourcc": "MJPG",
+      "buffer_size": 8
+    },
+    "rail": {
+      "y_band": [
+        0.25,
+        0.39
+      ],
+      "x_margin": 0.12,
+      "grad_threshold": 45,
+      "slope_limit": 0.35,
+      "ransac_iters": 300,
+      "ransac_tol": 3.0,
+      "refresh_frames": 3,
+      "min_inlier_ratio": 0.25,
+      "expected_y_ratio": 0.32,
+      "max_dev_ratio": 0.06,
+      "track_window_ratio": 0.05
+    },
+    "ball": {
+      "use_color": true,
+      "use_geometry": true,
+      "blue_minus_red": 30,
+      "blue_min": 140,
+      "envelope_threshold": 100,
+      "band_above_ratio": 0.05,
+      "band_below_ratio": 0.012,
+      "dev_threshold_ratio": 0.008,
+      "min_width_ratio": 0.018,
+      "max_width_ratio": 0.075,
+      "min_height_ratio": 0.004,
+      "max_height_ratio": 0.035,
+      "min_aspect": 1.3,
+      "max_aspect": 8.0,
+      "min_area_ratio": 0.00015,
+      "typical_width_ratio": 0.038,
+      "typical_height_ratio": 0.018,
+      "color_only_scale": 0.5,
+      "x_margin": 0.12
+    },
+    "tracking": {
+      "max_jump_ratio": 0.12,
+      "uncertain_frames": 4,
+      "lost_frames": 15,
+      "velocity_alpha": 0.5,
+      "confidence_threshold": 0.55,
+      "acquire_frames": 5
+    },
+    "calibration": {
+      "file": "calibration_fusion_v2.json"
+    },
+    "output": {
+      "recordings_dir": "recordings",
+      "logs_dir": "logs"
+    }
+  },
+  "calibration_sha256_before": {
+    "old": "5241e1b5a607ef072f62d0bd23e079f1efbb8776d788e8c2a3938ec34e5a59f1",
+    "new": "5241e1b5a607ef072f62d0bd23e079f1efbb8776d788e8c2a3938ec34e5a59f1"
+  },
+  "calibration_sha256_after": {
+    "old": "5241e1b5a607ef072f62d0bd23e079f1efbb8776d788e8c2a3938ec34e5a59f1",
+    "new": "5241e1b5a607ef072f62d0bd23e079f1efbb8776d788e8c2a3938ec34e5a59f1"
+  },
+  "calibration_matches_history": true,
+  "sources_unchanged": true,
+  "source_hashes_before": {
+    "old": {
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/analyze_track.py": "53baf8766071c2407b0037cd12d148af104c310fdbbf2c7567d8f9016cfc8789",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/ball_detector.py": "b489e6043cd1bb9f5aece2403cae6b264b4ae0b888d857d0cc9e5681be0d5e2a",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/ball_tracker.py": "e0e1ae2e840692478fd73e8ee8f0d0c4fe7beabf05c2ca9efd8ec5303ce54309",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/calibrate.py": "0e288f6ffe8cd59737170442a35077b856b857edf5fc9b09235a1944f4b86d57",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/calibration.py": "6c1563dc7214aea3e58bac16c70536a37273d4a7164183031b5f6734ddfa5ff8",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/calibration_fusion_v2.json": "5241e1b5a607ef072f62d0bd23e079f1efbb8776d788e8c2a3938ec34e5a59f1",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/camera.py": "eeeb25c9db3bd32b6a1264a413e039bbcd88a0b3ecead26d611787eb255b6079",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/capture_raw.py": "967431fb9d93199b1c74d6ea9d3f83b1e0ce2f58ba6bd2af6ee9f3d8b6c25a9c",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/config_fusion_v2.json": "e8c1a7bb405b91a832fba42d8d2b66445db0a112aa07a1745e072ea133a8646f",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/evaluate_buffer_recovery.py": "2b6a3a254bd0753dd15ae862657fe991862684141fbd426cae4b91ee9f03ff6f",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/evaluate_local_roi.py": "0f2c0d87c3929c27d2198f515be125178e53102564ff1e418fb0fa868190c3d7",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/evaluate_ruler_reference.py": "d96671a61f4deb75232b2d986488abe226d1792987abaf93d57b7cfff925e0f4",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/local_vision.py": "6cd7b80d99de815c24bdaa5d435b9b0aec13f8df104fab85aa5818ace6444f31",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/main.py": "f03eb6cf81ae42cabd64c2f88ce3ad44d42e5033c80dc4bc8f3e60d376f18860",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/measurement_contract.py": "9fb981b017371115e09344b80cb658aa6bf7340ddb72942427f03d5732f5dc81",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/position_feedback.py": "ed32d6d7e273685c9c1f976b00800c089a281b8b28dac8a439212e69af687c2d",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/rail_detector.py": "6192f89e384db421b9b1edd800c43f63b075f902f54422e639015a663b63d792",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/recording_schedule.py": "6d37b62cb206ac5d7ccc2c1cce5fc28000be1bfefba65acfcf092e359a52f1a6",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/reference_preview.py": "62b19f6e228f4ecae5382e0f4e1a77a6add1cd77189ba847536e1f7a8d122d72",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/ruler_reference.py": "2b5083d6de8130a0b21c06386ce420aa732019c2fda34bc6999e2125904b1aad",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/video_writer.py": "76dae5dc6ed740e732c60cf23fd971ccf4058283b20a7d9df455ec61b9c8455a",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/visualization.py": "8bcd9a6b3d121c71482a6377d51cfbe5da64e635bda00f7a2730d4675528fd92"
+    },
+    "new": {
+      "/home/user/h_contest_vision_repository/Jetson/analyze_track.py": "53baf8766071c2407b0037cd12d148af104c310fdbbf2c7567d8f9016cfc8789",
+      "/home/user/h_contest_vision_repository/Jetson/ball_detector.py": "18ba47aec24a60166ea309acf7626a7641f2c38068e1771e80a6007b506499f0",
+      "/home/user/h_contest_vision_repository/Jetson/ball_tracker.py": "e0e1ae2e840692478fd73e8ee8f0d0c4fe7beabf05c2ca9efd8ec5303ce54309",
+      "/home/user/h_contest_vision_repository/Jetson/benchmark_live.py": "da322b69039d1e3d597ab80ea75330c8ecc01c1f83662f07e6ebca9da14cd22c",
+      "/home/user/h_contest_vision_repository/Jetson/calibrate.py": "0e288f6ffe8cd59737170442a35077b856b857edf5fc9b09235a1944f4b86d57",
+      "/home/user/h_contest_vision_repository/Jetson/calibration.py": "6c1563dc7214aea3e58bac16c70536a37273d4a7164183031b5f6734ddfa5ff8",
+      "/home/user/h_contest_vision_repository/Jetson/calibration_fusion_v2.json": "5241e1b5a607ef072f62d0bd23e079f1efbb8776d788e8c2a3938ec34e5a59f1",
+      "/home/user/h_contest_vision_repository/Jetson/camera.py": "eeeb25c9db3bd32b6a1264a413e039bbcd88a0b3ecead26d611787eb255b6079",
+      "/home/user/h_contest_vision_repository/Jetson/capture_raw.py": "967431fb9d93199b1c74d6ea9d3f83b1e0ce2f58ba6bd2af6ee9f3d8b6c25a9c",
+      "/home/user/h_contest_vision_repository/Jetson/config_fusion_v2.json": "e8c1a7bb405b91a832fba42d8d2b66445db0a112aa07a1745e072ea133a8646f",
+      "/home/user/h_contest_vision_repository/Jetson/evaluate_buffer_recovery.py": "2b6a3a254bd0753dd15ae862657fe991862684141fbd426cae4b91ee9f03ff6f",
+      "/home/user/h_contest_vision_repository/Jetson/evaluate_local_roi.py": "0f2c0d87c3929c27d2198f515be125178e53102564ff1e418fb0fa868190c3d7",
+      "/home/user/h_contest_vision_repository/Jetson/evaluate_ruler_reference.py": "d96671a61f4deb75232b2d986488abe226d1792987abaf93d57b7cfff925e0f4",
+      "/home/user/h_contest_vision_repository/Jetson/local_vision.py": "c968fc180802a7f2d9e84d25b8c95ada220bbee04b87feea8d71ee62392232f6",
+      "/home/user/h_contest_vision_repository/Jetson/main.py": "1e51594d49620ec67f8d4c295f246a50ed1fc8c3a9176f8d9513a5326320ece5",
+      "/home/user/h_contest_vision_repository/Jetson/measurement_contract.py": "9fb981b017371115e09344b80cb658aa6bf7340ddb72942427f03d5732f5dc81",
+      "/home/user/h_contest_vision_repository/Jetson/position_feedback.py": "ed32d6d7e273685c9c1f976b00800c089a281b8b28dac8a439212e69af687c2d",
+      "/home/user/h_contest_vision_repository/Jetson/rail_detector.py": "b74ccf0eab9d4d4059874006327ef967294e00e127b557758b89ead119880f14",
+      "/home/user/h_contest_vision_repository/Jetson/recording_schedule.py": "6d37b62cb206ac5d7ccc2c1cce5fc28000be1bfefba65acfcf092e359a52f1a6",
+      "/home/user/h_contest_vision_repository/Jetson/reference_preview.py": "62b19f6e228f4ecae5382e0f4e1a77a6add1cd77189ba847536e1f7a8d122d72",
+      "/home/user/h_contest_vision_repository/Jetson/ruler_reference.py": "2b5083d6de8130a0b21c06386ce420aa732019c2fda34bc6999e2125904b1aad",
+      "/home/user/h_contest_vision_repository/Jetson/video_writer.py": "76dae5dc6ed740e732c60cf23fd971ccf4058283b20a7d9df455ec61b9c8455a",
+      "/home/user/h_contest_vision_repository/Jetson/visualization.py": "8bcd9a6b3d121c71482a6377d51cfbe5da64e635bda00f7a2730d4675528fd92"
+    }
+  },
+  "source_hashes_after": {
+    "old": {
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/analyze_track.py": "53baf8766071c2407b0037cd12d148af104c310fdbbf2c7567d8f9016cfc8789",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/ball_detector.py": "b489e6043cd1bb9f5aece2403cae6b264b4ae0b888d857d0cc9e5681be0d5e2a",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/ball_tracker.py": "e0e1ae2e840692478fd73e8ee8f0d0c4fe7beabf05c2ca9efd8ec5303ce54309",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/calibrate.py": "0e288f6ffe8cd59737170442a35077b856b857edf5fc9b09235a1944f4b86d57",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/calibration.py": "6c1563dc7214aea3e58bac16c70536a37273d4a7164183031b5f6734ddfa5ff8",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/calibration_fusion_v2.json": "5241e1b5a607ef072f62d0bd23e079f1efbb8776d788e8c2a3938ec34e5a59f1",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/camera.py": "eeeb25c9db3bd32b6a1264a413e039bbcd88a0b3ecead26d611787eb255b6079",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/capture_raw.py": "967431fb9d93199b1c74d6ea9d3f83b1e0ce2f58ba6bd2af6ee9f3d8b6c25a9c",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/config_fusion_v2.json": "e8c1a7bb405b91a832fba42d8d2b66445db0a112aa07a1745e072ea133a8646f",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/evaluate_buffer_recovery.py": "2b6a3a254bd0753dd15ae862657fe991862684141fbd426cae4b91ee9f03ff6f",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/evaluate_local_roi.py": "0f2c0d87c3929c27d2198f515be125178e53102564ff1e418fb0fa868190c3d7",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/evaluate_ruler_reference.py": "d96671a61f4deb75232b2d986488abe226d1792987abaf93d57b7cfff925e0f4",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/local_vision.py": "6cd7b80d99de815c24bdaa5d435b9b0aec13f8df104fab85aa5818ace6444f31",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/main.py": "f03eb6cf81ae42cabd64c2f88ce3ad44d42e5033c80dc4bc8f3e60d376f18860",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/measurement_contract.py": "9fb981b017371115e09344b80cb658aa6bf7340ddb72942427f03d5732f5dc81",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/position_feedback.py": "ed32d6d7e273685c9c1f976b00800c089a281b8b28dac8a439212e69af687c2d",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/rail_detector.py": "6192f89e384db421b9b1edd800c43f63b075f902f54422e639015a663b63d792",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/recording_schedule.py": "6d37b62cb206ac5d7ccc2c1cce5fc28000be1bfefba65acfcf092e359a52f1a6",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/reference_preview.py": "62b19f6e228f4ecae5382e0f4e1a77a6add1cd77189ba847536e1f7a8d122d72",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/ruler_reference.py": "2b5083d6de8130a0b21c06386ce420aa732019c2fda34bc6999e2125904b1aad",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/video_writer.py": "76dae5dc6ed740e732c60cf23fd971ccf4058283b20a7d9df455ec61b9c8455a",
+      "/home/user/桌面/jetson_nano/3/baseline_cb05552/Jetson/visualization.py": "8bcd9a6b3d121c71482a6377d51cfbe5da64e635bda00f7a2730d4675528fd92"
+    },
+    "new": {
+      "/home/user/h_contest_vision_repository/Jetson/analyze_track.py": "53baf8766071c2407b0037cd12d148af104c310fdbbf2c7567d8f9016cfc8789",
+      "/home/user/h_contest_vision_repository/Jetson/ball_detector.py": "18ba47aec24a60166ea309acf7626a7641f2c38068e1771e80a6007b506499f0",
+      "/home/user/h_contest_vision_repository/Jetson/ball_tracker.py": "e0e1ae2e840692478fd73e8ee8f0d0c4fe7beabf05c2ca9efd8ec5303ce54309",
+      "/home/user/h_contest_vision_repository/Jetson/benchmark_live.py": "da322b69039d1e3d597ab80ea75330c8ecc01c1f83662f07e6ebca9da14cd22c",
+      "/home/user/h_contest_vision_repository/Jetson/calibrate.py": "0e288f6ffe8cd59737170442a35077b856b857edf5fc9b09235a1944f4b86d57",
+      "/home/user/h_contest_vision_repository/Jetson/calibration.py": "6c1563dc7214aea3e58bac16c70536a37273d4a7164183031b5f6734ddfa5ff8",
+      "/home/user/h_contest_vision_repository/Jetson/calibration_fusion_v2.json": "5241e1b5a607ef072f62d0bd23e079f1efbb8776d788e8c2a3938ec34e5a59f1",
+      "/home/user/h_contest_vision_repository/Jetson/camera.py": "eeeb25c9db3bd32b6a1264a413e039bbcd88a0b3ecead26d611787eb255b6079",
+      "/home/user/h_contest_vision_repository/Jetson/capture_raw.py": "967431fb9d93199b1c74d6ea9d3f83b1e0ce2f58ba6bd2af6ee9f3d8b6c25a9c",
+      "/home/user/h_contest_vision_repository/Jetson/config_fusion_v2.json": "e8c1a7bb405b91a832fba42d8d2b66445db0a112aa07a1745e072ea133a8646f",
+      "/home/user/h_contest_vision_repository/Jetson/evaluate_buffer_recovery.py": "2b6a3a254bd0753dd15ae862657fe991862684141fbd426cae4b91ee9f03ff6f",
+      "/home/user/h_contest_vision_repository/Jetson/evaluate_local_roi.py": "0f2c0d87c3929c27d2198f515be125178e53102564ff1e418fb0fa868190c3d7",
+      "/home/user/h_contest_vision_repository/Jetson/evaluate_ruler_reference.py": "d96671a61f4deb75232b2d986488abe226d1792987abaf93d57b7cfff925e0f4",
+      "/home/user/h_contest_vision_repository/Jetson/local_vision.py": "c968fc180802a7f2d9e84d25b8c95ada220bbee04b87feea8d71ee62392232f6",
+      "/home/user/h_contest_vision_repository/Jetson/main.py": "1e51594d49620ec67f8d4c295f246a50ed1fc8c3a9176f8d9513a5326320ece5",
+      "/home/user/h_contest_vision_repository/Jetson/measurement_contract.py": "9fb981b017371115e09344b80cb658aa6bf7340ddb72942427f03d5732f5dc81",
+      "/home/user/h_contest_vision_repository/Jetson/position_feedback.py": "ed32d6d7e273685c9c1f976b00800c089a281b8b28dac8a439212e69af687c2d",
+      "/home/user/h_contest_vision_repository/Jetson/rail_detector.py": "b74ccf0eab9d4d4059874006327ef967294e00e127b557758b89ead119880f14",
+      "/home/user/h_contest_vision_repository/Jetson/recording_schedule.py": "6d37b62cb206ac5d7ccc2c1cce5fc28000be1bfefba65acfcf092e359a52f1a6",
+      "/home/user/h_contest_vision_repository/Jetson/reference_preview.py": "62b19f6e228f4ecae5382e0f4e1a77a6add1cd77189ba847536e1f7a8d122d72",
+      "/home/user/h_contest_vision_repository/Jetson/ruler_reference.py": "2b5083d6de8130a0b21c06386ce420aa732019c2fda34bc6999e2125904b1aad",
+      "/home/user/h_contest_vision_repository/Jetson/video_writer.py": "76dae5dc6ed740e732c60cf23fd971ccf4058283b20a7d9df455ec61b9c8455a",
+      "/home/user/h_contest_vision_repository/Jetson/visualization.py": "8bcd9a6b3d121c71482a6377d51cfbe5da64e635bda00f7a2730d4675528fd92"
+    }
+  },
+  "expected_total_frames": 894,
+  "compared_frames": 894,
+  "mismatch_count": 0,
+  "cases": [
+    {
+      "name": "minus5_static_20261113",
+      "expected_frames": 149,
+      "inclusive_window": [
+        0,
+        148
+      ],
+      "video": "/home/user/ball_vision_src/test_results/minus5_static_20261113/raw_minus5_static_reference_20260324_162712_1280x720.avi",
+      "video_sha256_before": "9445062452033f40474a79720d4a0eaebc5193423782d9b807f0b68ee3433659",
+      "sidecar_sha256_before": "ed143d7ad79dbac60d9e6488b1bd4cea729234242f7b6860eacd3db09db1a037",
+      "mismatches": [],
+      "summary": {
+        "old": {
+          "frames": 149,
+          "valid_frames": 145,
+          "frames_with_candidates": 149,
+          "total_candidates": 149
+        },
+        "new": {
+          "frames": 149,
+          "valid_frames": 145,
+          "frames_with_candidates": 149,
+          "total_candidates": 149
+        }
+      },
+      "status": "pass",
+      "video_sha256_after": "9445062452033f40474a79720d4a0eaebc5193423782d9b807f0b68ee3433659",
+      "sidecar_sha256_after": "ed143d7ad79dbac60d9e6488b1bd4cea729234242f7b6860eacd3db09db1a037"
+    },
+    {
+      "name": "zero_static_20261113",
+      "expected_frames": 149,
+      "inclusive_window": [
+        0,
+        148
+      ],
+      "video": "/home/user/ball_vision_src/test_results/zero_static_20261113/raw_zero_static_reference_20260324_162525_1280x720.avi",
+      "video_sha256_before": "9d42cb4a17379a0778eae9a060f68b2467e5dea91278854dfa578143cac5e66e",
+      "sidecar_sha256_before": "7122d472d4ba7c6b3cfb171856c28f5450119104155e4e63f77e26dc700a6308",
+      "mismatches": [],
+      "summary": {
+        "old": {
+          "frames": 149,
+          "valid_frames": 145,
+          "frames_with_candidates": 149,
+          "total_candidates": 149
+        },
+        "new": {
+          "frames": 149,
+          "valid_frames": 145,
+          "frames_with_candidates": 149,
+          "total_candidates": 149
+        }
+      },
+      "status": "pass",
+      "video_sha256_after": "9d42cb4a17379a0778eae9a060f68b2467e5dea91278854dfa578143cac5e66e",
+      "sidecar_sha256_after": "7122d472d4ba7c6b3cfb171856c28f5450119104155e4e63f77e26dc700a6308"
+    },
+    {
+      "name": "plus5_static_20261113",
+      "expected_frames": 149,
+      "inclusive_window": [
+        0,
+        148
+      ],
+      "video": "/home/user/ball_vision_src/test_results/plus5_static_20261113/raw_plus5_static_reference_20260324_163041_1280x720.avi",
+      "video_sha256_before": "efbf292af7edec911195fe2e400744d5359518980ca6c9d1387307dddc1be428",
+      "sidecar_sha256_before": "235e9dea1446062eef3ebd40f87696de8efdf54f80730777cbc34d1f163fbde8",
+      "mismatches": [],
+      "summary": {
+        "old": {
+          "frames": 149,
+          "valid_frames": 141,
+          "frames_with_candidates": 145,
+          "total_candidates": 145
+        },
+        "new": {
+          "frames": 149,
+          "valid_frames": 141,
+          "frames_with_candidates": 145,
+          "total_candidates": 145
+        }
+      },
+      "status": "pass",
+      "video_sha256_after": "efbf292af7edec911195fe2e400744d5359518980ca6c9d1387307dddc1be428",
+      "sidecar_sha256_after": "235e9dea1446062eef3ebd40f87696de8efdf54f80730777cbc34d1f163fbde8"
+    },
+    {
+      "name": "plus2_independent_20261113",
+      "expected_frames": 149,
+      "inclusive_window": [
+        0,
+        148
+      ],
+      "video": "/home/user/ball_vision_src/test_results/plus2_independent_20261113/raw_plus2_independent_20260324_163745_1280x720.avi",
+      "video_sha256_before": "7be5080f1ee3ae2e448d9212daa9edffceff459ce3bdbf24831db99ea3db14b4",
+      "sidecar_sha256_before": "f49dae60523c0e7420f9abda87139c7f199678a91f8756b37ba314810c2d785e",
+      "mismatches": [],
+      "summary": {
+        "old": {
+          "frames": 149,
+          "valid_frames": 145,
+          "frames_with_candidates": 149,
+          "total_candidates": 149
+        },
+        "new": {
+          "frames": 149,
+          "valid_frames": 145,
+          "frames_with_candidates": 149,
+          "total_candidates": 149
+        }
+      },
+      "status": "pass",
+      "video_sha256_after": "7be5080f1ee3ae2e448d9212daa9edffceff459ce3bdbf24831db99ea3db14b4",
+      "sidecar_sha256_after": "f49dae60523c0e7420f9abda87139c7f199678a91f8756b37ba314810c2d785e"
+    },
+    {
+      "name": "minus2_independent_20261113",
+      "expected_frames": 149,
+      "inclusive_window": [
+        0,
+        148
+      ],
+      "video": "/home/user/ball_vision_src/test_results/minus2_independent_20261113/raw_minus2_independent_20260324_164112_1280x720.avi",
+      "video_sha256_before": "019de724fa8d28a86fa769dcf75dbed1abecb47ec749b89a0fdb1f3371bad6a2",
+      "sidecar_sha256_before": "3861b99ec40a7e25eda4043b0a2f10a32b656b75a5be532c5a878b923ab1e04e",
+      "mismatches": [],
+      "summary": {
+        "old": {
+          "frames": 149,
+          "valid_frames": 145,
+          "frames_with_candidates": 149,
+          "total_candidates": 149
+        },
+        "new": {
+          "frames": 149,
+          "valid_frames": 145,
+          "frames_with_candidates": 149,
+          "total_candidates": 149
+        }
+      },
+      "status": "pass",
+      "video_sha256_after": "019de724fa8d28a86fa769dcf75dbed1abecb47ec749b89a0fdb1f3371bad6a2",
+      "sidecar_sha256_after": "3861b99ec40a7e25eda4043b0a2f10a32b656b75a5be532c5a878b923ab1e04e"
+    },
+    {
+      "name": "zero_motion_20261113",
+      "expected_frames": 149,
+      "inclusive_window": [
+        0,
+        148
+      ],
+      "video": "/home/user/ball_vision_src/test_results/zero_motion_20261113/raw_zero_motion_diagnostic_20260324_162258_1280x720.avi",
+      "video_sha256_before": "102b2dd8b9e2f4f7af488d261d8c41279895c322764f9f34a57dc2133734877f",
+      "sidecar_sha256_before": "e2942059c3609df4ed317a4d8bde1027fc94e4676b63a3e603bd50a569c601a1",
+      "mismatches": [],
+      "summary": {
+        "old": {
+          "frames": 149,
+          "valid_frames": 145,
+          "frames_with_candidates": 149,
+          "total_candidates": 149
+        },
+        "new": {
+          "frames": 149,
+          "valid_frames": 145,
+          "frames_with_candidates": 149,
+          "total_candidates": 149
+        }
+      },
+      "status": "pass",
+      "video_sha256_after": "102b2dd8b9e2f4f7af488d261d8c41279895c322764f9f34a57dc2133734877f",
+      "sidecar_sha256_after": "e2942059c3609df4ed317a4d8bde1027fc94e4676b63a3e603bd50a569c601a1"
+    }
+  ],
+  "script_sha256": "0b6b709f7a34ad78c001b589adc6a5bc2e7ee5ad2f762e3535f9c2809c4feef6"
+}

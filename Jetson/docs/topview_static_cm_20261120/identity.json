@@ -1,0 +1,32 @@
+{
+  "fit_m5": {
+    "accepted_track_samples": 142,
+    "min_template_score": 0.9762293696403503,
+    "max_center_distance_px": 10.380321045655469,
+    "suspect_frames": []
+  },
+  "fit_zero": {
+    "accepted_track_samples": 146,
+    "min_template_score": 0.990230143070221,
+    "max_center_distance_px": 5.5448352070050655,
+    "suspect_frames": []
+  },
+  "fit_p5": {
+    "accepted_track_samples": 138,
+    "min_template_score": 0.9882568717002869,
+    "max_center_distance_px": 7.8638443526803705,
+    "suspect_frames": []
+  },
+  "verify_m3": {
+    "accepted_track_samples": 146,
+    "min_template_score": 0.9878230094909668,
+    "max_center_distance_px": 7.7840090584949415,
+    "suspect_frames": []
+  },
+  "verify_p3": {
+    "accepted_track_samples": 145,
+    "min_template_score": 0.9885609745979309,
+    "max_center_distance_px": 4.3094843329094195,
+    "suspect_frames": []
+  }
+}

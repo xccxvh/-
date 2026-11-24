@@ -1,0 +1,289 @@
+[
+  {
+    "scene": "fixed_O_observed",
+    "captured": 895,
+    "processed": 802,
+    "seconds": 30.001184570999953,
+    "skipped": 93,
+    "reference": 802,
+    "pixel": 798,
+    "cm": 0,
+    "captured_hz": 29.7988233726,
+    "processed_hz": 26.732277790632217,
+    "pixel_hz": 26.59894972185101,
+    "cm_hz": 0.0,
+    "longest_cm_output_gap_s": null,
+    "longest_raw_gap_s": 0.14456359299992982,
+    "longest_valid_output_gap_s": 0.0569036460000234,
+    "read_to_output_p95_ms": 85.90834999999998,
+    "mean_and_p95_ms": {
+      "decode_ms": [
+        17.07768578553616,
+        18.34525
+      ],
+      "reference_and_edge_ms": [
+        19.944322942643392,
+        20.55755
+      ],
+      "detector_ms": [
+        15.469667082294263,
+        17.045949999999984
+      ],
+      "tracker_ms": [
+        0.25815336658354116,
+        0.29494999999999993
+      ],
+      "coordinates_ms": [
+        1.438574812967581,
+        1.9168999999999998
+      ]
+    },
+    "raw_sha256": "428e07e82e470acdf34251ac8e8dc4a5fbaffd4616f3b6d432950880cc4b77c8"
+  },
+  {
+    "scene": "fixed_m5_final",
+    "captured": 895,
+    "processed": 691,
+    "seconds": 30.006924364000042,
+    "skipped": 204,
+    "reference": 644,
+    "pixel": 617,
+    "cm": 617,
+    "captured_hz": 29.793123385632658,
+    "processed_hz": 23.028018187329046,
+    "pixel_hz": 20.561920725878466,
+    "cm_hz": 20.561920725878466,
+    "longest_cm_output_gap_s": 1.5487305199999355,
+    "longest_raw_gap_s": 1.5792761969998992,
+    "longest_valid_output_gap_s": 1.5487305199999355,
+    "read_to_output_p95_ms": 100.70150000000001,
+    "mean_and_p95_ms": {
+      "decode_ms": [
+        17.027853835021705,
+        18.6295
+      ],
+      "reference_and_edge_ms": [
+        27.30717800289436,
+        48.9725
+      ],
+      "detector_ms": [
+        13.680772793053547,
+        25.9805
+      ],
+      "tracker_ms": [
+        0.2609305354558611,
+        0.327
+      ],
+      "coordinates_ms": [
+        1.9270593342981186,
+        2.6325000000000003
+      ]
+    },
+    "raw_sha256": "7dd443079566a50c190e16108d149c1a236c8007df4ace15bfb833566e8cfd13"
+  },
+  {
+    "scene": "moving_dual_live",
+    "captured": 895,
+    "processed": 667,
+    "seconds": 30.006656133999968,
+    "skipped": 228,
+    "reference": 667,
+    "pixel": 663,
+    "cm": 0,
+    "captured_hz": 29.79338970685993,
+    "processed_hz": 22.228401492701984,
+    "pixel_hz": 22.09509773562431,
+    "cm_hz": 0.0,
+    "longest_cm_output_gap_s": null,
+    "longest_raw_gap_s": 0.17401109299999007,
+    "longest_valid_output_gap_s": 0.059148801999981515,
+    "read_to_output_p95_ms": 97.8496,
+    "mean_and_p95_ms": {
+      "decode_ms": [
+        16.815476761619188,
+        18.005699999999997
+      ],
+      "reference_and_edge_ms": [
+        30.16342878560719,
+        34.358699999999985
+      ],
+      "detector_ms": [
+        12.900985007496253,
+        13.4194
+      ],
+      "tracker_ms": [
+        0.24210644677661172,
+        0.27769999999999995
+      ],
+      "coordinates_ms": [
+        1.4563673163418291,
+        1.9173999999999993
+      ]
+    },
+    "raw_sha256": "d58ab2fe4bc38aecdacfdebe9f253cbb56962b0fa73edee1fe6073191caf0487"
+  },
+  {
+    "scene": "moving_final",
+    "captured": 895,
+    "processed": 677,
+    "seconds": 30.008683738999935,
+    "skipped": 218,
+    "reference": 672,
+    "pixel": 425,
+    "cm": 269,
+    "captured_hz": 29.791376648691134,
+    "processed_hz": 22.560136455440603,
+    "pixel_hz": 14.162567198762563,
+    "cm_hz": 8.96407194462854,
+    "longest_cm_output_gap_s": 1.2618617179998637,
+    "longest_raw_gap_s": 1.2370437490001223,
+    "longest_valid_output_gap_s": 1.1987481770001978,
+    "read_to_output_p95_ms": 100.712,
+    "mean_and_p95_ms": {
+      "decode_ms": [
+        17.258918759231907,
+        18.7104
+      ],
+      "reference_and_edge_ms": [
+        26.90261742983752,
+        36.674199999999985
+      ],
+      "detector_ms": [
+        15.070872968980797,
+        23.111399999999996
+      ],
+      "tracker_ms": [
+        0.24452289512555392,
+        0.319
+      ],
+      "coordinates_ms": [
+        1.8497031019202361,
+        2.4984
+      ]
+    },
+    "raw_sha256": "cdbbfb527e95b31ddf5f5d911e04067ab0b64349f6acc12a4b6c2bbc03ccf273"
+  },
+  {
+    "scene": "moving_free_new",
+    "captured": 895,
+    "processed": 762,
+    "seconds": 30.005200926000043,
+    "skipped": 133,
+    "reference": 762,
+    "pixel": 481,
+    "cm": 0,
+    "captured_hz": 29.79483464232806,
+    "processed_hz": 25.395597312588343,
+    "pixel_hz": 16.03055420912729,
+    "cm_hz": 0.0,
+    "longest_cm_output_gap_s": null,
+    "longest_raw_gap_s": 1.1064486450000004,
+    "longest_valid_output_gap_s": 1.0750586459998885,
+    "read_to_output_p95_ms": 93.67725,
+    "mean_and_p95_ms": {
+      "decode_ms": [
+        16.969132545931757,
+        18.328599999999998
+      ],
+      "reference_and_edge_ms": [
+        22.689136482939638,
+        35.906549999999996
+      ],
+      "detector_ms": [
+        14.822043307086613,
+        21.497649999999993
+      ],
+      "tracker_ms": [
+        0.21419160104986876,
+        0.274
+      ],
+      "coordinates_ms": [
+        1.3578963254593175,
+        1.823299999999999
+      ]
+    },
+    "raw_sha256": "ca097ab399453cabaa67b0ebab8abcb9bc97e41bf4442515d2c3c6c5ffca9691"
+  },
+  {
+    "scene": "parked_final",
+    "captured": 871,
+    "processed": 809,
+    "seconds": 30.001283478000005,
+    "skipped": 62,
+    "reference": 756,
+    "pixel": 710,
+    "cm": 705,
+    "captured_hz": 28.9987593576779,
+    "processed_hz": 26.965513011909678,
+    "pixel_hz": 23.66565418844978,
+    "cm_hz": 23.498994651911403,
+    "longest_cm_output_gap_s": 4.480479217000038,
+    "longest_raw_gap_s": 4.320524685999999,
+    "longest_valid_output_gap_s": 4.303020101999891,
+    "read_to_output_p95_ms": 86.49679999999998,
+    "mean_and_p95_ms": {
+      "decode_ms": [
+        17.207454882571074,
+        18.674599999999998
+      ],
+      "reference_and_edge_ms": [
+        20.333941903584673,
+        20.839399999999998
+      ],
+      "detector_ms": [
+        12.666720642768851,
+        14.828999999999999
+      ],
+      "tracker_ms": [
+        0.25540420271940667,
+        0.312
+      ],
+      "coordinates_ms": [
+        1.9002039555006178,
+        2.5942
+      ]
+    },
+    "raw_sha256": "83ff6feca47ddcbb80667d898d920ade5e538a2b31e4cd76bbe76b4b00671e66"
+  },
+  {
+    "scene": "parked_free_new",
+    "captured": 895,
+    "processed": 773,
+    "seconds": 30.006468998999935,
+    "skipped": 122,
+    "reference": 760,
+    "pixel": 558,
+    "cm": 0,
+    "captured_hz": 29.7935755129934,
+    "processed_hz": 25.76111171313635,
+    "pixel_hz": 18.59599008529118,
+    "cm_hz": 0.0,
+    "longest_cm_output_gap_s": null,
+    "longest_raw_gap_s": 5.270112134000101,
+    "longest_valid_output_gap_s": 2.70754551899995,
+    "read_to_output_p95_ms": 91.4962,
+    "mean_and_p95_ms": {
+      "decode_ms": [
+        17.0499340232859,
+        18.173399999999997
+      ],
+      "reference_and_edge_ms": [
+        22.298721862871922,
+        36.0856
+      ],
+      "detector_ms": [
+        14.272626131953428,
+        17.8172
+      ],
+      "tracker_ms": [
+        0.22408020698576972,
+        0.286
+      ],
+      "coordinates_ms": [
+        1.3836157826649418,
+        1.9127999999999996
+      ]
+    },
+    "raw_sha256": "12161aca203e480759c81a093f1a0998a933cb8c8ae4b9db119e5139a7f44c39"
+  }
+]

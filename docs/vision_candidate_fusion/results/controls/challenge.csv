@@ -1,0 +1,11 @@
+scene,mode,captured,processed,inside,correct,offset,outside_valid,returns,recovered,median_ms
+moving_fast_confirmed,A,895,833,614,398,23,0,12,12,281.2205
+moving_fast_confirmed,B,895,833,614,400,23,0,12,12,281.2205
+moving_fast_confirmed,C,895,833,614,488,28,0,12,12,132.55349999999999
+moving_fast_confirmed,D,895,833,614,488,28,0,12,12,132.55349999999999
+moving_fast_confirmed,E,895,833,614,488,28,0,12,12,132.55349999999999
+moving_free_new,A,895,762,614,434,13,0,11,11,266.307
+moving_free_new,B,895,762,614,434,13,0,11,11,266.307
+moving_free_new,C,895,762,614,434,13,0,11,11,266.307
+moving_free_new,D,895,762,614,434,13,0,11,11,266.307
+moving_free_new,E,895,762,614,434,13,0,11,11,266.307

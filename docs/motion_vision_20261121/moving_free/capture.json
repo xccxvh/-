@@ -1,0 +1,20 @@
+{
+  "scene": "moving_free",
+  "config": "config_motion_ruler_digits_20261121.json",
+  "raw_host": "/home/user/桌面/jetson_nano/7/motion_20261121/runs/moving_free/raw.mjpg",
+  "raw_nano": "~/motion_vision_20261121/runs/moving_free/raw.mjpg",
+  "files": {
+    "raw.mjpg": {
+      "sha256": "35fdd5d30e50a6cafbce3c5327602dfb7dad4c8c9e6d29f48b21298cb2f06322",
+      "bytes": 68616372
+    },
+    "frames.csv": {
+      "sha256": "18cf6bc969202895cc01a712e99b92f2d2036398769a366bf851346b2d7afac2",
+      "bytes": 17698
+    },
+    "measurements.csv": {
+      "sha256": "8be76e0067e34e9c546a15f1aa28e23bfc57787612cbb9796cc3d19bbde335c0",
+      "bytes": 117232
+    }
+  }
+}

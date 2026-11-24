@@ -1,0 +1,3 @@
+local_vision_sha256 c968fc180802a7f2d9e84d25b8c95ada220bbee04b87feea8d71ee62392232f6
+matches_audited_source True
+REAL_GRADIENT_FIXED_REGISTRATION_SWEEP total 600 outside_accepted 0

@@ -1,0 +1,16 @@
+{
+  "scene": "moving_fast_confirmed",
+  "onsite_motion_confirmed_from_start": true,
+  "config": "config_motion_ruler_digits_20261121.json",
+  "source_commit": "de560f9",
+  "raw_host": "/home/user/桌面/jetson_nano/7/motion_20261121/runs/moving_fast_confirmed/raw.mjpg",
+  "raw_nano": "~/motion_vision_20261121/runs/moving_fast_confirmed/raw.mjpg",
+  "frames": 895,
+  "processed": 833,
+  "pixel_valid": 429,
+  "files": {
+    "raw.mjpg": "faf2cd6578b49b6a6da244ae6cdf590e3b94084d11d834aa3a6f0e6c66623c8b",
+    "frames.csv": "70d9554da429a9a7d830d140aec212da34ec775592ae946026d674a193b22a27",
+    "measurements.csv": "3fca498289f93a30e122ba7175c7913c4f4075336f3df8cfd9fb81251858afa9"
+  }
+}

@@ -1,0 +1,1412 @@
+{
+  "audit_type": "same_video_final151_change_regression_not_independent_new_video",
+  "labeler": "assistant_visual_review",
+  "revision": "gradient_correction_median151_with_apex_roi_gate_no_absolute_endpoint_gate",
+  "source_video": "/home/user/桌面/jetson_nano/raw_rolling_20261116_35s.avi",
+  "baseline_csv": "/home/user/桌面/jetson_nano/2/verified_comparison/V4.csv",
+  "quick_replay_json": "/home/user/桌面/jetson_nano/3/quick_replay.json",
+  "frozen_replay_snapshot": "quick_replay_151_audit_snapshot.json",
+  "input_sha256": {
+    "/home/user/桌面/jetson_nano/2/verified_comparison/V4.csv": "9666b79b4db749ae3d6265ba9cd818b71123d946be95e0bd19be1c211a0045d7",
+    "/home/user/桌面/jetson_nano/3/quick_replay.json": "88f433aa1d2b698cbaf4cba42636d64d79b6dfbaab0f7948acd624287939427f",
+    "/home/user/h_contest_vision_repository/Jetson/local_vision.py": "c968fc180802a7f2d9e84d25b8c95ada220bbee04b87feea8d71ee62392232f6"
+  },
+  "provenance_note": "Replay revision association confirmed by parent user; source SHA records code inspected during audit, not an embedded replay build manifest. Frozen replay hash identifies exact assessed outputs.",
+  "prior_audit_archive": "gained_valid_audit_pre151_31frames.json",
+  "prior_audit_status": "Superseded for output assessment. Original visual labels remain reusable; old output positions and correct counts are not current-version evidence.",
+  "selection": "new valid AND NOT baseline valid; loss selection baseline valid AND NOT new valid",
+  "actual_decoded_frames": 1043,
+  "baseline_valid_count": 627,
+  "quick_replay_valid_count": 666,
+  "gained_valid_count": 45,
+  "lost_valid_count": 6,
+  "method": "Sequentially decoded full original video, exported 22 additional/lost frames; inspected all clean contact rows and 3x shallow-cap zoom. Reused 29 prior gained visual labels and 3 dense labels; independently read 13 newly gained centers. Every gain compared anew against frozen 151 output. Loss6 visually checked including dense frame885.",
+  "limitations": [
+    "Same implementation source video; not new independent footage or human ground truth.",
+    "Only gain45 and loss6 assessed here; does not exhaustively revalidate all unchanged valid frames.",
+    "Approximate +/-6 pixel visual tolerance, not empirical calibration accuracy.",
+    "No label values derived from detector outputs.",
+    "Synthetic negative sweep success is limited to the stated grid, not proof of no false positives."
+  ],
+  "summary": {
+    "correct": 45,
+    "uncertain": 0,
+    "max_abs_error_px": 5.095175337249145,
+    "mean_abs_error_px": 1.5702509512436935,
+    "visible_wrong_lock_observed": false,
+    "true_ball_missed_regression_count": 6,
+    "reused_old_visual_count": 29,
+    "reused_dense_extra_count": 3,
+    "new_visual_count": 13,
+    "reused_visual_with_changed_output_count": 28
+  },
+  "labels": [
+    {
+      "frame": 14,
+      "x_px": 243,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 241.13388902643666,
+      "output_minus_visual_px": -1.8661109735633374,
+      "evidence": {
+        "full_frame": "gained_frame_0014.png",
+        "clean_crop": "gained_crop_0014.png",
+        "clean_contact": "gained_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_01.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 240.98203719357574,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.15185183286092752
+    },
+    {
+      "frame": 50,
+      "x_px": 289,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 287.5866553174456,
+      "output_minus_visual_px": -1.4133446825543956,
+      "evidence": {
+        "full_frame": "gained_frame_0050.png",
+        "clean_crop": "gained_crop_0050.png",
+        "clean_contact": "gained_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_01.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 287.5217627831474,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.06489253429822384
+    },
+    {
+      "frame": 116,
+      "x_px": 267,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 268.2387941919192,
+      "output_minus_visual_px": 1.2387941919192258,
+      "evidence": {
+        "full_frame": "v151_frame_0116.png",
+        "clean_crop": "v151_crop_0116.png",
+        "clean_contact": "v151_new_and_lost_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_01.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 117,
+      "x_px": 249,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 248.6995941964534,
+      "output_minus_visual_px": -0.30040580354659596,
+      "evidence": {
+        "full_frame": "gained_frame_0117.png",
+        "clean_crop": "gained_crop_0117.png",
+        "clean_contact": "gained_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_01.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 248.46633760500336,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.23325659145004352
+    },
+    {
+      "frame": 118,
+      "x_px": 237,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 234.0757763616966,
+      "output_minus_visual_px": -2.9242236383034026,
+      "evidence": {
+        "full_frame": "gained_frame_0118.png",
+        "clean_crop": "gained_crop_0118.png",
+        "clean_contact": "gained_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_01.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 233.7143224314078,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.36145393028880335
+    },
+    {
+      "frame": 153,
+      "x_px": 280,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 278.72560009664187,
+      "output_minus_visual_px": -1.2743999033581304,
+      "evidence": {
+        "full_frame": "gained_frame_0153.png",
+        "clean_crop": "gained_crop_0153.png",
+        "clean_contact": "gained_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_01.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 278.7146244305151,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.010975666126796568
+    },
+    {
+      "frame": 154,
+      "x_px": 301,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 300.05033850037785,
+      "output_minus_visual_px": -0.9496614996221524,
+      "evidence": {
+        "full_frame": "gained_frame_0154.png",
+        "clean_crop": "gained_crop_0154.png",
+        "clean_contact": "gained_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_01.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 300.0540147326978,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": -0.0036762323199468483
+    },
+    {
+      "frame": 193,
+      "x_px": 848,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 847.121723797599,
+      "output_minus_visual_px": -0.8782762024010253,
+      "evidence": {
+        "full_frame": "v151_frame_0193.png",
+        "clean_crop": "v151_crop_0193.png",
+        "clean_contact": "v151_new_and_lost_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_01.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 219,
+      "x_px": 249,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 249.8852902101135,
+      "output_minus_visual_px": 0.8852902101135101,
+      "evidence": {
+        "full_frame": "gained_frame_0219.png",
+        "clean_crop": "gained_crop_0219.png",
+        "clean_contact": "gained_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_02.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 250.24097407414956,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": -0.35568386403605246
+    },
+    {
+      "frame": 220,
+      "x_px": 233,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 232.74607831594508,
+      "output_minus_visual_px": -0.2539216840549159,
+      "evidence": {
+        "full_frame": "gained_frame_0220.png",
+        "clean_crop": "gained_crop_0220.png",
+        "clean_contact": "gained_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_02.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 232.39771390874486,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.3483644072002221
+    },
+    {
+      "frame": 258,
+      "x_px": 295,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 296.44395878480253,
+      "output_minus_visual_px": 1.4439587848025326,
+      "evidence": {
+        "full_frame": "gained_frame_0258.png",
+        "clean_crop": "gained_crop_0258.png",
+        "clean_contact": "gained_contact_02.png",
+        "comparison_contact": "v151_gained_comparison_02.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 296.2439929375729,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.19996584722963462
+    },
+    {
+      "frame": 285,
+      "x_px": 907,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 907.4271403599572,
+      "output_minus_visual_px": 0.4271403599572068,
+      "evidence": {
+        "full_frame": "v151_frame_0285.png",
+        "clean_crop": "v151_crop_0285.png",
+        "clean_contact": "v151_new_and_lost_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_02.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 362,
+      "x_px": 285,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "dense85_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 288.87289881989983,
+      "output_minus_visual_px": 3.872898819899831,
+      "evidence": {
+        "full_frame": "v151_frame_0362.png",
+        "clean_crop": "v151_crop_0362.png",
+        "clean_contact": "v151_new_and_lost_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_02.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 363,
+      "x_px": 306,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "dense85_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 311.09517533724915,
+      "output_minus_visual_px": 5.095175337249145,
+      "evidence": {
+        "full_frame": "v151_frame_0363.png",
+        "clean_crop": "v151_crop_0363.png",
+        "clean_contact": "v151_new_and_lost_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_02.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 364,
+      "x_px": 328,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "dense85_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 331.3653340721991,
+      "output_minus_visual_px": 3.3653340721991185,
+      "evidence": {
+        "full_frame": "v151_frame_0364.png",
+        "clean_crop": "v151_crop_0364.png",
+        "clean_contact": "v151_new_and_lost_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_02.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 398,
+      "x_px": 896,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 898.4573015661673,
+      "output_minus_visual_px": 2.4573015661673026,
+      "evidence": {
+        "full_frame": "v151_frame_0398.png",
+        "clean_crop": "v151_crop_0398.png",
+        "clean_contact": "v151_new_and_lost_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_02.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 430,
+      "x_px": 238,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 238.26604361370715,
+      "output_minus_visual_px": 0.26604361370715424,
+      "evidence": {
+        "full_frame": "gained_frame_0430.png",
+        "clean_crop": "gained_crop_0430.png",
+        "clean_contact": "gained_contact_02.png",
+        "comparison_contact": "v151_gained_comparison_03.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 238.18401896055528,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.08202465315187624
+    },
+    {
+      "frame": 466,
+      "x_px": 292,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 291.5313383003426,
+      "output_minus_visual_px": -0.4686616996573889,
+      "evidence": {
+        "full_frame": "gained_frame_0466.png",
+        "clean_crop": "gained_crop_0466.png",
+        "clean_contact": "gained_contact_02.png",
+        "comparison_contact": "v151_gained_comparison_03.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 291.4647174820217,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.06662081832092781
+    },
+    {
+      "frame": 497,
+      "x_px": 902,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 901.1327305331008,
+      "output_minus_visual_px": -0.867269466899188,
+      "evidence": {
+        "full_frame": "v151_frame_0497.png",
+        "clean_crop": "v151_crop_0497.png",
+        "clean_contact": "v151_new_and_lost_contact_01.png",
+        "comparison_contact": "v151_gained_comparison_03.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 534,
+      "x_px": 247,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 245.51727146897753,
+      "output_minus_visual_px": -1.4827285310224738,
+      "evidence": {
+        "full_frame": "gained_frame_0534.png",
+        "clean_crop": "gained_crop_0534.png",
+        "clean_contact": "gained_contact_02.png",
+        "comparison_contact": "v151_gained_comparison_03.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 245.1753098499674,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.3419616190101351
+    },
+    {
+      "frame": 535,
+      "x_px": 230,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 229.65818304399122,
+      "output_minus_visual_px": -0.3418169560087847,
+      "evidence": {
+        "full_frame": "gained_frame_0535.png",
+        "clean_crop": "gained_crop_0535.png",
+        "clean_contact": "gained_contact_02.png",
+        "comparison_contact": "v151_gained_comparison_03.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 228.2744119743407,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 1.3837710696505212
+    },
+    {
+      "frame": 571,
+      "x_px": 289,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 289.71367435744327,
+      "output_minus_visual_px": 0.7136743574432671,
+      "evidence": {
+        "full_frame": "gained_frame_0571.png",
+        "clean_crop": "gained_crop_0571.png",
+        "clean_contact": "gained_contact_02.png",
+        "comparison_contact": "v151_gained_comparison_03.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 289.55305705417743,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.16061730326583756
+    },
+    {
+      "frame": 572,
+      "x_px": 309,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 307.8931232685159,
+      "output_minus_visual_px": -1.1068767314840784,
+      "evidence": {
+        "full_frame": "v151_frame_0572.png",
+        "clean_crop": "v151_crop_0572.png",
+        "clean_contact": "v151_new_and_lost_contact_02.png",
+        "comparison_contact": "v151_gained_comparison_03.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 573,
+      "x_px": 330,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 329.01067138940925,
+      "output_minus_visual_px": -0.9893286105907464,
+      "evidence": {
+        "full_frame": "gained_frame_0573.png",
+        "clean_crop": "gained_crop_0573.png",
+        "clean_contact": "gained_contact_02.png",
+        "comparison_contact": "v151_gained_comparison_03.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 329.12038821667215,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": -0.10971682726290055
+    },
+    {
+      "frame": 574,
+      "x_px": 350,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 348.54111995141824,
+      "output_minus_visual_px": -1.4588800485817615,
+      "evidence": {
+        "full_frame": "gained_frame_0574.png",
+        "clean_crop": "gained_crop_0574.png",
+        "clean_contact": "gained_contact_02.png",
+        "comparison_contact": "v151_gained_comparison_04.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 348.3845291457943,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.15659080562392091
+    },
+    {
+      "frame": 575,
+      "x_px": 371,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 373.17843102183787,
+      "output_minus_visual_px": 2.1784310218378664,
+      "evidence": {
+        "full_frame": "gained_frame_0575.png",
+        "clean_crop": "gained_crop_0575.png",
+        "clean_contact": "gained_contact_03.png",
+        "comparison_contact": "v151_gained_comparison_04.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 373.077191180718,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.10123984111987738
+    },
+    {
+      "frame": 576,
+      "x_px": 395,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 396.69750996342447,
+      "output_minus_visual_px": 1.6975099634244657,
+      "evidence": {
+        "full_frame": "gained_frame_0576.png",
+        "clean_crop": "gained_crop_0576.png",
+        "clean_contact": "gained_contact_03.png",
+        "comparison_contact": "v151_gained_comparison_04.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 396.71924753299226,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": -0.02173756956779016
+    },
+    {
+      "frame": 608,
+      "x_px": 886,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 886.670139527524,
+      "output_minus_visual_px": 0.6701395275240429,
+      "evidence": {
+        "full_frame": "v151_frame_0608.png",
+        "clean_crop": "v151_crop_0608.png",
+        "clean_contact": "v151_new_and_lost_contact_02.png",
+        "comparison_contact": "v151_gained_comparison_04.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 609,
+      "x_px": 878,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 880.3512629882684,
+      "output_minus_visual_px": 2.351262988268445,
+      "evidence": {
+        "full_frame": "v151_frame_0609.png",
+        "clean_crop": "v151_crop_0609.png",
+        "clean_contact": "v151_new_and_lost_contact_02.png",
+        "comparison_contact": "v151_gained_comparison_04.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 610,
+      "x_px": 866,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 870.7958814027921,
+      "output_minus_visual_px": 4.7958814027921335,
+      "evidence": {
+        "full_frame": "v151_frame_0610.png",
+        "clean_crop": "v151_crop_0610.png",
+        "clean_contact": "v151_new_and_lost_contact_02.png",
+        "comparison_contact": "v151_gained_comparison_04.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 640,
+      "x_px": 238,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 236.54355337334061,
+      "output_minus_visual_px": -1.4564466266593854,
+      "evidence": {
+        "full_frame": "gained_frame_0640.png",
+        "clean_crop": "gained_crop_0640.png",
+        "clean_contact": "gained_contact_03.png",
+        "comparison_contact": "v151_gained_comparison_04.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 236.0163017420489,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.5272516312917048
+    },
+    {
+      "frame": 675,
+      "x_px": 273,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 273.09687373150916,
+      "output_minus_visual_px": 0.09687373150916301,
+      "evidence": {
+        "full_frame": "gained_frame_0675.png",
+        "clean_crop": "gained_crop_0675.png",
+        "clean_contact": "gained_contact_03.png",
+        "comparison_contact": "v151_gained_comparison_04.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 273.09687373150916,
+      "output_changed_since_previous_audit": false,
+      "output_delta_since_previous_audit_px": 0.0
+    },
+    {
+      "frame": 676,
+      "x_px": 292,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 293.74640179370016,
+      "output_minus_visual_px": 1.7464017937001586,
+      "evidence": {
+        "full_frame": "gained_frame_0676.png",
+        "clean_crop": "gained_crop_0676.png",
+        "clean_contact": "gained_contact_03.png",
+        "comparison_contact": "v151_gained_comparison_05.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 293.8151415733204,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": -0.06873977962021627
+    },
+    {
+      "frame": 744,
+      "x_px": 243,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 243.55134917438582,
+      "output_minus_visual_px": 0.5513491743858197,
+      "evidence": {
+        "full_frame": "gained_frame_0744.png",
+        "clean_crop": "gained_crop_0744.png",
+        "clean_contact": "gained_contact_03.png",
+        "comparison_contact": "v151_gained_comparison_05.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 243.46383928571427,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.08750988867154774
+    },
+    {
+      "frame": 780,
+      "x_px": 289,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 289.9944190157935,
+      "output_minus_visual_px": 0.9944190157934827,
+      "evidence": {
+        "full_frame": "gained_frame_0780.png",
+        "clean_crop": "gained_crop_0780.png",
+        "clean_contact": "gained_contact_03.png",
+        "comparison_contact": "v151_gained_comparison_05.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 289.7586220008859,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": 0.23579701490757543
+    },
+    {
+      "frame": 801,
+      "x_px": 804,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 806.8817525972318,
+      "output_minus_visual_px": 2.8817525972317526,
+      "evidence": {
+        "full_frame": "v151_frame_0801.png",
+        "clean_crop": "v151_crop_0801.png",
+        "clean_contact": "v151_new_and_lost_contact_03.png",
+        "comparison_contact": "v151_gained_comparison_05.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 803,
+      "x_px": 842,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 842.1322516582402,
+      "output_minus_visual_px": 0.13225165824019314,
+      "evidence": {
+        "full_frame": "v151_frame_0803.png",
+        "clean_crop": "v151_crop_0803.png",
+        "clean_contact": "v151_new_and_lost_contact_03.png",
+        "comparison_contact": "v151_gained_comparison_05.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 847,
+      "x_px": 248,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 246.4611300720516,
+      "output_minus_visual_px": -1.5388699279484115,
+      "evidence": {
+        "full_frame": "gained_frame_0847.png",
+        "clean_crop": "gained_crop_0847.png",
+        "clean_contact": "gained_contact_03.png",
+        "comparison_contact": "v151_gained_comparison_05.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 246.72680293982543,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": -0.26567286777384425
+    },
+    {
+      "frame": 848,
+      "x_px": 233,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 231.32538625466168,
+      "output_minus_visual_px": -1.6746137453383199,
+      "evidence": {
+        "full_frame": "gained_frame_0848.png",
+        "clean_crop": "gained_crop_0848.png",
+        "clean_contact": "gained_contact_04.png",
+        "comparison_contact": "v151_gained_comparison_05.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 231.4779694852417,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": -0.15258323058000656
+    },
+    {
+      "frame": 909,
+      "x_px": 855,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 858.1635286172149,
+      "output_minus_visual_px": 3.1635286172148653,
+      "evidence": {
+        "full_frame": "v151_frame_0909.png",
+        "clean_crop": "v151_crop_0909.png",
+        "clean_contact": "v151_new_and_lost_contact_03.png",
+        "comparison_contact": "v151_gained_comparison_05.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 924,
+      "x_px": 845,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 846.572038035417,
+      "output_minus_visual_px": 1.5720380354169947,
+      "evidence": {
+        "full_frame": "v151_frame_0924.png",
+        "clean_crop": "v151_crop_0924.png",
+        "clean_contact": "v151_new_and_lost_contact_03.png",
+        "comparison_contact": "v151_gained_comparison_06.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification."
+    },
+    {
+      "frame": 952,
+      "x_px": 248,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 247.63695937090435,
+      "output_minus_visual_px": -0.36304062909565005,
+      "evidence": {
+        "full_frame": "gained_frame_0952.png",
+        "clean_crop": "gained_crop_0952.png",
+        "clean_contact": "gained_contact_04.png",
+        "comparison_contact": "v151_gained_comparison_06.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 247.81675479637886,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": -0.17979542547450933
+    },
+    {
+      "frame": 953,
+      "x_px": 233,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 231.15478740788905,
+      "output_minus_visual_px": -1.8452125921109541,
+      "evidence": {
+        "full_frame": "gained_frame_0953.png",
+        "clean_crop": "gained_crop_0953.png",
+        "clean_contact": "gained_contact_04.png",
+        "comparison_contact": "v151_gained_comparison_06.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 231.56444051296666,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": -0.4096531050776093
+    },
+    {
+      "frame": 987,
+      "x_px": 281,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 280.52114330283587,
+      "output_minus_visual_px": -0.47885669716413304,
+      "evidence": {
+        "full_frame": "gained_frame_0987.png",
+        "clean_crop": "gained_crop_0987.png",
+        "clean_contact": "gained_contact_04.png",
+        "comparison_contact": "v151_gained_comparison_06.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 280.5770200480693,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": -0.05587674523343367
+    },
+    {
+      "frame": 988,
+      "x_px": 301,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "correct",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "prior_visual_label_reused",
+      "baseline_valid": false,
+      "new_valid": true,
+      "output_x_px": 296.8691046847967,
+      "output_minus_visual_px": -4.130895315203304,
+      "evidence": {
+        "full_frame": "gained_frame_0988.png",
+        "clean_crop": "gained_crop_0988.png",
+        "clean_contact": "gained_contact_04.png",
+        "comparison_contact": "v151_gained_comparison_06.png"
+      },
+      "note": "Actual ball cap identifiable; lower sphere hidden. Correct means matching visible cap within approximate tolerance, not calibration or full contour certification.",
+      "previous_audit_output_x_px": 297.13553249066786,
+      "output_changed_since_previous_audit": true,
+      "output_delta_since_previous_audit_px": -0.2664278058711602
+    }
+  ],
+  "loss_labels": [
+    {
+      "frame": 501,
+      "x_px": 894,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "true_ball_valid_output_miss_regression",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": true,
+      "new_valid": false,
+      "baseline_output_x_px": 894.6719328973188,
+      "baseline_output_minus_visual_px": 0.6719328973188112,
+      "new_reported_x_px": 896.9302731240062,
+      "tracker_reason": "no_candidates",
+      "candidate_x_px": [],
+      "diagnostics": [
+        {
+          "left_px": 880,
+          "right_px": 911,
+          "width": 32,
+          "height": 6,
+          "area": 138,
+          "reason": "arc_shoulders",
+          "center_px": null,
+          "footprint_in_search": true,
+          "terminal_depth_px": [
+            4.709232790318424,
+            3.5082219421948935
+          ]
+        }
+      ],
+      "evidence": {
+        "full_frame": "v151_frame_0501.png",
+        "clean_crop": "v151_crop_0501.png",
+        "clean_contact": "v151_new_and_lost_contact_02.png"
+      },
+      "note": "Visible real ball, not disappearance/out-of-frame. Invalid output is a recall regression; detector vs tracker cause retained separately from visual truth."
+    },
+    {
+      "frame": 505,
+      "x_px": 863,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "true_ball_valid_output_miss_regression",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": true,
+      "new_valid": false,
+      "baseline_output_x_px": 861.8612534701535,
+      "baseline_output_minus_visual_px": -1.1387465298464576,
+      "new_reported_x_px": 865.5543222727985,
+      "tracker_reason": "no_candidates",
+      "candidate_x_px": [],
+      "diagnostics": [
+        {
+          "left_px": 847,
+          "right_px": 879,
+          "width": 33,
+          "height": 7,
+          "area": 150,
+          "reason": "arc_shoulders",
+          "center_px": null,
+          "footprint_in_search": true,
+          "terminal_depth_px": [
+            6.329477127630014,
+            4.085941815616451
+          ]
+        }
+      ],
+      "evidence": {
+        "full_frame": "v151_frame_0505.png",
+        "clean_crop": "v151_crop_0505.png",
+        "clean_contact": "v151_new_and_lost_contact_02.png"
+      },
+      "note": "Visible real ball, not disappearance/out-of-frame. Invalid output is a recall regression; detector vs tracker cause retained separately from visual truth."
+    },
+    {
+      "frame": 710,
+      "x_px": 891,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "true_ball_valid_output_miss_regression",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": true,
+      "new_valid": false,
+      "baseline_output_x_px": 892.7072179149313,
+      "baseline_output_minus_visual_px": 1.7072179149313342,
+      "new_reported_x_px": 895.0805862843976,
+      "tracker_reason": "no_candidates",
+      "candidate_x_px": [],
+      "diagnostics": [
+        {
+          "left_px": 880,
+          "right_px": 910,
+          "width": 31,
+          "height": 6,
+          "area": 117,
+          "reason": "arc_shoulders",
+          "center_px": null,
+          "footprint_in_search": true,
+          "terminal_depth_px": [
+            5.459232790318424,
+            2.4824480985859907
+          ]
+        },
+        {
+          "left_px": 874,
+          "right_px": 876,
+          "width": 3,
+          "height": 1,
+          "area": 3,
+          "reason": "width",
+          "center_px": null,
+          "footprint_in_search": true
+        }
+      ],
+      "evidence": {
+        "full_frame": "v151_frame_0710.png",
+        "clean_crop": "v151_crop_0710.png",
+        "clean_contact": "v151_new_and_lost_contact_02.png"
+      },
+      "note": "Visible real ball, not disappearance/out-of-frame. Invalid output is a recall regression; detector vs tracker cause retained separately from visual truth."
+    },
+    {
+      "frame": 714,
+      "x_px": 865,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "true_ball_valid_output_miss_regression",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": true,
+      "new_valid": false,
+      "baseline_output_x_px": 866.6580133588102,
+      "baseline_output_minus_visual_px": 1.6580133588101944,
+      "new_reported_x_px": 873.5054849706092,
+      "tracker_reason": "no_candidates",
+      "candidate_x_px": [],
+      "diagnostics": [
+        {
+          "left_px": 853,
+          "right_px": 883,
+          "width": 31,
+          "height": 6,
+          "area": 132,
+          "reason": "arc_shoulders",
+          "center_px": null,
+          "footprint_in_search": true,
+          "terminal_depth_px": [
+            3.521299690857319,
+            2.164773020305063
+          ]
+        },
+        {
+          "left_px": 848,
+          "right_px": 849,
+          "width": 2,
+          "height": 2,
+          "area": 3,
+          "reason": "width",
+          "center_px": null,
+          "footprint_in_search": true
+        }
+      ],
+      "evidence": {
+        "full_frame": "v151_frame_0714.png",
+        "clean_crop": "v151_crop_0714.png",
+        "clean_contact": "v151_new_and_lost_contact_02.png"
+      },
+      "note": "Visible real ball, not disappearance/out-of-frame. Invalid output is a recall regression; detector vs tracker cause retained separately from visual truth."
+    },
+    {
+      "frame": 809,
+      "x_px": 905,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "true_ball_valid_output_miss_regression",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "new_visual_estimate_v151",
+      "baseline_valid": true,
+      "new_valid": false,
+      "baseline_output_x_px": 905.4508797412429,
+      "baseline_output_minus_visual_px": 0.45087974124294306,
+      "new_reported_x_px": 910.8442635892098,
+      "tracker_reason": "no_candidates",
+      "candidate_x_px": [],
+      "diagnostics": [
+        {
+          "left_px": 893,
+          "right_px": 923,
+          "width": 31,
+          "height": 6,
+          "area": 110,
+          "reason": "arc_shoulders",
+          "center_px": null,
+          "footprint_in_search": true,
+          "terminal_depth_px": [
+            2.0336803363624085,
+            3.153263206761551
+          ]
+        },
+        {
+          "left_px": 888,
+          "right_px": 890,
+          "width": 3,
+          "height": 1,
+          "area": 3,
+          "reason": "width",
+          "center_px": null,
+          "footprint_in_search": true
+        }
+      ],
+      "evidence": {
+        "full_frame": "v151_frame_0809.png",
+        "clean_crop": "v151_crop_0809.png",
+        "clean_contact": "v151_new_and_lost_contact_03.png"
+      },
+      "note": "Visible real ball, not disappearance/out-of-frame. Invalid output is a recall regression; detector vs tracker cause retained separately from visual truth."
+    },
+    {
+      "frame": 885,
+      "x_px": 321,
+      "tolerance_px": 6,
+      "status": "visible_partial_ball_cap",
+      "confidence": "medium",
+      "assessment": "true_ball_valid_output_miss_regression",
+      "labeler": "assistant_visual_review",
+      "visual_label_source": "dense85_visual_label_reused",
+      "baseline_valid": true,
+      "new_valid": false,
+      "baseline_output_x_px": 318.33150701179125,
+      "baseline_output_minus_visual_px": -2.6684929882087545,
+      "new_reported_x_px": 317.82320575766965,
+      "tracker_reason": "acquiring",
+      "candidate_x_px": [
+        317.82320575766965
+      ],
+      "diagnostics": [
+        {
+          "left_px": 304,
+          "right_px": 335,
+          "width": 32,
+          "height": 6,
+          "area": 125,
+          "reason": "accepted",
+          "center_px": 317.82320575766965,
+          "footprint_in_search": true,
+          "terminal_depth_px": [
+            3.118558403848283,
+            2.077882635799881
+          ],
+          "fitted_apex_px": 317.4108384841061
+        },
+        {
+          "left_px": 446,
+          "right_px": 446,
+          "width": 1,
+          "height": 1,
+          "area": 1,
+          "reason": "width",
+          "center_px": null,
+          "footprint_in_search": true
+        }
+      ],
+      "evidence": {
+        "full_frame": "v151_frame_0885.png",
+        "clean_crop": "v151_crop_0885.png",
+        "clean_contact": "v151_new_and_lost_contact_03.png"
+      },
+      "note": "Visible real ball, not disappearance/out-of-frame. Invalid output is a recall regression; detector vs tracker cause retained separately from visual truth."
+    }
+  ],
+  "previous_audit_frames_no_longer_valid": [
+    {
+      "frame": 883,
+      "x_px": 281,
+      "tolerance_px": 6,
+      "previous_valid": true,
+      "current_valid": false,
+      "current_reason": "acquiring",
+      "note": "Former gained-valid frame no longer valid in final-151 replay; excluded from current gain45, retained to expose regression."
+    },
+    {
+      "frame": 884,
+      "x_px": 300,
+      "tolerance_px": 6,
+      "previous_valid": true,
+      "current_valid": false,
+      "current_reason": "acquiring",
+      "note": "Former gained-valid frame no longer valid in final-151 replay; excluded from current gain45, retained to expose regression."
+    }
+  ],
+  "negative_audit": {
+    "existing_boundary_tests_passed": 7,
+    "real_gradient_fixed_registration_sweep": {
+      "cases": 600,
+      "outside_center_accepted": 0,
+      "ellipse_rx": [
+        21,
+        26,
+        32
+      ],
+      "ellipse_ry": [
+        6,
+        7,
+        9,
+        13,
+        23
+      ],
+      "outside_distances_px": [
+        1,
+        3,
+        10
+      ],
+      "sides": [
+        "left",
+        "right"
+      ],
+      "cut_delta_rule": "range(-rx+2,1,4)",
+      "support_margin_px": 80,
+      "correction_median_width": 151,
+      "search_bounds_px": [
+        200,
+        440
+      ],
+      "method": "Real UpperEdgeReference.locate Sobel evidence; matcher identity transform mocked to isolate geometry and contour processing. No source edits."
+    }
+  }
+}

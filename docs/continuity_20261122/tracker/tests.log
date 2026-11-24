@@ -1,0 +1,92 @@
+..........................calibration rejected: no local calibration images matched
+calibration rejected: output already exists; refusing overwrite
+..........usage: python3 -m unittest collect [-h] --csv CSV --video VIDEO
+                                   --known-position --cm CM --start-frame
+                                   START_FRAME --end-frame END_FRAME
+                                   [--binding-file BINDING_FILE] --output
+                                   OUTPUT
+python3 -m unittest collect: error: the following arguments are required: --known-position
+usage: python3 -m unittest collect [-h] --csv CSV --video VIDEO
+                                   --known-position --cm CM --start-frame
+                                   START_FRAME --end-frame END_FRAME
+                                   [--binding-file BINDING_FILE] --output
+                                   OUTPUT
+python3 -m unittest collect: error: the following arguments are required: --end-frame
+...........................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 271 tests in 7.695s
+
+OK
+{
+  "status": "complete"
+}
+calibration saved: /tmp/tmpvquomhug/synthetic-output.json (16 views; RMS 0.000011 px)
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmp2mpre417/first.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmp2mpre417/auto.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmp2mpre417/explicit.json
+session: 16/20 samples, coverage=0.8000 -> /tmp/tmpfoiapjsk/s.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmpel2h00z_/minus.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmpel2h00z_/zero.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmpel2h00z_/plus.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmpel2h00z_/verify_minus.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmpel2h00z_/verify_plus.json
+ready=True validated=False -> /tmp/tmpel2h00z_/model-v1.json
+ready=True validated=True -> /tmp/tmpel2h00z_/model-v2.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmp_bdrydck/s.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmpwrj0ce8l/s.json
+frames=3 labeled=0 valid=0 output=/tmp/tmpiekqre30/run
+G3519 TX=1 RX_bytes=41 telemetry=1 CRC_errors=0
+source: /dev/video0  1280x720  fps=30.0
+calibration: not ready
+
+--- summary ---
+frames: 3, elapsed: 0.0s, avg fps: 1045.0
+states: {'DETECTED': 0, 'UNCERTAIN': 0, 'LOST': 3}
+algo_ms: mean=0.76 p95=0.86 max=0.86
+queue_wait_ms: mean=871.28 p95=1003.61 max=1003.61
+capture_to_result_ms: mean=872.04 p95=1004.47 max=1004.47 (n=3)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=0.84 p95=0.95 max=0.95
+csv: /tmp/tmpitn5jha2/track_run_20261122_182613.csv
+source: /dev/video0  1280x720  fps=30.0
+calibration: not ready
+reference cm PREVIEW: experimental, UART disabled
+
+--- summary ---
+frames: 3, elapsed: 0.0s, avg fps: 967.0
+states: {'DETECTED': 0, 'UNCERTAIN': 0, 'LOST': 3}
+algo_ms: mean=0.88 p95=1.25 max=1.25
+queue_wait_ms: mean=871.02 p95=1003.13 max=1003.13
+capture_to_result_ms: mean=871.90 p95=1004.38 max=1004.38 (n=3)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=0.95 p95=1.33 max=1.33
+csv: /tmp/tmpdzfgvh_9/track_run_20261122_182613.csv
+source: dummy  1280x720  fps=0.5
+calibration: not ready
+
+--- summary ---
+frames: 3, elapsed: 0.0s, avg fps: 1207.6
+states: {'DETECTED': 0, 'UNCERTAIN': 0, 'LOST': 3}
+algo_ms: mean=0.68 p95=0.77 max=0.77
+queue_wait_ms: mean=870.60 p95=1003.08 max=1003.08
+capture_to_result_ms: mean=871.29 p95=1003.85 max=1003.85 (n=3)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=0.74 p95=0.82 max=0.82
+csv: /tmp/tmpr42_nbgc/track_run_20261122_182613.csv
+source: /dev/video0  1280x720  fps=30.0
+calibration: not ready
+reference cm PREVIEW: experimental, UART disabled
+
+--- summary ---
+frames: 4, elapsed: 0.0s, avg fps: 1011.1
+states: {'DETECTED': 3, 'UNCERTAIN': 0, 'LOST': 1}
+algo_ms: mean=0.42 p95=0.86 max=0.86
+queue_wait_ms: mean=0.00 p95=0.00 max=0.00
+capture_to_result_ms: mean=0.43 p95=0.87 max=0.87 (n=4)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=0.51 p95=0.93 max=0.93
+csv: /tmp/tmpjjh4br5o/track_run_20261122_182613.csv

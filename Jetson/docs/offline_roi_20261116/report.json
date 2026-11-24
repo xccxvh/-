@@ -1,0 +1,261 @@
+{
+  "status": "blocked_missing_raw",
+  "scope": "Legacy branch preservation only; NOT relative-cap certification.",
+  "old_source": "/home/user/ball_vision_src",
+  "new_source": "/home/user/h_contest_vision_repository/Jetson",
+  "config_path": "/home/user/ball_vision_src/config_fusion_v2.json",
+  "config_sha256": "e8c1a7bb405b91a832fba42d8d2b66445db0a112aa07a1745e072ea133a8646f",
+  "original_config": {
+    "camera": {
+      "device": "/dev/video0",
+      "width": 1280,
+      "height": 720,
+      "fps": 30,
+      "fourcc": "MJPG",
+      "buffer_size": 8
+    },
+    "rail": {
+      "y_band": [
+        0.25,
+        0.39
+      ],
+      "x_margin": 0.12,
+      "grad_threshold": 45,
+      "slope_limit": 0.35,
+      "ransac_iters": 300,
+      "ransac_tol": 3.0,
+      "refresh_frames": 3,
+      "min_inlier_ratio": 0.25,
+      "expected_y_ratio": 0.32,
+      "max_dev_ratio": 0.06,
+      "track_window_ratio": 0.05
+    },
+    "ball": {
+      "use_color": true,
+      "use_geometry": true,
+      "blue_minus_red": 30,
+      "blue_min": 140,
+      "envelope_threshold": 100,
+      "band_above_ratio": 0.05,
+      "band_below_ratio": 0.012,
+      "dev_threshold_ratio": 0.008,
+      "min_width_ratio": 0.018,
+      "max_width_ratio": 0.075,
+      "min_height_ratio": 0.004,
+      "max_height_ratio": 0.035,
+      "min_aspect": 1.3,
+      "max_aspect": 8.0,
+      "min_area_ratio": 0.00015,
+      "typical_width_ratio": 0.038,
+      "typical_height_ratio": 0.018,
+      "color_only_scale": 0.5,
+      "x_margin": 0.12
+    },
+    "tracking": {
+      "max_jump_ratio": 0.12,
+      "uncertain_frames": 4,
+      "lost_frames": 15,
+      "velocity_alpha": 0.5,
+      "confidence_threshold": 0.55,
+      "acquire_frames": 5
+    },
+    "calibration": {
+      "file": "calibration_fusion_v2.json"
+    },
+    "output": {
+      "recordings_dir": "recordings",
+      "logs_dir": "logs"
+    }
+  },
+  "calibration_sha256": "5241e1b5a607ef072f62d0bd23e079f1efbb8776d788e8c2a3938ec34e5a59f1",
+  "calibration_matches_history": true,
+  "source_hashes_before": {
+    "old": {
+      "/home/user/ball_vision_src/analyze_track.py": "53baf8766071c2407b0037cd12d148af104c310fdbbf2c7567d8f9016cfc8789",
+      "/home/user/ball_vision_src/ball_detector.py": "3e28f8caeee67b9a55a7d1004e8ed725fd82e0852057fe91efb92fb7456350bd",
+      "/home/user/ball_vision_src/ball_tracker.py": "5a7602ff6085d5a309f3f8fcc93842ca12bb4d10eebfa175eb0582550e8bb0db",
+      "/home/user/ball_vision_src/calibrate.py": "0e288f6ffe8cd59737170442a35077b856b857edf5fc9b09235a1944f4b86d57",
+      "/home/user/ball_vision_src/calibration.py": "6c1563dc7214aea3e58bac16c70536a37273d4a7164183031b5f6734ddfa5ff8",
+      "/home/user/ball_vision_src/calibration_fusion_v2.json": "5241e1b5a607ef072f62d0bd23e079f1efbb8776d788e8c2a3938ec34e5a59f1",
+      "/home/user/ball_vision_src/camera.py": "eeeb25c9db3bd32b6a1264a413e039bbcd88a0b3ecead26d611787eb255b6079",
+      "/home/user/ball_vision_src/capture_raw.py": "967431fb9d93199b1c74d6ea9d3f83b1e0ce2f58ba6bd2af6ee9f3d8b6c25a9c",
+      "/home/user/ball_vision_src/config_fusion_v2.json": "e8c1a7bb405b91a832fba42d8d2b66445db0a112aa07a1745e072ea133a8646f",
+      "/home/user/ball_vision_src/evaluate_ruler_reference.py": "d96671a61f4deb75232b2d986488abe226d1792987abaf93d57b7cfff925e0f4",
+      "/home/user/ball_vision_src/main.py": "9dcb25557ed40b6f82f36bd82243b212d7758442248c0d4ce66cb140fbe3fed1",
+      "/home/user/ball_vision_src/measurement_contract.py": "9fb981b017371115e09344b80cb658aa6bf7340ddb72942427f03d5732f5dc81",
+      "/home/user/ball_vision_src/position_feedback.py": "ed32d6d7e273685c9c1f976b00800c089a281b8b28dac8a439212e69af687c2d",
+      "/home/user/ball_vision_src/rail_detector.py": "246dfb1a5c7e12a7f2d8791bd1c86e38e0f3a7d9aef5b5fe033c9bb7a6b94397",
+      "/home/user/ball_vision_src/recording_schedule.py": "6d37b62cb206ac5d7ccc2c1cce5fc28000be1bfefba65acfcf092e359a52f1a6",
+      "/home/user/ball_vision_src/reference_preview.py": "62b19f6e228f4ecae5382e0f4e1a77a6add1cd77189ba847536e1f7a8d122d72",
+      "/home/user/ball_vision_src/ruler_reference.py": "2b5083d6de8130a0b21c06386ce420aa732019c2fda34bc6999e2125904b1aad",
+      "/home/user/ball_vision_src/video_writer.py": "76dae5dc6ed740e732c60cf23fd971ccf4058283b20a7d9df455ec61b9c8455a",
+      "/home/user/ball_vision_src/visualization.py": "820da4cff4fe7f115e5f0d6dcd698769463978fc3a481692a1b5836648afcdc8"
+    },
+    "new": {
+      "/home/user/h_contest_vision_repository/Jetson/analyze_track.py": "53baf8766071c2407b0037cd12d148af104c310fdbbf2c7567d8f9016cfc8789",
+      "/home/user/h_contest_vision_repository/Jetson/ball_detector.py": "5229c3594321cf0bfcaa7e538bfa779891f89e931402b514be139d1430f960f0",
+      "/home/user/h_contest_vision_repository/Jetson/ball_tracker.py": "e0e1ae2e840692478fd73e8ee8f0d0c4fe7beabf05c2ca9efd8ec5303ce54309",
+      "/home/user/h_contest_vision_repository/Jetson/calibrate.py": "0e288f6ffe8cd59737170442a35077b856b857edf5fc9b09235a1944f4b86d57",
+      "/home/user/h_contest_vision_repository/Jetson/calibration.py": "6c1563dc7214aea3e58bac16c70536a37273d4a7164183031b5f6734ddfa5ff8",
+      "/home/user/h_contest_vision_repository/Jetson/calibration_fusion_v2.json": "5241e1b5a607ef072f62d0bd23e079f1efbb8776d788e8c2a3938ec34e5a59f1",
+      "/home/user/h_contest_vision_repository/Jetson/camera.py": "eeeb25c9db3bd32b6a1264a413e039bbcd88a0b3ecead26d611787eb255b6079",
+      "/home/user/h_contest_vision_repository/Jetson/capture_raw.py": "967431fb9d93199b1c74d6ea9d3f83b1e0ce2f58ba6bd2af6ee9f3d8b6c25a9c",
+      "/home/user/h_contest_vision_repository/Jetson/config_fusion_v2.json": "e8c1a7bb405b91a832fba42d8d2b66445db0a112aa07a1745e072ea133a8646f",
+      "/home/user/h_contest_vision_repository/Jetson/evaluate_local_roi.py": "cf5a1bb5c3461c0a61eabfcc5ebc17557563a4aa676d3dc7ea7bc1ca68dcf121",
+      "/home/user/h_contest_vision_repository/Jetson/evaluate_ruler_reference.py": "d96671a61f4deb75232b2d986488abe226d1792987abaf93d57b7cfff925e0f4",
+      "/home/user/h_contest_vision_repository/Jetson/local_vision.py": "ed6a524bf33cd7a8d5e9d942289cd3f308e520dfc9fba64c64b6ed7b620dd9a1",
+      "/home/user/h_contest_vision_repository/Jetson/main.py": "f03eb6cf81ae42cabd64c2f88ce3ad44d42e5033c80dc4bc8f3e60d376f18860",
+      "/home/user/h_contest_vision_repository/Jetson/measurement_contract.py": "9fb981b017371115e09344b80cb658aa6bf7340ddb72942427f03d5732f5dc81",
+      "/home/user/h_contest_vision_repository/Jetson/position_feedback.py": "ed32d6d7e273685c9c1f976b00800c089a281b8b28dac8a439212e69af687c2d",
+      "/home/user/h_contest_vision_repository/Jetson/rail_detector.py": "824659755e0cddfb32964865caaf7ad2164d76fbe3c43baa4ee5243ccd01a5a2",
+      "/home/user/h_contest_vision_repository/Jetson/recording_schedule.py": "6d37b62cb206ac5d7ccc2c1cce5fc28000be1bfefba65acfcf092e359a52f1a6",
+      "/home/user/h_contest_vision_repository/Jetson/reference_preview.py": "62b19f6e228f4ecae5382e0f4e1a77a6add1cd77189ba847536e1f7a8d122d72",
+      "/home/user/h_contest_vision_repository/Jetson/ruler_reference.py": "2b5083d6de8130a0b21c06386ce420aa732019c2fda34bc6999e2125904b1aad",
+      "/home/user/h_contest_vision_repository/Jetson/video_writer.py": "76dae5dc6ed740e732c60cf23fd971ccf4058283b20a7d9df455ec61b9c8455a",
+      "/home/user/h_contest_vision_repository/Jetson/visualization.py": "8bcd9a6b3d121c71482a6377d51cfbe5da64e635bda00f7a2730d4675528fd92"
+    }
+  },
+  "source_hashes_after": {
+    "old": {
+      "/home/user/ball_vision_src/analyze_track.py": "53baf8766071c2407b0037cd12d148af104c310fdbbf2c7567d8f9016cfc8789",
+      "/home/user/ball_vision_src/ball_detector.py": "3e28f8caeee67b9a55a7d1004e8ed725fd82e0852057fe91efb92fb7456350bd",
+      "/home/user/ball_vision_src/ball_tracker.py": "5a7602ff6085d5a309f3f8fcc93842ca12bb4d10eebfa175eb0582550e8bb0db",
+      "/home/user/ball_vision_src/calibrate.py": "0e288f6ffe8cd59737170442a35077b856b857edf5fc9b09235a1944f4b86d57",
+      "/home/user/ball_vision_src/calibration.py": "6c1563dc7214aea3e58bac16c70536a37273d4a7164183031b5f6734ddfa5ff8",
+      "/home/user/ball_vision_src/calibration_fusion_v2.json": "5241e1b5a607ef072f62d0bd23e079f1efbb8776d788e8c2a3938ec34e5a59f1",
+      "/home/user/ball_vision_src/camera.py": "eeeb25c9db3bd32b6a1264a413e039bbcd88a0b3ecead26d611787eb255b6079",
+      "/home/user/ball_vision_src/capture_raw.py": "967431fb9d93199b1c74d6ea9d3f83b1e0ce2f58ba6bd2af6ee9f3d8b6c25a9c",
+      "/home/user/ball_vision_src/config_fusion_v2.json": "e8c1a7bb405b91a832fba42d8d2b66445db0a112aa07a1745e072ea133a8646f",
+      "/home/user/ball_vision_src/evaluate_ruler_reference.py": "d96671a61f4deb75232b2d986488abe226d1792987abaf93d57b7cfff925e0f4",
+      "/home/user/ball_vision_src/main.py": "9dcb25557ed40b6f82f36bd82243b212d7758442248c0d4ce66cb140fbe3fed1",
+      "/home/user/ball_vision_src/measurement_contract.py": "9fb981b017371115e09344b80cb658aa6bf7340ddb72942427f03d5732f5dc81",
+      "/home/user/ball_vision_src/position_feedback.py": "ed32d6d7e273685c9c1f976b00800c089a281b8b28dac8a439212e69af687c2d",
+      "/home/user/ball_vision_src/rail_detector.py": "246dfb1a5c7e12a7f2d8791bd1c86e38e0f3a7d9aef5b5fe033c9bb7a6b94397",
+      "/home/user/ball_vision_src/recording_schedule.py": "6d37b62cb206ac5d7ccc2c1cce5fc28000be1bfefba65acfcf092e359a52f1a6",
+      "/home/user/ball_vision_src/reference_preview.py": "62b19f6e228f4ecae5382e0f4e1a77a6add1cd77189ba847536e1f7a8d122d72",
+      "/home/user/ball_vision_src/ruler_reference.py": "2b5083d6de8130a0b21c06386ce420aa732019c2fda34bc6999e2125904b1aad",
+      "/home/user/ball_vision_src/video_writer.py": "76dae5dc6ed740e732c60cf23fd971ccf4058283b20a7d9df455ec61b9c8455a",
+      "/home/user/ball_vision_src/visualization.py": "820da4cff4fe7f115e5f0d6dcd698769463978fc3a481692a1b5836648afcdc8"
+    },
+    "new": {
+      "/home/user/h_contest_vision_repository/Jetson/analyze_track.py": "53baf8766071c2407b0037cd12d148af104c310fdbbf2c7567d8f9016cfc8789",
+      "/home/user/h_contest_vision_repository/Jetson/ball_detector.py": "5229c3594321cf0bfcaa7e538bfa779891f89e931402b514be139d1430f960f0",
+      "/home/user/h_contest_vision_repository/Jetson/ball_tracker.py": "e0e1ae2e840692478fd73e8ee8f0d0c4fe7beabf05c2ca9efd8ec5303ce54309",
+      "/home/user/h_contest_vision_repository/Jetson/calibrate.py": "0e288f6ffe8cd59737170442a35077b856b857edf5fc9b09235a1944f4b86d57",
+      "/home/user/h_contest_vision_repository/Jetson/calibration.py": "6c1563dc7214aea3e58bac16c70536a37273d4a7164183031b5f6734ddfa5ff8",
+      "/home/user/h_contest_vision_repository/Jetson/calibration_fusion_v2.json": "5241e1b5a607ef072f62d0bd23e079f1efbb8776d788e8c2a3938ec34e5a59f1",
+      "/home/user/h_contest_vision_repository/Jetson/camera.py": "eeeb25c9db3bd32b6a1264a413e039bbcd88a0b3ecead26d611787eb255b6079",
+      "/home/user/h_contest_vision_repository/Jetson/capture_raw.py": "967431fb9d93199b1c74d6ea9d3f83b1e0ce2f58ba6bd2af6ee9f3d8b6c25a9c",
+      "/home/user/h_contest_vision_repository/Jetson/config_fusion_v2.json": "e8c1a7bb405b91a832fba42d8d2b66445db0a112aa07a1745e072ea133a8646f",
+      "/home/user/h_contest_vision_repository/Jetson/evaluate_local_roi.py": "cf5a1bb5c3461c0a61eabfcc5ebc17557563a4aa676d3dc7ea7bc1ca68dcf121",
+      "/home/user/h_contest_vision_repository/Jetson/evaluate_ruler_reference.py": "d96671a61f4deb75232b2d986488abe226d1792987abaf93d57b7cfff925e0f4",
+      "/home/user/h_contest_vision_repository/Jetson/local_vision.py": "ed6a524bf33cd7a8d5e9d942289cd3f308e520dfc9fba64c64b6ed7b620dd9a1",
+      "/home/user/h_contest_vision_repository/Jetson/main.py": "f03eb6cf81ae42cabd64c2f88ce3ad44d42e5033c80dc4bc8f3e60d376f18860",
+      "/home/user/h_contest_vision_repository/Jetson/measurement_contract.py": "9fb981b017371115e09344b80cb658aa6bf7340ddb72942427f03d5732f5dc81",
+      "/home/user/h_contest_vision_repository/Jetson/position_feedback.py": "ed32d6d7e273685c9c1f976b00800c089a281b8b28dac8a439212e69af687c2d",
+      "/home/user/h_contest_vision_repository/Jetson/rail_detector.py": "824659755e0cddfb32964865caaf7ad2164d76fbe3c43baa4ee5243ccd01a5a2",
+      "/home/user/h_contest_vision_repository/Jetson/recording_schedule.py": "6d37b62cb206ac5d7ccc2c1cce5fc28000be1bfefba65acfcf092e359a52f1a6",
+      "/home/user/h_contest_vision_repository/Jetson/reference_preview.py": "62b19f6e228f4ecae5382e0f4e1a77a6add1cd77189ba847536e1f7a8d122d72",
+      "/home/user/h_contest_vision_repository/Jetson/ruler_reference.py": "2b5083d6de8130a0b21c06386ce420aa732019c2fda34bc6999e2125904b1aad",
+      "/home/user/h_contest_vision_repository/Jetson/video_writer.py": "76dae5dc6ed740e732c60cf23fd971ccf4058283b20a7d9df455ec61b9c8455a",
+      "/home/user/h_contest_vision_repository/Jetson/visualization.py": "8bcd9a6b3d121c71482a6377d51cfbe5da64e635bda00f7a2730d4675528fd92"
+    }
+  },
+  "sources_unchanged": true,
+  "static_report_sha256": "37467cf9c8b642dc23df1866232d3d1677da422aa144778b5484bf7560944c8e",
+  "search_roots": [
+    "/home/user",
+    "/mnt",
+    "/media"
+  ],
+  "search_errors": [],
+  "expected_full_frames": 205,
+  "expected_steady_frames": 189,
+  "compared_frames": 0,
+  "cases": [
+    {
+      "truth_cm": -4.0,
+      "original_video": "/home/jetson/ball_vision_fusion_20261112_2102/recordings/raw_verify_ruler8_minus4_20260324_163318_1280x720.avi",
+      "basename": "raw_verify_ruler8_minus4_20260324_163318_1280x720.avi",
+      "expected_video_sha256": "57c1074654688da657d924a312f20a5af08fb5b9b6452072553571f7ce90a0a8",
+      "full_window": [
+        0,
+        49
+      ],
+      "steady_window": [
+        4,
+        49
+      ],
+      "evidence": {
+        "/home/user/ball_vision_src/test_results/fusion_v2/verify_minus4_tracked.json": "25b5d7d30dcf202d656f13f74dda29e79cab6f5142302b0f7a76228ea823ef84",
+        "/home/user/ball_vision_src/test_results/fusion_v2/verify_minus4_full.json": "55fa3801a4c5b3098a84f1af4df73b4710168886df9fd54170aab0d8b762464d"
+      },
+      "historical_valid_samples": 46,
+      "discovered_raw_hashes": {},
+      "status": "missing_raw"
+    },
+    {
+      "truth_cm": -2.0,
+      "original_video": "/home/jetson/ball_vision_fusion_20261112_2102/recordings/raw_verify_ruler10_minus2_20260324_163142_1280x720.avi",
+      "basename": "raw_verify_ruler10_minus2_20260324_163142_1280x720.avi",
+      "expected_video_sha256": "8bc251eb9640748734e4c29a9b06cb300841a76a065a05a31354a40dbdcb9478",
+      "full_window": [
+        0,
+        49
+      ],
+      "steady_window": [
+        4,
+        49
+      ],
+      "evidence": {
+        "/home/user/ball_vision_src/test_results/fusion_v2/verify_minus2_tracked.json": "2bfe9b973535116d9633c6a23afbe9d761c581e2cfb982e166fc54a43e6ae849",
+        "/home/user/ball_vision_src/test_results/fusion_v2/verify_minus2_full.json": "14c2c79899c8d7d52d38f2568eab7a5b26394181790053305c00ef8dd61535be"
+      },
+      "historical_valid_samples": 46,
+      "discovered_raw_hashes": {},
+      "status": "missing_raw"
+    },
+    {
+      "truth_cm": 2.0,
+      "original_video": "/home/jetson/ball_vision_fusion_20261112_2102/recordings/raw_retest_plus2_fusion_20260324_162954_1280x720.avi",
+      "basename": "raw_retest_plus2_fusion_20260324_162954_1280x720.avi",
+      "expected_video_sha256": "3db8d8d81836c1aac4c56d19e887deef6a9c8d1b72feebb4b99f925d5e177ca9",
+      "full_window": [
+        0,
+        54
+      ],
+      "steady_window": [
+        4,
+        54
+      ],
+      "evidence": {
+        "/home/user/ball_vision_src/test_results/fusion_v2/retest_plus2_tracked.json": "44a0095f09909032f5060f578a5e53684c65ee9042b6f7aff70cb48cbe293f5b",
+        "/home/user/ball_vision_src/test_results/fusion_v2/retest_plus2_full.json": "9ae0a212e064bc9c03df39010bda6665d09301d55fe91bab25b0686b21dde726"
+      },
+      "historical_valid_samples": 51,
+      "discovered_raw_hashes": {},
+      "status": "missing_raw"
+    },
+    {
+      "truth_cm": 4.0,
+      "original_video": "/home/jetson/ball_vision_fusion_20261112_2102/recordings/raw_verify_ruler16_plus4_20260324_163536_1280x720.avi",
+      "basename": "raw_verify_ruler16_plus4_20260324_163536_1280x720.avi",
+      "expected_video_sha256": "19f0b2b34c60a6df83552f42524faf282f048721f5c67a7610195638f307667d",
+      "full_window": [
+        0,
+        49
+      ],
+      "steady_window": [
+        4,
+        49
+      ],
+      "evidence": {
+        "/home/user/ball_vision_src/test_results/fusion_v2/verify_plus4_tracked.json": "fcaea4f0712f5aab69a91757aa5a7908e48512e0daa26070594683a245ae939f",
+        "/home/user/ball_vision_src/test_results/fusion_v2/verify_plus4_full.json": "fbf63d0e3227b3c28499a98b4b36074fbf7cf457617a9ff60ebe479300dd067e"
+      },
+      "historical_valid_samples": 46,
+      "discovered_raw_hashes": {},
+      "status": "missing_raw"
+    }
+  ]
+}

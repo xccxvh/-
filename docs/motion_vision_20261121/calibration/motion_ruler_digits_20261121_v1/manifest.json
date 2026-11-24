@@ -1,0 +1,39 @@
+{
+  "version": "motion_ruler_digits_20261121_v1",
+  "config": "config_motion_ruler_digits_20261121.json",
+  "config_sha256": "56dde81e57550aea1ecf77d7965437a1120bb3e1d79af0167d6ff3fd8a904669",
+  "reference_sha256": "3c6da668646e530e87fc80368bd68fdef1be0c5f59344afd466ba7cc1505eff3",
+  "modes": {
+    "raw": {
+      "binding": "40288c2e2ff686a3542836d55d9c574de9b943107d77c22d13c108294d829d7b",
+      "fit_status": "insufficient_fit_samples",
+      "deployable_for_static": false
+    },
+    "points": {
+      "binding": "9d52529400969c65e2e4587a752fac65767e6c9d1e32c104882060d7b8185075",
+      "fit_status": "insufficient_fit_samples",
+      "deployable_for_static": false
+    }
+  },
+  "source": "/home/user/桌面/jetson_nano/7/motion_calibration/digits_two_rounds",
+  "tilt_source": "/home/user/桌面/jetson_nano/7/motion_calibration/digits_tilt_v1",
+  "source_sha256": {
+    "rail_detector.py": "f4c246b96236e177e61e5e2e1d9f90bf2c831728ffefb867a50829b31ed32a1d",
+    "ball_detector.py": "a0f956b1f3f58c7bf54761c31d498b6c28409637e93b68e921674924a5720289",
+    "ruler_reference.py": "25f7901f3b7410a300d02d27439526e20813eb48d71ae9220b3eba2563cb5f06",
+    "ball_tracker.py": "ab34ba63c04c9f071e755883cdf1735f91b2c53d7005e2840599df85fcbc1be5",
+    "local_vision.py": "caab6cd1428bf1b1677111c281e3b4ce0d53ddf7c066bda5e71356a72cc59f32",
+    "camera_geometry.py": "0bf7037919abf8310789e0e70fdaaa34ebe0efe8d8bf81d435b6c25ad573d284",
+    "rail_coordinates.py": "9f7ca56abfcf55a2283b704504c949f20cff2757754b5b0bb705ca9a30fddbb1",
+    "measurement_contract.py": "58e1edd879f363b40535f2227211bbee4010d57d9a9ccbdb7e21530c76ede8fd",
+    "motion_observe.py": "f833e3e55f0018a2bb1de524200d3d65cebfa9f7cdb0a8bdc7a3e80248870c31",
+    "rail_calibration.py": "8cb741e9a54c62f59b0120a9c984eb1dc44d5259c6333389e953832283838af0",
+    "calibrate_rail.py": "24baa000d803d19f02a3c96b20f333706b996a0fff41447d5e2b63f213dfb20a"
+  },
+  "files": {
+    "evaluation.json": "50d029cc0fdac216d3055db3d8aa3ae6cd8e70231dc71c13772de8e2cc8d8471",
+    "evidence.zip": "6919ce3273dec50025007ae22ae558d9bd1b7f0e403101aa72a213a8e1501304",
+    "statistics.csv": "003598659f7c697a9d3bd96c8e6929ca8cbbdc766c3b2cf1048da74c5ec1cc40",
+    "tilt.json": "4037ab78767287805758bdadc3f8fff8793d0de97e75936616c28c965cce1b22"
+  }
+}

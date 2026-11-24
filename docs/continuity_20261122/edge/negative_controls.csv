@@ -1,0 +1,7 @@
+control,valid,reason
+intact,True,confirmed_upper_edge
+intact_print_erased_edge,False,upper_edge_geometry
+offband_bright_curve,False,upper_edge_geometry
+150_column_fragment,False,upper_edge_geometry
+duplicate_print,False,reference_rotation_proposal_inconsistent_reference
+blank,False,reference_rotation_proposal_untrusted

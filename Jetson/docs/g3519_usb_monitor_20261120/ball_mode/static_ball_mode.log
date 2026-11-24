@@ -1,0 +1,22 @@
+source: /dev/video0  1280x720  fps=30.0
+calibration: rail model: validated
+G3519 monitor CSV: /home/jetson/topview_usb_monitor_20261120/logs/link_usb_static_20260324_183210.csv
+frame=30 fps=38.6 x=452.3 state=UNCERTAIN conf=0.47 algo=10.3ms
+frame=60 fps=28.9 x=- state=LOST conf=0.00 algo=26.6ms
+frame=90 fps=28.6 x=508.2 state=UNCERTAIN conf=0.95 algo=31.0ms
+frame=120 fps=27.0 x=560.0 state=DETECTED conf=0.86 algo=49.9ms
+frame=150 fps=27.9 x=- state=LOST conf=0.00 algo=26.6ms
+frame=180 fps=31.0 x=- state=LOST conf=0.00 algo=27.0ms
+frame=210 fps=27.7 x=739.0 state=DETECTED conf=0.92 algo=46.1ms
+
+--- summary ---
+frames: 213, elapsed: 8.0s, avg fps: 26.6
+states: {'DETECTED': 72, 'UNCERTAIN': 41, 'LOST': 100}
+algo_ms: mean=34.33 p95=49.29 max=67.43
+queue_wait_ms: mean=9.42 p95=29.94 max=37.16
+capture_to_result_ms: mean=43.76 p95=73.98 max=85.10 (n=213)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=34.81 p95=49.94 max=67.85
+csv: /home/jetson/topview_usb_monitor_20261120/logs/track_usb_static_20260324_183210.csv
+G3519 TX=214 RX_bytes=3282 telemetry=80 CRC_errors=0

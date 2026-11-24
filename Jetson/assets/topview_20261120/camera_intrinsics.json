@@ -1,0 +1,378 @@
+{
+  "schema": "camera-intrinsics-v1",
+  "model": "opencv-pinhole-brown5-v1",
+  "resolution": [
+    1280,
+    720
+  ],
+  "camera_id": "icspring-usb-camera",
+  "focus_id": "topview-focused-20261120",
+  "K": [
+    [
+      854.8644724851466,
+      0.0,
+      648.7115366623854
+    ],
+    [
+      0.0,
+      852.4211600129576,
+      364.49498187047317
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "D": [
+    -0.4221806764407108,
+    0.21310544041501991,
+    -0.0006774780034419427,
+    -0.0003785002752345725,
+    -0.05097382916807979
+  ],
+  "board": {
+    "inner_cols": 9,
+    "inner_rows": 4,
+    "square_mm": 20.0
+  },
+  "inputs": [
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/flat_YEh7nJ/pose_1795177311845158369.jpg",
+      "sha256": "4526d159be3b8095eb07f9aca9f56f1287d42e0d90f1d6ee1ab72f5446a141f9"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/flat_YEh7nJ/pose_1795177496385688897.jpg",
+      "sha256": "0e316df85578c875077655381219e2cf370e2050134f949eb787d5cb36371731"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/flat_YEh7nJ/pose_1795177501872945831.jpg",
+      "sha256": "400c7d5ba1ef08a9a5d2a04d60f9e5d60c5d0f27d368ed043df1c4fa4b95c56b"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/flat_YEh7nJ/pose_1795177518935221343.jpg",
+      "sha256": "1c31744b4e50b3c642c6d237a257d8f7bddb0e3faeb48d8254c27841c6c87f1c"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/flat_YEh7nJ/pose_1795177520935632675.jpg",
+      "sha256": "9c976336c2926525c06aad04aea1a4a178a6e0b39ad5038312bcfac85ea08f7b"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/flat_YEh7nJ/pose_1795177531720362477.jpg",
+      "sha256": "06a7ece03c714031da3efa5a6108c111a5f33566a50e5f14ecb1aacc9189b148"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/flat_YEh7nJ/pose_1795177535896815397.jpg",
+      "sha256": "9b09eb3c54aeb7350d05e1594f110a7b62f074bd511ae4115d6a245237e6db65"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/flat_YEh7nJ/pose_1795177551591486663.jpg",
+      "sha256": "bc3667d339b22245c01fec6248de11690a9d57e7e508329dfbf844e4a02a7cf3"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/flat_YEh7nJ/pose_1795177553365322742.jpg",
+      "sha256": "08191c4af8b84c300778e5e718e00b269c41fc33a8ce0c4922751c9ae564b818"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/flat_YEh7nJ/pose_1795177566526496306.jpg",
+      "sha256": "242311356a7f57a7c25e0f3d358c03ab96efbd6ac6f4bed81e174a369ce6864e"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/flat_YEh7nJ/pose_1795177568575673150.jpg",
+      "sha256": "2f743868604c115d764c4a6460927bf6be70fb6ce48aa02c2b9f5d2e09f94d08"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/flat_YEh7nJ/pose_1795177601591623719.jpg",
+      "sha256": "eb0bcda967ae48b45fb879484ff8544959f416a1fa4da1fad960f2fae0d5c736"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/flat_YEh7nJ/pose_1795177603816759861.jpg",
+      "sha256": "e2c435c96a4a1d4382cc493c0c889e2db558a0fe8f13a5b4ce50d6b413a9d31a"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/flat_YEh7nJ/pose_1795177608005397691.jpg",
+      "sha256": "40c95acd1b84efe7de93403954e598cfd27a0e4a0d4145c0f0f5bf156a3861e3"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178274648169458.jpg",
+      "sha256": "cbd59989d488838bae33c6adfe62629f779ffd8f32b5ed47661e8f54fd26d609"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178283248703843.jpg",
+      "sha256": "9b017e9cfc2dc5d4e9e5eb0c2e459ffaa2a0d70e64cfe6e7ee7f78d657cb4bc5"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178297384145159.jpg",
+      "sha256": "9a182c911869d32d53884446418678bf71e7e099d1d8f7ebe2c0cd4a0c1db090"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178389107104494.jpg",
+      "sha256": "d47a394b5f8e88e0e99479acc308a98d6ca2236fbc562c3d942f875f131bf10c"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178393875839302.jpg",
+      "sha256": "c4e4976a22ec08dbdcb6791bed74f39138bd73f061ebc5906e1c1df7567f0f4b"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178416718268569.jpg",
+      "sha256": "9ea459c5683c05f54c1bef9e55041dedbbea6d1b1b1d84409923ff80219214bd"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178441358856379.jpg",
+      "sha256": "b5f7d1a231d2ad1268fa39fff89d020411c7b407511b3e004e04dfa2f493fe00"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178442220513353.jpg",
+      "sha256": "59838c370aabc69868200919e0cfd21630ae06ad00a96a1a0bcd953b2f26ad28"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178456330465562.jpg",
+      "sha256": "780fc329169cc3ac15f08f8974362ae9f3da6534006c639191f241609db1345e"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178471051985625.jpg",
+      "sha256": "c4fce96a77252ebf2b662b9d6eba8c9e5824f01f5ac469d781e7a3fd6c1f0893"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178475582849448.jpg",
+      "sha256": "f2fdc32738b59d1a315f596bc0f116c32218c68e0988009b630896ff640202b6"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178485125967667.jpg",
+      "sha256": "723fd13d3e2c67ea6548734ac5a65e54e47d0327911c9c750fb410a4f552e286"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178488461685952.jpg",
+      "sha256": "3728d687a866d715b1776a673f32ea7d6aebab331db16be9d979e22536678027"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178522680527585.jpg",
+      "sha256": "7a59af10a07b9cfd31850c0b276113f58c25708593ec66354e5ad8d3bfa541af"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178560384593824.jpg",
+      "sha256": "b9040d49ae2455a6f034b60b51d7b0864aed9fe61521ee6994be1617802071b0"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178587062466407.jpg",
+      "sha256": "eff91ef775e9dd611c1da4602c8af081912b1dcd29fbb8e50e9ce3c941b66ff3"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178592691390087.jpg",
+      "sha256": "3ccb3f26fae1f16fc1d17a4dc7982f1721baadfc3fa7052e7988617d4d3d8019"
+    },
+    {
+      "path": "/home/user/\u684c\u9762/jetson_nano/6/topview_20261120/camera_calibration_20261120/supplement_myB8iP/pose_1795178642795186319.jpg",
+      "sha256": "0f2584ccca5b63e2df4c1cc38a5a94d079bc2c440ed9666cc7cbc3f9e4cf8ca5"
+    }
+  ],
+  "reprojection": {
+    "overall_rms_px": 0.8409834092235438,
+    "opencv_rms_px": 0.8409834108316068,
+    "per_view_rms_px": [
+      0.600806898942845,
+      0.5825515013892972,
+      1.0369016225900483,
+      0.8097998683702111,
+      1.0570439981358675,
+      0.9646646903089721,
+      0.6284529735429306,
+      0.5521748942432476,
+      0.8203323578394145,
+      0.5118669202993964,
+      0.6580197508031913,
+      1.0716289658207028,
+      0.5929756177570877,
+      0.576604742571689,
+      0.8603287019432058,
+      0.7443319315132914,
+      0.9217422554730528,
+      0.8870856648239391,
+      0.7346885266893312,
+      0.8904268324202997,
+      0.8525294395879639,
+      0.8749531207480532,
+      0.9473719785033771,
+      0.9981835495998219,
+      1.0494780205492054,
+      0.9336086201839946,
+      0.9394477364850834,
+      0.9523860971669578,
+      0.9447851586886047,
+      0.8188137738765152,
+      0.8322947761780766,
+      0.7646058777533931
+    ]
+  },
+  "validation": {
+    "passed": true,
+    "limits": {
+      "min_views": 12,
+      "duplicate_corner_rms_px": 1.0,
+      "min_board_area_fraction": 0.02,
+      "min_centroid_span_x": 0.2,
+      "min_centroid_span_y": 0.2,
+      "min_corner_hull_fraction": 0.25,
+      "min_scale_ratio": 1.25,
+      "min_tilt_span_x_deg": 10.0,
+      "min_tilt_span_y_deg": 10.0,
+      "max_overall_rms_px": 1.0,
+      "max_view_rms_px": 2.0
+    },
+    "coverage": {
+      "centroid_span_x": 0.2060422420501709,
+      "centroid_span_y": 0.206268310546875,
+      "corner_hull_fraction": 0.37811854031618286,
+      "min_board_area_fraction": 0.07484513543949713,
+      "max_board_area_fraction": 0.23670439249214104,
+      "scale_ratio": 1.7783669116276772
+    },
+    "pose": {
+      "tilt_span_x_deg": 13.80554835056582,
+      "tilt_span_y_deg": 16.748920484347945,
+      "per_view_tilt_deg": [
+        [
+          0.7462774049796654,
+          -21.14175173317957
+        ],
+        [
+          1.3070458701151177,
+          -20.51422369111504
+        ],
+        [
+          0.931865794568105,
+          -20.929262691541158
+        ],
+        [
+          1.554257827811082,
+          -22.047231452145137
+        ],
+        [
+          0.603312823374947,
+          -22.10096389587643
+        ],
+        [
+          -0.83872761442694,
+          -20.641417860785964
+        ],
+        [
+          -0.04040949049524986,
+          -19.69914330956534
+        ],
+        [
+          0.3262751497516925,
+          -20.917815372314596
+        ],
+        [
+          0.275546100758838,
+          -20.720462520643874
+        ],
+        [
+          1.1837864043753288,
+          -20.222112586935374
+        ],
+        [
+          1.3356318867904613,
+          -20.719686150486353
+        ],
+        [
+          0.6194278648610859,
+          -20.82502497279327
+        ],
+        [
+          1.5421004054850933,
+          -21.195099366585172
+        ],
+        [
+          1.7978933313989718,
+          -20.955885401416424
+        ],
+        [
+          0.9776292634814784,
+          -10.859851126391774
+        ],
+        [
+          -1.9143542284174155,
+          -25.52341700271896
+        ],
+        [
+          5.53366644229873,
+          -24.728003006651296
+        ],
+        [
+          0.34518125249778275,
+          -19.747945973717332
+        ],
+        [
+          0.14564342831326188,
+          -18.930328429437086
+        ],
+        [
+          0.8382780907165006,
+          -18.93020638181886
+        ],
+        [
+          2.859196327434092,
+          -18.453136080333117
+        ],
+        [
+          2.0178050764907094,
+          -18.33515103285594
+        ],
+        [
+          3.1136120587769165,
+          -16.435673492500744
+        ],
+        [
+          7.920019481625046,
+          -14.336647519688082
+        ],
+        [
+          8.591767276303472,
+          -13.73846231332704
+        ],
+        [
+          9.55380226851822,
+          -12.834056576470928
+        ],
+        [
+          11.280204831969016,
+          -13.53773426837339
+        ],
+        [
+          5.573424528009757,
+          -15.446516861883236
+        ],
+        [
+          11.891194122148404,
+          -13.845146790638827
+        ],
+        [
+          7.176041494198264,
+          -17.247679763848563
+        ],
+        [
+          1.7017829651854788,
+          -27.60877161073972
+        ],
+        [
+          2.601173291424069,
+          -15.578276091709364
+        ]
+      ]
+    },
+    "input_views": 32,
+    "used_views": 32,
+    "dropped_views": 0
+  },
+  "limitations": "Fit residuals and diversity checks are not independent camera accuracy or physical-source certification.",
+  "runtime": {
+    "opencv": "4.8.1",
+    "numpy": "1.24.4"
+  },
+  "integrity": {
+    "algorithm": "sha256",
+    "canonicalization": "json-sort-keys-compact-utf8-v1",
+    "payload_sha256": "01da95b57dff2af367a71671844ca3498c0c8a74b65f159ea1bcde7513af574c"
+  }
+}

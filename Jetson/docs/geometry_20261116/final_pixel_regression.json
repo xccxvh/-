@@ -1,0 +1,20 @@
+{
+  "frames": [
+    1043,
+    1043,
+    1043
+  ],
+  "desktop_vs253_differences": [],
+  "desktop_valid": 666,
+  "nano_valid": 641,
+  "nano_vs_desktop_field_differences": {
+    "valid": 35,
+    "state": 36,
+    "candidate_count": 31,
+    "detector_reason": 31,
+    "tracker_reason": 35,
+    "rail_valid": 0
+  },
+  "both_valid_max_x_difference_px": 1.7204304282286103,
+  "note": "Replay parity, not independent accuracy; platform differences require inspection."
+}

@@ -13,13 +13,26 @@ import numpy as np
 
 
 class RailLine(object):
-    def __init__(self, slope, intercept, valid=False, confidence=0.0):
+    def __init__(self, slope, intercept, valid=False, confidence=0.0,
+                 validity_policy="legacy_geometry"):
         self.slope = float(slope)
         self.intercept = float(intercept)
         self.raw_slope = self.slope
         self.raw_intercept = self.intercept
-        self.valid = bool(valid)
         self.confidence = float(confidence)
+        # valid 构造参数沿用旧接口，表示几何判定；身份只能由参考路径确认。
+        self.geometry_valid = bool(valid)
+        self.validity_policy = validity_policy
+        self.identity_valid = False
+        self.reason = "legacy_geometry"
+
+    @property
+    def valid(self):
+        # 旧算法没有身份观测，显式保留仅几何策略，绝不伪造 identity_valid。
+        # 参考路径每次读取都计算合取，防止几何或身份失效后沿用旧有效快照。
+        if self.validity_policy == "legacy_geometry":
+            return bool(self.geometry_valid)
+        return bool(self.geometry_valid and self.identity_valid)
 
     def y_at(self, x):
         return self.slope * x + self.intercept
@@ -31,6 +44,10 @@ class RailLine(object):
 class RailDetector(object):
     def __init__(self, cfg, width, height):
         self.cfg = cfg
+        self.upper_reference = None
+        if cfg.get("upper_reference", {}).get("enabled", False):
+            from local_vision import UpperEdgeReference
+            self.upper_reference = UpperEdgeReference(cfg["upper_reference"])
         self.W = int(width)
         self.H = int(height)
         self.y0_ratio, self.y1_ratio = cfg.get("y_band", [0.33, 0.68])
@@ -53,7 +70,9 @@ class RailDetector(object):
         return self._fallback()
 
     def _fallback(self):
-        return RailLine(0.0, self.H * 0.5, False, 0.0)
+        # 失败结果仍保留所在路径的策略；不退回可绕过身份校验的旧模式。
+        policy = "reference_identity" if self.upper_reference is not None else "legacy_geometry"
+        return RailLine(0.0, self.H * 0.5, False, 0.0, validity_policy=policy)
 
     def _search_region(self):
         """跟踪阶段只在上一条轨道线附近搜索, 避免跳到桌面/箱子边缘。"""
@@ -70,6 +89,25 @@ class RailDetector(object):
 
     def detect(self, gray, force=False):
         """返回 RailLine。gray 为单通道灰度图。"""
+        if self.upper_reference is not None:
+            self.reference_sequence = getattr(self, "reference_sequence", 0) + 1
+            evidence = self.upper_reference.locate(gray)
+            if evidence is None:
+                line = self._invalidate()
+                line.reference_sequence = self.reference_sequence
+                line.reason = self.upper_reference.reason
+                # 纸尺纹理匹配不等于轨道上缘身份成立：没有可用上缘几何时，
+                # fallback 不携带参考变换/轮廓，身份必须为假；reason 保留具体原因。
+                line.identity_valid = False
+                return line
+            line = RailLine(evidence.pop('slope'), evidence.pop('intercept'), True,
+                            evidence.pop('confidence'), validity_policy='reference_identity')
+            for key, value in evidence.items():setattr(line, key, value)
+            line.identity_valid = True
+            line.reference_sequence = self.reference_sequence
+            line.reason = 'confirmed_upper_edge'
+            self.last = line
+            return line
         self.counter += 1
         if (self.last is not None and not force and
                 (self.counter % self.refresh) != 0):

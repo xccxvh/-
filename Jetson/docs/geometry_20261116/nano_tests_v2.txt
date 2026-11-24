@@ -1,0 +1,90 @@
+calibration rejected: no local calibration images matched
+calibration rejected: output already exists; refusing overwrite
+usage: python3 -m unittest collect [-h] --csv CSV --video VIDEO
+                                   --known-position --cm CM --start-frame
+                                   START_FRAME --end-frame END_FRAME
+                                   [--binding-file BINDING_FILE] --output
+                                   OUTPUT
+python3 -m unittest collect: error: the following arguments are required: --known-position
+usage: python3 -m unittest collect [-h] --csv CSV --video VIDEO
+                                   --known-position --cm CM --start-frame
+                                   START_FRAME --end-frame END_FRAME
+                                   [--binding-file BINDING_FILE] --output
+                                   OUTPUT
+python3 -m unittest collect: error: the following arguments are required: --end-frame
+----------------------------------------------------------------------
+Ran 239 tests in 33.475s
+
+OK
+{
+  "status": "complete"
+}
+calibration saved: /tmp/tmp9kcysspv/synthetic-output.json (16 views; RMS 0.000011 px)
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmpjt54j58e/first.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmpjt54j58e/auto.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmpjt54j58e/explicit.json
+session: 16/20 samples, coverage=0.8000 -> /tmp/tmp58ruvp0i/s.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmpmnxbyjsq/minus.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmpmnxbyjsq/zero.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmpmnxbyjsq/plus.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmpmnxbyjsq/verify_minus.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmpmnxbyjsq/verify_plus.json
+ready=True validated=False -> /tmp/tmpmnxbyjsq/model-v1.json
+ready=True validated=True -> /tmp/tmpmnxbyjsq/model-v2.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmp3h3q8l0o/s.json
+session: 20/20 samples, coverage=1.0000 -> /tmp/tmpnwn9ncrf/s.json
+frames=3 labeled=0 valid=0 output=/tmp/tmp2b7bi1ro/run
+source: /dev/video0  1280x720  fps=30.0
+calibration: not ready
+
+--- summary ---
+frames: 3, elapsed: 0.0s, avg fps: 177.9
+states: {'DETECTED': 0, 'UNCERTAIN': 0, 'LOST': 3}
+algo_ms: mean=4.78 p95=4.89 max=4.89
+queue_wait_ms: mean=883.22 p95=1011.04 max=1011.04
+capture_to_result_ms: mean=888.01 p95=1015.93 max=1015.93 (n=3)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=5.08 p95=5.19 max=5.19
+csv: /tmp/tmpu16xpoc5/track_run_20260324_170419.csv
+source: /dev/video0  1280x720  fps=30.0
+calibration: not ready
+reference cm PREVIEW: experimental, UART disabled
+
+--- summary ---
+frames: 3, elapsed: 0.0s, avg fps: 165.2
+states: {'DETECTED': 0, 'UNCERTAIN': 0, 'LOST': 3}
+algo_ms: mean=5.26 p95=6.03 max=6.03
+queue_wait_ms: mean=883.44 p95=1010.45 max=1010.45
+capture_to_result_ms: mean=888.69 p95=1016.48 max=1016.48 (n=3)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=5.57 p95=6.37 max=6.37
+csv: /tmp/tmpwprg6t_c/track_run_20260324_170419.csv
+source: dummy  1280x720  fps=0.5
+calibration: not ready
+
+--- summary ---
+frames: 3, elapsed: 0.0s, avg fps: 183.4
+states: {'DETECTED': 0, 'UNCERTAIN': 0, 'LOST': 3}
+algo_ms: mean=4.70 p95=4.72 max=4.72
+queue_wait_ms: mean=906.78 p95=1034.72 max=1034.72
+capture_to_result_ms: mean=911.48 p95=1039.45 max=1039.45 (n=3)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=5.01 p95=5.02 max=5.02
+csv: /tmp/tmpyz169kpp/track_run_20260324_170419.csv
+source: /dev/video0  1280x720  fps=30.0
+calibration: not ready
+reference cm PREVIEW: experimental, UART disabled
+
+--- summary ---
+frames: 4, elapsed: 0.0s, avg fps: 251.1
+states: {'DETECTED': 3, 'UNCERTAIN': 0, 'LOST': 1}
+algo_ms: mean=1.66 p95=2.89 max=2.89
+queue_wait_ms: mean=0.02 p95=0.02 max=0.02
+capture_to_result_ms: mean=1.68 p95=2.91 max=2.91 (n=4)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=1.95 p95=3.21 max=3.21
+csv: /tmp/tmpsi_7fghw/track_run_20260324_170419.csv

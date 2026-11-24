@@ -1,0 +1,3989 @@
+{
+  "source_video": "/home/user/桌面/jetson_nano/raw_rolling_20261116_35s.avi",
+  "sample_selection_source": "/home/user/桌面/jetson_nano/2/verified_comparison/V4.csv",
+  "sample_frames": [
+    220,
+    360,
+    640,
+    780,
+    880
+  ],
+  "labeler": "assistant_visual_review",
+  "audit_type": "separate_agent_visual_audit_not_human_independent_ground_truth",
+  "method": "Video sequentially decoded from frame 0 to EOF (1043 actual frames); saved all frames in five inclusive +/-8 windows. Each of 85 frames visually inspected in clean strips and 3x cap zooms. Center, cap endpoints, and current-frame 5/7cm tick x coordinates manually transcribed. No detector-derived coordinates used as labels.",
+  "exposure_disclosure": "V4 buffer rows were read to identify samples and included detector fields; their values were not used to set visual labels. User later supplied rejection reasons; these were not used to infer ball locations or visibility. This is a separate-agent review, not a blinded human study.",
+  "coordinates": "Zero-based original 1280x720 pixels; x right; frame numbers are sequential decoded indices.",
+  "tolerances_px": {
+    "center": 6,
+    "cap_endpoint": 5,
+    "ruler_tick": 3,
+    "center_boundary_combined": 9,
+    "endpoint_boundary_combined": 8
+  },
+  "tolerance_note": "Approximate visual uncertainty bounds, not statistically validated. Endpoint/anchor uncertainty is added conservatively for crossing decisions.",
+  "region_definition": {
+    "source": "config_used.json ball_search semantic anchors only",
+    "search_ruler_cm": [
+      5,
+      19
+    ],
+    "core_ruler_cm": [
+      7,
+      17
+    ],
+    "local_audit": "All five windows cross only left boundaries; right boundary is far beyond every cap. Current-frame 5/7 ticks are visually read, not copied from projected detector ROI. Exact detector ROI/gooddomain may differ.",
+    "calibration_valid": false,
+    "scope": "temporary visual ROI audit only"
+  },
+  "visibility_definitions": {
+    "complete_visible_cap": "Visible upper cap has identifiable left and right ends in original image; DOES NOT mean entire sphere visible or cap entirely inside ROI.",
+    "partial_search_cap": "ROI boundary passes through visible cap; image itself may still show complete cap.",
+    "boundary_uncertain": "Pixel tolerance spans a cap/ROI classification boundary."
+  },
+  "sample_count": 5,
+  "label_count": 85,
+  "windows": [
+    {
+      "sample_frame": 220,
+      "start_frame": 212,
+      "end_frame": 228,
+      "direction": "exit_left",
+      "expanded": false,
+      "coverage_note": "Window brackets this local left-edge passage through both search and core boundaries, including cap leading/trailing edge passages. Does not claim entire oscillation or both travel directions.",
+      "sample_cap_visibility_original": "complete_visible_cap",
+      "sample_cap_in_search": {
+        "nominal": "partial",
+        "with_tolerance": "partial",
+        "left_clearance_px": -13,
+        "right_clearance_px": 21
+      },
+      "sample_cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -103,
+        "right_clearance_px": -69
+      },
+      "events": [
+        {
+          "boundary": "search",
+          "metric": "x_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 221,
+          "nominal_crossing_bracket": [
+            220,
+            221
+          ],
+          "possible_first_frame_range": [
+            220,
+            221
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_left_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 220,
+          "nominal_crossing_bracket": [
+            219,
+            220
+          ],
+          "possible_first_frame_range": [
+            219,
+            220
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_right_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 222,
+          "nominal_crossing_bracket": [
+            221,
+            222
+          ],
+          "possible_first_frame_range": [
+            221,
+            222
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "x_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 216,
+          "nominal_crossing_bracket": [
+            215,
+            216
+          ],
+          "possible_first_frame_range": [
+            216,
+            216
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_left_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 215,
+          "nominal_crossing_bracket": [
+            214,
+            215
+          ],
+          "possible_first_frame_range": [
+            215,
+            216
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_right_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 217,
+          "nominal_crossing_bracket": [
+            216,
+            217
+          ],
+          "possible_first_frame_range": [
+            217,
+            217
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        }
+      ]
+    },
+    {
+      "sample_frame": 360,
+      "start_frame": 352,
+      "end_frame": 368,
+      "direction": "enter_from_left",
+      "expanded": false,
+      "coverage_note": "Window brackets this local left-edge passage through both search and core boundaries, including cap leading/trailing edge passages. Does not claim entire oscillation or both travel directions.",
+      "sample_cap_visibility_original": "complete_visible_cap",
+      "sample_cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 20,
+        "right_clearance_px": 55
+      },
+      "sample_cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -69,
+        "right_clearance_px": -34
+      },
+      "events": [
+        {
+          "boundary": "search",
+          "metric": "x_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 358,
+          "nominal_crossing_bracket": [
+            357,
+            358
+          ],
+          "possible_first_frame_range": [
+            358,
+            359
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_left_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 359,
+          "nominal_crossing_bracket": [
+            358,
+            359
+          ],
+          "possible_first_frame_range": [
+            359,
+            360
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_right_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 357,
+          "nominal_crossing_bracket": [
+            356,
+            357
+          ],
+          "possible_first_frame_range": [
+            356,
+            358
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "x_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 363,
+          "nominal_crossing_bracket": [
+            362,
+            363
+          ],
+          "possible_first_frame_range": [
+            363,
+            364
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_left_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 364,
+          "nominal_crossing_bracket": [
+            363,
+            364
+          ],
+          "possible_first_frame_range": [
+            364,
+            364
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_right_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 362,
+          "nominal_crossing_bracket": [
+            361,
+            362
+          ],
+          "possible_first_frame_range": [
+            362,
+            363
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        }
+      ]
+    },
+    {
+      "sample_frame": 640,
+      "start_frame": 632,
+      "end_frame": 648,
+      "direction": "exit_left",
+      "expanded": false,
+      "coverage_note": "Window brackets this local left-edge passage through both search and core boundaries, including cap leading/trailing edge passages. Does not claim entire oscillation or both travel directions.",
+      "sample_cap_visibility_original": "complete_visible_cap",
+      "sample_cap_in_search": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -6,
+        "right_clearance_px": 29
+      },
+      "sample_cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -96,
+        "right_clearance_px": -61
+      },
+      "events": [
+        {
+          "boundary": "search",
+          "metric": "x_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 641,
+          "nominal_crossing_bracket": [
+            640,
+            641
+          ],
+          "possible_first_frame_range": [
+            641,
+            642
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_left_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 640,
+          "nominal_crossing_bracket": [
+            639,
+            640
+          ],
+          "possible_first_frame_range": [
+            639,
+            641
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_right_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 642,
+          "nominal_crossing_bracket": [
+            641,
+            642
+          ],
+          "possible_first_frame_range": [
+            642,
+            643
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "x_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 636,
+          "nominal_crossing_bracket": [
+            635,
+            636
+          ],
+          "possible_first_frame_range": [
+            636,
+            636
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_left_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 635,
+          "nominal_crossing_bracket": [
+            634,
+            635
+          ],
+          "possible_first_frame_range": [
+            635,
+            636
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_right_px",
+          "direction": "exit_left",
+          "nominal_first_frame_on_new_side": 637,
+          "nominal_crossing_bracket": [
+            636,
+            637
+          ],
+          "possible_first_frame_range": [
+            637,
+            637
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        }
+      ]
+    },
+    {
+      "sample_frame": 780,
+      "start_frame": 772,
+      "end_frame": 788,
+      "direction": "enter_from_left",
+      "expanded": false,
+      "coverage_note": "Window brackets this local left-edge passage through both search and core boundaries, including cap leading/trailing edge passages. Does not claim entire oscillation or both travel directions.",
+      "sample_cap_visibility_original": "complete_visible_cap",
+      "sample_cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 60,
+        "right_clearance_px": 95
+      },
+      "sample_cap_in_core": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -27,
+        "right_clearance_px": 8
+      },
+      "events": [
+        {
+          "boundary": "search",
+          "metric": "x_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 776,
+          "nominal_crossing_bracket": [
+            775,
+            776
+          ],
+          "possible_first_frame_range": [
+            775,
+            777
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_left_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 777,
+          "nominal_crossing_bracket": [
+            776,
+            777
+          ],
+          "possible_first_frame_range": [
+            776,
+            778
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_right_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 775,
+          "nominal_crossing_bracket": [
+            774,
+            775
+          ],
+          "possible_first_frame_range": [
+            774,
+            776
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "x_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 781,
+          "nominal_crossing_bracket": [
+            780,
+            781
+          ],
+          "possible_first_frame_range": [
+            781,
+            782
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_left_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 782,
+          "nominal_crossing_bracket": [
+            781,
+            782
+          ],
+          "possible_first_frame_range": [
+            781,
+            782
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_right_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 780,
+          "nominal_crossing_bracket": [
+            779,
+            780
+          ],
+          "possible_first_frame_range": [
+            780,
+            781
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        }
+      ]
+    },
+    {
+      "sample_frame": 880,
+      "start_frame": 872,
+      "end_frame": 888,
+      "direction": "enter_from_left",
+      "expanded": false,
+      "coverage_note": "Window brackets this local left-edge passage through both search and core boundaries, including cap leading/trailing edge passages. Does not claim entire oscillation or both travel directions.",
+      "sample_cap_visibility_original": "complete_visible_cap",
+      "sample_cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": 2,
+        "right_clearance_px": 38
+      },
+      "sample_cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -87,
+        "right_clearance_px": -51
+      },
+      "events": [
+        {
+          "boundary": "search",
+          "metric": "x_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 879,
+          "nominal_crossing_bracket": [
+            878,
+            879
+          ],
+          "possible_first_frame_range": [
+            878,
+            880
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_left_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 880,
+          "nominal_crossing_bracket": [
+            879,
+            880
+          ],
+          "possible_first_frame_range": [
+            880,
+            881
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "search",
+          "metric": "cap_right_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 878,
+          "nominal_crossing_bracket": [
+            877,
+            878
+          ],
+          "possible_first_frame_range": [
+            877,
+            879
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "x_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 884,
+          "nominal_crossing_bracket": [
+            883,
+            884
+          ],
+          "possible_first_frame_range": [
+            884,
+            885
+          ],
+          "combined_tolerance_px": 9,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_left_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 885,
+          "nominal_crossing_bracket": [
+            884,
+            885
+          ],
+          "possible_first_frame_range": [
+            885,
+            886
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        },
+        {
+          "boundary": "core",
+          "metric": "cap_right_px",
+          "direction": "enter_from_left",
+          "nominal_first_frame_on_new_side": 883,
+          "nominal_crossing_bracket": [
+            882,
+            883
+          ],
+          "possible_first_frame_range": [
+            883,
+            884
+          ],
+          "combined_tolerance_px": 8,
+          "note": "Derived only from manually read coordinates and per-frame visual ruler ticks; bounds conservative, not exact detector ROI/gooddomain crossings.",
+          "equality_convention": "At x equal to boundary, nominally inside; boundary uncertainty still applies."
+        }
+      ]
+    }
+  ],
+  "labels": [
+    {
+      "frame": 212,
+      "sample_frame": 220,
+      "x_px": 407,
+      "cap_left_px": 389,
+      "cap_right_px": 427,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 229,
+      "ruler7_core_left_x_px": 319,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 160,
+        "right_clearance_px": 198
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 70,
+        "right_clearance_px": 108
+      },
+      "evidence": {
+        "full_frame": "frame_0212.png",
+        "clean_crop": "crop_0212.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 213,
+      "sample_frame": 220,
+      "x_px": 380,
+      "cap_left_px": 362,
+      "cap_right_px": 401,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 230,
+      "ruler7_core_left_x_px": 319,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 132,
+        "right_clearance_px": 171
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 43,
+        "right_clearance_px": 82
+      },
+      "evidence": {
+        "full_frame": "frame_0213.png",
+        "clean_crop": "crop_0213.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 214,
+      "sample_frame": 220,
+      "x_px": 356,
+      "cap_left_px": 338,
+      "cap_right_px": 376,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 230,
+      "ruler7_core_left_x_px": 320,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 108,
+        "right_clearance_px": 146
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 18,
+        "right_clearance_px": 56
+      },
+      "evidence": {
+        "full_frame": "frame_0214.png",
+        "clean_crop": "crop_0214.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 215,
+      "sample_frame": 220,
+      "x_px": 333,
+      "cap_left_px": 316,
+      "cap_right_px": 352,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 230,
+      "ruler7_core_left_x_px": 320,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 86,
+        "right_clearance_px": 122
+      },
+      "cap_in_core": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -4,
+        "right_clearance_px": 32
+      },
+      "evidence": {
+        "full_frame": "frame_0215.png",
+        "clean_crop": "crop_0215.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 216,
+      "sample_frame": 220,
+      "x_px": 310,
+      "cap_left_px": 291,
+      "cap_right_px": 330,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 230,
+      "ruler7_core_left_x_px": 320,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 61,
+        "right_clearance_px": 100
+      },
+      "cap_in_core": {
+        "nominal": "partial",
+        "with_tolerance": "partial",
+        "left_clearance_px": -29,
+        "right_clearance_px": 10
+      },
+      "evidence": {
+        "full_frame": "frame_0216.png",
+        "clean_crop": "crop_0216.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 217,
+      "sample_frame": 220,
+      "x_px": 289,
+      "cap_left_px": 270,
+      "cap_right_px": 310,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 230,
+      "ruler7_core_left_x_px": 319,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 40,
+        "right_clearance_px": 80
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -49,
+        "right_clearance_px": -9
+      },
+      "evidence": {
+        "full_frame": "frame_0217.png",
+        "clean_crop": "crop_0217.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 218,
+      "sample_frame": 220,
+      "x_px": 267,
+      "cap_left_px": 250,
+      "cap_right_px": 286,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 229,
+      "ruler7_core_left_x_px": 319,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 21,
+        "right_clearance_px": 57
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -69,
+        "right_clearance_px": -33
+      },
+      "evidence": {
+        "full_frame": "frame_0218.png",
+        "clean_crop": "crop_0218.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 219,
+      "sample_frame": 220,
+      "x_px": 249,
+      "cap_left_px": 233,
+      "cap_right_px": 269,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 229,
+      "ruler7_core_left_x_px": 319,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": 4,
+        "right_clearance_px": 40
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -86,
+        "right_clearance_px": -50
+      },
+      "evidence": {
+        "full_frame": "frame_0219.png",
+        "clean_crop": "crop_0219.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 220,
+      "sample_frame": 220,
+      "x_px": 233,
+      "cap_left_px": 215,
+      "cap_right_px": 249,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 228,
+      "ruler7_core_left_x_px": 318,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": true,
+      "cap_in_search": {
+        "nominal": "partial",
+        "with_tolerance": "partial",
+        "left_clearance_px": -13,
+        "right_clearance_px": 21
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -103,
+        "right_clearance_px": -69
+      },
+      "evidence": {
+        "full_frame": "frame_0220.png",
+        "clean_crop": "crop_0220.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 221,
+      "sample_frame": 220,
+      "x_px": 215,
+      "cap_left_px": 198,
+      "cap_right_px": 232,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 227,
+      "ruler7_core_left_x_px": 317,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -29,
+        "right_clearance_px": 5
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -119,
+        "right_clearance_px": -85
+      },
+      "evidence": {
+        "full_frame": "frame_0221.png",
+        "clean_crop": "crop_0221.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 222,
+      "sample_frame": 220,
+      "x_px": 198,
+      "cap_left_px": 181,
+      "cap_right_px": 216,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 226,
+      "ruler7_core_left_x_px": 315,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -45,
+        "right_clearance_px": -10
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -134,
+        "right_clearance_px": -99
+      },
+      "evidence": {
+        "full_frame": "frame_0222.png",
+        "clean_crop": "crop_0222.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 223,
+      "sample_frame": 220,
+      "x_px": 184,
+      "cap_left_px": 169,
+      "cap_right_px": 202,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 225,
+      "ruler7_core_left_x_px": 314,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -56,
+        "right_clearance_px": -23
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -145,
+        "right_clearance_px": -112
+      },
+      "evidence": {
+        "full_frame": "frame_0223.png",
+        "clean_crop": "crop_0223.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 224,
+      "sample_frame": 220,
+      "x_px": 170,
+      "cap_left_px": 153,
+      "cap_right_px": 188,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 223,
+      "ruler7_core_left_x_px": 312,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -70,
+        "right_clearance_px": -35
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -159,
+        "right_clearance_px": -124
+      },
+      "evidence": {
+        "full_frame": "frame_0224.png",
+        "clean_crop": "crop_0224.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 225,
+      "sample_frame": 220,
+      "x_px": 157,
+      "cap_left_px": 143,
+      "cap_right_px": 175,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 222,
+      "ruler7_core_left_x_px": 311,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -79,
+        "right_clearance_px": -47
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -168,
+        "right_clearance_px": -136
+      },
+      "evidence": {
+        "full_frame": "frame_0225.png",
+        "clean_crop": "crop_0225.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 226,
+      "sample_frame": 220,
+      "x_px": 145,
+      "cap_left_px": 131,
+      "cap_right_px": 164,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 221,
+      "ruler7_core_left_x_px": 309,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -90,
+        "right_clearance_px": -57
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -178,
+        "right_clearance_px": -145
+      },
+      "evidence": {
+        "full_frame": "frame_0226.png",
+        "clean_crop": "crop_0226.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 227,
+      "sample_frame": 220,
+      "x_px": 137,
+      "cap_left_px": 123,
+      "cap_right_px": 151,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 219,
+      "ruler7_core_left_x_px": 308,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -96,
+        "right_clearance_px": -68
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -185,
+        "right_clearance_px": -157
+      },
+      "evidence": {
+        "full_frame": "frame_0227.png",
+        "clean_crop": "crop_0227.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 228,
+      "sample_frame": 220,
+      "x_px": 127,
+      "cap_left_px": 114,
+      "cap_right_px": 142,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 218,
+      "ruler7_core_left_x_px": 306,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -104,
+        "right_clearance_px": -76
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -192,
+        "right_clearance_px": -164
+      },
+      "evidence": {
+        "full_frame": "frame_0228.png",
+        "clean_crop": "crop_0228.png",
+        "clean_contact": "window_220_clean.png",
+        "cap_zoom": "window_220_cap_zoom.png",
+        "annotated_contact": "window_220_annotated.png"
+      }
+    },
+    {
+      "frame": 352,
+      "sample_frame": 360,
+      "x_px": 144,
+      "cap_left_px": 128,
+      "cap_right_px": 160,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 304,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -86,
+        "right_clearance_px": -54
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -176,
+        "right_clearance_px": -144
+      },
+      "evidence": {
+        "full_frame": "frame_0352.png",
+        "clean_crop": "crop_0352.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 353,
+      "sample_frame": 360,
+      "x_px": 153,
+      "cap_left_px": 138,
+      "cap_right_px": 170,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 304,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -76,
+        "right_clearance_px": -44
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -166,
+        "right_clearance_px": -134
+      },
+      "evidence": {
+        "full_frame": "frame_0353.png",
+        "clean_crop": "crop_0353.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 354,
+      "sample_frame": 360,
+      "x_px": 166,
+      "cap_left_px": 149,
+      "cap_right_px": 181,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 304,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -65,
+        "right_clearance_px": -33
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -155,
+        "right_clearance_px": -123
+      },
+      "evidence": {
+        "full_frame": "frame_0354.png",
+        "clean_crop": "crop_0354.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 355,
+      "sample_frame": 360,
+      "x_px": 177,
+      "cap_left_px": 160,
+      "cap_right_px": 191,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 304,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -54,
+        "right_clearance_px": -23
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -144,
+        "right_clearance_px": -113
+      },
+      "evidence": {
+        "full_frame": "frame_0355.png",
+        "clean_crop": "crop_0355.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 356,
+      "sample_frame": 360,
+      "x_px": 190,
+      "cap_left_px": 174,
+      "cap_right_px": 207,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 303,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -40,
+        "right_clearance_px": -7
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -129,
+        "right_clearance_px": -96
+      },
+      "evidence": {
+        "full_frame": "frame_0356.png",
+        "clean_crop": "crop_0356.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 357,
+      "sample_frame": 360,
+      "x_px": 203,
+      "cap_left_px": 188,
+      "cap_right_px": 221,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 303,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -26,
+        "right_clearance_px": 7
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -115,
+        "right_clearance_px": -82
+      },
+      "evidence": {
+        "full_frame": "frame_0357.png",
+        "clean_crop": "crop_0357.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 358,
+      "sample_frame": 360,
+      "x_px": 216,
+      "cap_left_px": 201,
+      "cap_right_px": 234,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 303,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": true,
+      "cap_in_search": {
+        "nominal": "partial",
+        "with_tolerance": "partial",
+        "left_clearance_px": -13,
+        "right_clearance_px": 20
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -102,
+        "right_clearance_px": -69
+      },
+      "evidence": {
+        "full_frame": "frame_0358.png",
+        "clean_crop": "crop_0358.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 359,
+      "sample_frame": 360,
+      "x_px": 233,
+      "cap_left_px": 217,
+      "cap_right_px": 251,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 303,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": 3,
+        "right_clearance_px": 37
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -86,
+        "right_clearance_px": -52
+      },
+      "evidence": {
+        "full_frame": "frame_0359.png",
+        "clean_crop": "crop_0359.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 360,
+      "sample_frame": 360,
+      "x_px": 249,
+      "cap_left_px": 233,
+      "cap_right_px": 268,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 213,
+      "ruler7_core_left_x_px": 302,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 20,
+        "right_clearance_px": 55
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -69,
+        "right_clearance_px": -34
+      },
+      "evidence": {
+        "full_frame": "frame_0360.png",
+        "clean_crop": "crop_0360.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 361,
+      "sample_frame": 360,
+      "x_px": 266,
+      "cap_left_px": 251,
+      "cap_right_px": 285,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 213,
+      "ruler7_core_left_x_px": 302,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 38,
+        "right_clearance_px": 72
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -51,
+        "right_clearance_px": -17
+      },
+      "evidence": {
+        "full_frame": "frame_0361.png",
+        "clean_crop": "crop_0361.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 362,
+      "sample_frame": 360,
+      "x_px": 285,
+      "cap_left_px": 269,
+      "cap_right_px": 306,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 213,
+      "ruler7_core_left_x_px": 302,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 56,
+        "right_clearance_px": 93
+      },
+      "cap_in_core": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -33,
+        "right_clearance_px": 4
+      },
+      "evidence": {
+        "full_frame": "frame_0362.png",
+        "clean_crop": "crop_0362.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 363,
+      "sample_frame": 360,
+      "x_px": 306,
+      "cap_left_px": 289,
+      "cap_right_px": 325,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 212,
+      "ruler7_core_left_x_px": 301,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": true,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 77,
+        "right_clearance_px": 113
+      },
+      "cap_in_core": {
+        "nominal": "partial",
+        "with_tolerance": "partial",
+        "left_clearance_px": -12,
+        "right_clearance_px": 24
+      },
+      "evidence": {
+        "full_frame": "frame_0363.png",
+        "clean_crop": "crop_0363.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 364,
+      "sample_frame": 360,
+      "x_px": 328,
+      "cap_left_px": 312,
+      "cap_right_px": 349,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 212,
+      "ruler7_core_left_x_px": 301,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 100,
+        "right_clearance_px": 137
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 11,
+        "right_clearance_px": 48
+      },
+      "evidence": {
+        "full_frame": "frame_0364.png",
+        "clean_crop": "crop_0364.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 365,
+      "sample_frame": 360,
+      "x_px": 352,
+      "cap_left_px": 335,
+      "cap_right_px": 372,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 212,
+      "ruler7_core_left_x_px": 300,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 123,
+        "right_clearance_px": 160
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 35,
+        "right_clearance_px": 72
+      },
+      "evidence": {
+        "full_frame": "frame_0365.png",
+        "clean_crop": "crop_0365.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 366,
+      "sample_frame": 360,
+      "x_px": 376,
+      "cap_left_px": 359,
+      "cap_right_px": 398,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 212,
+      "ruler7_core_left_x_px": 300,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 147,
+        "right_clearance_px": 186
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 59,
+        "right_clearance_px": 98
+      },
+      "evidence": {
+        "full_frame": "frame_0366.png",
+        "clean_crop": "crop_0366.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 367,
+      "sample_frame": 360,
+      "x_px": 402,
+      "cap_left_px": 384,
+      "cap_right_px": 423,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 211,
+      "ruler7_core_left_x_px": 300,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 173,
+        "right_clearance_px": 212
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 84,
+        "right_clearance_px": 123
+      },
+      "evidence": {
+        "full_frame": "frame_0367.png",
+        "clean_crop": "crop_0367.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 368,
+      "sample_frame": 360,
+      "x_px": 428,
+      "cap_left_px": 411,
+      "cap_right_px": 448,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 211,
+      "ruler7_core_left_x_px": 300,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 200,
+        "right_clearance_px": 237
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 111,
+        "right_clearance_px": 148
+      },
+      "evidence": {
+        "full_frame": "frame_0368.png",
+        "clean_crop": "crop_0368.png",
+        "clean_contact": "window_360_clean.png",
+        "cap_zoom": "window_360_cap_zoom.png",
+        "annotated_contact": "window_360_annotated.png"
+      }
+    },
+    {
+      "frame": 632,
+      "sample_frame": 640,
+      "x_px": 400,
+      "cap_left_px": 382,
+      "cap_right_px": 422,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 230,
+      "ruler7_core_left_x_px": 320,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 152,
+        "right_clearance_px": 192
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 62,
+        "right_clearance_px": 102
+      },
+      "evidence": {
+        "full_frame": "frame_0632.png",
+        "clean_crop": "crop_0632.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 633,
+      "sample_frame": 640,
+      "x_px": 378,
+      "cap_left_px": 361,
+      "cap_right_px": 397,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 230,
+      "ruler7_core_left_x_px": 320,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 131,
+        "right_clearance_px": 167
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 41,
+        "right_clearance_px": 77
+      },
+      "evidence": {
+        "full_frame": "frame_0633.png",
+        "clean_crop": "crop_0633.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 634,
+      "sample_frame": 640,
+      "x_px": 355,
+      "cap_left_px": 337,
+      "cap_right_px": 374,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 230,
+      "ruler7_core_left_x_px": 320,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 107,
+        "right_clearance_px": 144
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 17,
+        "right_clearance_px": 54
+      },
+      "evidence": {
+        "full_frame": "frame_0634.png",
+        "clean_crop": "crop_0634.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 635,
+      "sample_frame": 640,
+      "x_px": 333,
+      "cap_left_px": 315,
+      "cap_right_px": 352,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 230,
+      "ruler7_core_left_x_px": 320,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 85,
+        "right_clearance_px": 122
+      },
+      "cap_in_core": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -5,
+        "right_clearance_px": 32
+      },
+      "evidence": {
+        "full_frame": "frame_0635.png",
+        "clean_crop": "crop_0635.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 636,
+      "sample_frame": 640,
+      "x_px": 310,
+      "cap_left_px": 293,
+      "cap_right_px": 331,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 230,
+      "ruler7_core_left_x_px": 320,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 63,
+        "right_clearance_px": 101
+      },
+      "cap_in_core": {
+        "nominal": "partial",
+        "with_tolerance": "partial",
+        "left_clearance_px": -27,
+        "right_clearance_px": 11
+      },
+      "evidence": {
+        "full_frame": "frame_0636.png",
+        "clean_crop": "crop_0636.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 637,
+      "sample_frame": 640,
+      "x_px": 291,
+      "cap_left_px": 273,
+      "cap_right_px": 310,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 230,
+      "ruler7_core_left_x_px": 320,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 43,
+        "right_clearance_px": 80
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -47,
+        "right_clearance_px": -10
+      },
+      "evidence": {
+        "full_frame": "frame_0637.png",
+        "clean_crop": "crop_0637.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 638,
+      "sample_frame": 640,
+      "x_px": 271,
+      "cap_left_px": 254,
+      "cap_right_px": 289,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 229,
+      "ruler7_core_left_x_px": 319,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 25,
+        "right_clearance_px": 60
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -65,
+        "right_clearance_px": -30
+      },
+      "evidence": {
+        "full_frame": "frame_0638.png",
+        "clean_crop": "crop_0638.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 639,
+      "sample_frame": 640,
+      "x_px": 252,
+      "cap_left_px": 236,
+      "cap_right_px": 272,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 229,
+      "ruler7_core_left_x_px": 319,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": 7,
+        "right_clearance_px": 43
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -83,
+        "right_clearance_px": -47
+      },
+      "evidence": {
+        "full_frame": "frame_0639.png",
+        "clean_crop": "crop_0639.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 640,
+      "sample_frame": 640,
+      "x_px": 238,
+      "cap_left_px": 222,
+      "cap_right_px": 257,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 228,
+      "ruler7_core_left_x_px": 318,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -6,
+        "right_clearance_px": 29
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -96,
+        "right_clearance_px": -61
+      },
+      "evidence": {
+        "full_frame": "frame_0640.png",
+        "clean_crop": "crop_0640.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 641,
+      "sample_frame": 640,
+      "x_px": 221,
+      "cap_left_px": 204,
+      "cap_right_px": 239,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 227,
+      "ruler7_core_left_x_px": 317,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": true,
+      "cap_in_search": {
+        "nominal": "partial",
+        "with_tolerance": "partial",
+        "left_clearance_px": -23,
+        "right_clearance_px": 12
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -113,
+        "right_clearance_px": -78
+      },
+      "evidence": {
+        "full_frame": "frame_0641.png",
+        "clean_crop": "crop_0641.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 642,
+      "sample_frame": 640,
+      "x_px": 205,
+      "cap_left_px": 189,
+      "cap_right_px": 224,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 226,
+      "ruler7_core_left_x_px": 315,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -37,
+        "right_clearance_px": -2
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -126,
+        "right_clearance_px": -91
+      },
+      "evidence": {
+        "full_frame": "frame_0642.png",
+        "clean_crop": "crop_0642.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 643,
+      "sample_frame": 640,
+      "x_px": 191,
+      "cap_left_px": 174,
+      "cap_right_px": 210,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 225,
+      "ruler7_core_left_x_px": 314,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -51,
+        "right_clearance_px": -15
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -140,
+        "right_clearance_px": -104
+      },
+      "evidence": {
+        "full_frame": "frame_0643.png",
+        "clean_crop": "crop_0643.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 644,
+      "sample_frame": 640,
+      "x_px": 178,
+      "cap_left_px": 160,
+      "cap_right_px": 195,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 223,
+      "ruler7_core_left_x_px": 312,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -63,
+        "right_clearance_px": -28
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -152,
+        "right_clearance_px": -117
+      },
+      "evidence": {
+        "full_frame": "frame_0644.png",
+        "clean_crop": "crop_0644.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 645,
+      "sample_frame": 640,
+      "x_px": 165,
+      "cap_left_px": 149,
+      "cap_right_px": 181,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 222,
+      "ruler7_core_left_x_px": 311,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -73,
+        "right_clearance_px": -41
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -162,
+        "right_clearance_px": -130
+      },
+      "evidence": {
+        "full_frame": "frame_0645.png",
+        "clean_crop": "crop_0645.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 646,
+      "sample_frame": 640,
+      "x_px": 153,
+      "cap_left_px": 138,
+      "cap_right_px": 168,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 221,
+      "ruler7_core_left_x_px": 309,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -83,
+        "right_clearance_px": -53
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -171,
+        "right_clearance_px": -141
+      },
+      "evidence": {
+        "full_frame": "frame_0646.png",
+        "clean_crop": "crop_0646.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 647,
+      "sample_frame": 640,
+      "x_px": 142,
+      "cap_left_px": 127,
+      "cap_right_px": 158,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 219,
+      "ruler7_core_left_x_px": 308,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -92,
+        "right_clearance_px": -61
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -181,
+        "right_clearance_px": -150
+      },
+      "evidence": {
+        "full_frame": "frame_0647.png",
+        "clean_crop": "crop_0647.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 648,
+      "sample_frame": 640,
+      "x_px": 134,
+      "cap_left_px": 120,
+      "cap_right_px": 148,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 218,
+      "ruler7_core_left_x_px": 306,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -98,
+        "right_clearance_px": -70
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -186,
+        "right_clearance_px": -158
+      },
+      "evidence": {
+        "full_frame": "frame_0648.png",
+        "clean_crop": "crop_0648.png",
+        "clean_contact": "window_640_clean.png",
+        "cap_zoom": "window_640_cap_zoom.png",
+        "annotated_contact": "window_640_annotated.png"
+      }
+    },
+    {
+      "frame": 772,
+      "sample_frame": 780,
+      "x_px": 169,
+      "cap_left_px": 154,
+      "cap_right_px": 186,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 304,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -60,
+        "right_clearance_px": -28
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -150,
+        "right_clearance_px": -118
+      },
+      "evidence": {
+        "full_frame": "frame_0772.png",
+        "clean_crop": "crop_0772.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 773,
+      "sample_frame": 780,
+      "x_px": 181,
+      "cap_left_px": 165,
+      "cap_right_px": 198,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 304,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -49,
+        "right_clearance_px": -16
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -139,
+        "right_clearance_px": -106
+      },
+      "evidence": {
+        "full_frame": "frame_0773.png",
+        "clean_crop": "crop_0773.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 774,
+      "sample_frame": 780,
+      "x_px": 194,
+      "cap_left_px": 177,
+      "cap_right_px": 209,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 304,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -37,
+        "right_clearance_px": -5
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -127,
+        "right_clearance_px": -95
+      },
+      "evidence": {
+        "full_frame": "frame_0774.png",
+        "clean_crop": "crop_0774.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 775,
+      "sample_frame": 780,
+      "x_px": 206,
+      "cap_left_px": 190,
+      "cap_right_px": 222,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 303,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": true,
+      "cap_in_search": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -24,
+        "right_clearance_px": 8
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -113,
+        "right_clearance_px": -81
+      },
+      "evidence": {
+        "full_frame": "frame_0775.png",
+        "clean_crop": "crop_0775.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 776,
+      "sample_frame": 780,
+      "x_px": 221,
+      "cap_left_px": 205,
+      "cap_right_px": 239,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 213,
+      "ruler7_core_left_x_px": 303,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": true,
+      "cap_in_search": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -8,
+        "right_clearance_px": 26
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -98,
+        "right_clearance_px": -64
+      },
+      "evidence": {
+        "full_frame": "frame_0776.png",
+        "clean_crop": "crop_0776.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 777,
+      "sample_frame": 780,
+      "x_px": 237,
+      "cap_left_px": 221,
+      "cap_right_px": 256,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 213,
+      "ruler7_core_left_x_px": 302,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": 8,
+        "right_clearance_px": 43
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -81,
+        "right_clearance_px": -46
+      },
+      "evidence": {
+        "full_frame": "frame_0777.png",
+        "clean_crop": "crop_0777.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 778,
+      "sample_frame": 780,
+      "x_px": 252,
+      "cap_left_px": 234,
+      "cap_right_px": 270,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 213,
+      "ruler7_core_left_x_px": 302,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 21,
+        "right_clearance_px": 57
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -68,
+        "right_clearance_px": -32
+      },
+      "evidence": {
+        "full_frame": "frame_0778.png",
+        "clean_crop": "crop_0778.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 779,
+      "sample_frame": 780,
+      "x_px": 269,
+      "cap_left_px": 252,
+      "cap_right_px": 288,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 213,
+      "ruler7_core_left_x_px": 301,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 39,
+        "right_clearance_px": 75
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -49,
+        "right_clearance_px": -13
+      },
+      "evidence": {
+        "full_frame": "frame_0779.png",
+        "clean_crop": "crop_0779.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 780,
+      "sample_frame": 780,
+      "x_px": 289,
+      "cap_left_px": 272,
+      "cap_right_px": 307,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 212,
+      "ruler7_core_left_x_px": 299,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 60,
+        "right_clearance_px": 95
+      },
+      "cap_in_core": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -27,
+        "right_clearance_px": 8
+      },
+      "evidence": {
+        "full_frame": "frame_0780.png",
+        "clean_crop": "crop_0780.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 781,
+      "sample_frame": 780,
+      "x_px": 308,
+      "cap_left_px": 291,
+      "cap_right_px": 326,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 212,
+      "ruler7_core_left_x_px": 299,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": true,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 79,
+        "right_clearance_px": 114
+      },
+      "cap_in_core": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -8,
+        "right_clearance_px": 27
+      },
+      "evidence": {
+        "full_frame": "frame_0781.png",
+        "clean_crop": "crop_0781.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 782,
+      "sample_frame": 780,
+      "x_px": 329,
+      "cap_left_px": 313,
+      "cap_right_px": 348,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 212,
+      "ruler7_core_left_x_px": 299,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 101,
+        "right_clearance_px": 136
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 14,
+        "right_clearance_px": 49
+      },
+      "evidence": {
+        "full_frame": "frame_0782.png",
+        "clean_crop": "crop_0782.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 783,
+      "sample_frame": 780,
+      "x_px": 352,
+      "cap_left_px": 333,
+      "cap_right_px": 372,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 211,
+      "ruler7_core_left_x_px": 298,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 122,
+        "right_clearance_px": 161
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 35,
+        "right_clearance_px": 74
+      },
+      "evidence": {
+        "full_frame": "frame_0783.png",
+        "clean_crop": "crop_0783.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 784,
+      "sample_frame": 780,
+      "x_px": 376,
+      "cap_left_px": 357,
+      "cap_right_px": 395,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 211,
+      "ruler7_core_left_x_px": 298,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 146,
+        "right_clearance_px": 184
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 59,
+        "right_clearance_px": 97
+      },
+      "evidence": {
+        "full_frame": "frame_0784.png",
+        "clean_crop": "crop_0784.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 785,
+      "sample_frame": 780,
+      "x_px": 400,
+      "cap_left_px": 382,
+      "cap_right_px": 421,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 211,
+      "ruler7_core_left_x_px": 297,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 171,
+        "right_clearance_px": 210
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 85,
+        "right_clearance_px": 124
+      },
+      "evidence": {
+        "full_frame": "frame_0785.png",
+        "clean_crop": "crop_0785.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 786,
+      "sample_frame": 780,
+      "x_px": 425,
+      "cap_left_px": 407,
+      "cap_right_px": 445,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 211,
+      "ruler7_core_left_x_px": 297,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 196,
+        "right_clearance_px": 234
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 110,
+        "right_clearance_px": 148
+      },
+      "evidence": {
+        "full_frame": "frame_0786.png",
+        "clean_crop": "crop_0786.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 787,
+      "sample_frame": 780,
+      "x_px": 451,
+      "cap_left_px": 433,
+      "cap_right_px": 472,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 210,
+      "ruler7_core_left_x_px": 297,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 223,
+        "right_clearance_px": 262
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 136,
+        "right_clearance_px": 175
+      },
+      "evidence": {
+        "full_frame": "frame_0787.png",
+        "clean_crop": "crop_0787.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 788,
+      "sample_frame": 780,
+      "x_px": 477,
+      "cap_left_px": 460,
+      "cap_right_px": 499,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 210,
+      "ruler7_core_left_x_px": 297,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 250,
+        "right_clearance_px": 289
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 163,
+        "right_clearance_px": 202
+      },
+      "evidence": {
+        "full_frame": "frame_0788.png",
+        "clean_crop": "crop_0788.png",
+        "clean_contact": "window_780_clean.png",
+        "cap_zoom": "window_780_cap_zoom.png",
+        "annotated_contact": "window_780_annotated.png"
+      }
+    },
+    {
+      "frame": 872,
+      "sample_frame": 880,
+      "x_px": 142,
+      "cap_left_px": 127,
+      "cap_right_px": 158,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 304,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -87,
+        "right_clearance_px": -56
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -177,
+        "right_clearance_px": -146
+      },
+      "evidence": {
+        "full_frame": "frame_0872.png",
+        "clean_crop": "crop_0872.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 873,
+      "sample_frame": 880,
+      "x_px": 150,
+      "cap_left_px": 136,
+      "cap_right_px": 167,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 304,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -78,
+        "right_clearance_px": -47
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -168,
+        "right_clearance_px": -137
+      },
+      "evidence": {
+        "full_frame": "frame_0873.png",
+        "clean_crop": "crop_0873.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 874,
+      "sample_frame": 880,
+      "x_px": 159,
+      "cap_left_px": 143,
+      "cap_right_px": 175,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 304,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -71,
+        "right_clearance_px": -39
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -161,
+        "right_clearance_px": -129
+      },
+      "evidence": {
+        "full_frame": "frame_0874.png",
+        "clean_crop": "crop_0874.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 875,
+      "sample_frame": 880,
+      "x_px": 168,
+      "cap_left_px": 152,
+      "cap_right_px": 185,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 304,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -62,
+        "right_clearance_px": -29
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -152,
+        "right_clearance_px": -119
+      },
+      "evidence": {
+        "full_frame": "frame_0875.png",
+        "clean_crop": "crop_0875.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 876,
+      "sample_frame": 880,
+      "x_px": 180,
+      "cap_left_px": 163,
+      "cap_right_px": 195,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 304,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -51,
+        "right_clearance_px": -19
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -141,
+        "right_clearance_px": -109
+      },
+      "evidence": {
+        "full_frame": "frame_0876.png",
+        "clean_crop": "crop_0876.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 877,
+      "sample_frame": 880,
+      "x_px": 192,
+      "cap_left_px": 176,
+      "cap_right_px": 210,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 214,
+      "ruler7_core_left_x_px": 304,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "outside",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -38,
+        "right_clearance_px": -4
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -128,
+        "right_clearance_px": -94
+      },
+      "evidence": {
+        "full_frame": "frame_0877.png",
+        "clean_crop": "crop_0877.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 878,
+      "sample_frame": 880,
+      "x_px": 204,
+      "cap_left_px": 188,
+      "cap_right_px": 221,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 213,
+      "ruler7_core_left_x_px": 303,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "outside_search",
+      "center_region_uncertain": true,
+      "cap_in_search": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -25,
+        "right_clearance_px": 8
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -115,
+        "right_clearance_px": -82
+      },
+      "evidence": {
+        "full_frame": "frame_0878.png",
+        "clean_crop": "crop_0878.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 879,
+      "sample_frame": 880,
+      "x_px": 219,
+      "cap_left_px": 201,
+      "cap_right_px": 237,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 213,
+      "ruler7_core_left_x_px": 303,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": true,
+      "cap_in_search": {
+        "nominal": "partial",
+        "with_tolerance": "partial",
+        "left_clearance_px": -12,
+        "right_clearance_px": 24
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -102,
+        "right_clearance_px": -66
+      },
+      "evidence": {
+        "full_frame": "frame_0879.png",
+        "clean_crop": "crop_0879.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 880,
+      "sample_frame": 880,
+      "x_px": 232,
+      "cap_left_px": 215,
+      "cap_right_px": 251,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 213,
+      "ruler7_core_left_x_px": 302,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": 2,
+        "right_clearance_px": 38
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -87,
+        "right_clearance_px": -51
+      },
+      "evidence": {
+        "full_frame": "frame_0880.png",
+        "clean_crop": "crop_0880.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 881,
+      "sample_frame": 880,
+      "x_px": 247,
+      "cap_left_px": 230,
+      "cap_right_px": 266,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 213,
+      "ruler7_core_left_x_px": 302,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 17,
+        "right_clearance_px": 53
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -72,
+        "right_clearance_px": -36
+      },
+      "evidence": {
+        "full_frame": "frame_0881.png",
+        "clean_crop": "crop_0881.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 882,
+      "sample_frame": 880,
+      "x_px": 265,
+      "cap_left_px": 248,
+      "cap_right_px": 286,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 212,
+      "ruler7_core_left_x_px": 302,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 36,
+        "right_clearance_px": 74
+      },
+      "cap_in_core": {
+        "nominal": "outside",
+        "with_tolerance": "outside",
+        "left_clearance_px": -54,
+        "right_clearance_px": -16
+      },
+      "evidence": {
+        "full_frame": "frame_0882.png",
+        "clean_crop": "crop_0882.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 883,
+      "sample_frame": 880,
+      "x_px": 281,
+      "cap_left_px": 264,
+      "cap_right_px": 301,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 212,
+      "ruler7_core_left_x_px": 301,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "left_buffer",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 52,
+        "right_clearance_px": 89
+      },
+      "cap_in_core": {
+        "nominal": "partial",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": -37,
+        "right_clearance_px": 0
+      },
+      "evidence": {
+        "full_frame": "frame_0883.png",
+        "clean_crop": "crop_0883.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 884,
+      "sample_frame": 880,
+      "x_px": 300,
+      "cap_left_px": 283,
+      "cap_right_px": 321,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 212,
+      "ruler7_core_left_x_px": 300,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": true,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 71,
+        "right_clearance_px": 109
+      },
+      "cap_in_core": {
+        "nominal": "partial",
+        "with_tolerance": "partial",
+        "left_clearance_px": -17,
+        "right_clearance_px": 21
+      },
+      "evidence": {
+        "full_frame": "frame_0884.png",
+        "clean_crop": "crop_0884.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 885,
+      "sample_frame": 880,
+      "x_px": 321,
+      "cap_left_px": 304,
+      "cap_right_px": 339,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 212,
+      "ruler7_core_left_x_px": 300,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 92,
+        "right_clearance_px": 127
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "boundary_uncertain",
+        "left_clearance_px": 4,
+        "right_clearance_px": 39
+      },
+      "evidence": {
+        "full_frame": "frame_0885.png",
+        "clean_crop": "crop_0885.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 886,
+      "sample_frame": 880,
+      "x_px": 342,
+      "cap_left_px": 326,
+      "cap_right_px": 362,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 211,
+      "ruler7_core_left_x_px": 300,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 115,
+        "right_clearance_px": 151
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 26,
+        "right_clearance_px": 62
+      },
+      "evidence": {
+        "full_frame": "frame_0886.png",
+        "clean_crop": "crop_0886.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 887,
+      "sample_frame": 880,
+      "x_px": 364,
+      "cap_left_px": 345,
+      "cap_right_px": 385,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 211,
+      "ruler7_core_left_x_px": 300,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 134,
+        "right_clearance_px": 174
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 45,
+        "right_clearance_px": 85
+      },
+      "evidence": {
+        "full_frame": "frame_0887.png",
+        "clean_crop": "crop_0887.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    },
+    {
+      "frame": 888,
+      "sample_frame": 880,
+      "x_px": 387,
+      "cap_left_px": 370,
+      "cap_right_px": 407,
+      "status": "visible",
+      "cap_visibility_original": "complete_visible_cap",
+      "whole_ball_visibility": "partial_occlusion_by_ruler",
+      "tolerance_px": 6,
+      "cap_endpoint_tolerance_px": 5,
+      "confidence": "medium",
+      "note": "Both sides of the visible cap are identifiable; endpoints are approximate dark/silver arc-to-ruler intersections, not highlight edges. Lower sphere hidden. Blur/low contrast limits endpoint precision.",
+      "labeler": "assistant_visual_review",
+      "ruler5_search_left_x_px": 211,
+      "ruler7_core_left_x_px": 300,
+      "anchor_tolerance_px": 3,
+      "center_region_nominal": "core",
+      "center_region_uncertain": false,
+      "cap_in_search": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 159,
+        "right_clearance_px": 196
+      },
+      "cap_in_core": {
+        "nominal": "full",
+        "with_tolerance": "full",
+        "left_clearance_px": 70,
+        "right_clearance_px": 107
+      },
+      "evidence": {
+        "full_frame": "frame_0888.png",
+        "clean_crop": "crop_0888.png",
+        "clean_contact": "window_880_clean.png",
+        "cap_zoom": "window_880_cap_zoom.png",
+        "annotated_contact": "window_880_annotated.png"
+      }
+    }
+  ]
+}

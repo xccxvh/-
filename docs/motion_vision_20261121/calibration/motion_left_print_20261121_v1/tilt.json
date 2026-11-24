@@ -1,0 +1,48 @@
+[
+  {
+    "mode": "raw",
+    "nominal_cm": 0,
+    "reference": 860,
+    "frames": 895,
+    "axis_samples": 786,
+    "axis_coverage": 0.8782122905027933,
+    "median_s_px": -17.879091849629507,
+    "binding": "3305f0161444c368b74a67253a9f444cdfd636e89d2076c6c56bc926fdde8b32",
+    "rail_reasons": {
+      "confirmed_upper_edge": 860,
+      "reference_rotation_recheck_weak_or_ambiguous_patch": 35
+    },
+    "video_sha256": "98f1a56007f9a966939aca87a0dffb3f63695365c557c3cfe59ef989d730a2e7",
+    "clock_sha256": "3f57faa47e612eab552b53214c1e699aeb61f29de90d9c333dfd9461a3ba2beb",
+    "fit_status": "evaluated_offline",
+    "valid": 786,
+    "coverage": 0.8782122905027933,
+    "mae_cm": 0.43008957330224074,
+    "max_abs_cm": 0.5179986765828319,
+    "longest_missing_frames": 47,
+    "passed": false
+  },
+  {
+    "mode": "points",
+    "nominal_cm": 0,
+    "reference": 860,
+    "frames": 895,
+    "axis_samples": 786,
+    "axis_coverage": 0.8782122905027933,
+    "median_s_px": -17.65422918301902,
+    "binding": "e5de9361d43a2e1b13e56e33c0f3b9a266e794e337c127bda184075e3d0d4d76",
+    "rail_reasons": {
+      "confirmed_upper_edge": 860,
+      "reference_rotation_recheck_weak_or_ambiguous_patch": 35
+    },
+    "video_sha256": "98f1a56007f9a966939aca87a0dffb3f63695365c557c3cfe59ef989d730a2e7",
+    "clock_sha256": "3f57faa47e612eab552b53214c1e699aeb61f29de90d9c333dfd9461a3ba2beb",
+    "fit_status": "evaluated_offline",
+    "valid": 786,
+    "coverage": 0.8782122905027933,
+    "mae_cm": 0.4332296715016593,
+    "max_abs_cm": 0.5142051983611796,
+    "longest_missing_frames": 47,
+    "passed": false
+  }
+]

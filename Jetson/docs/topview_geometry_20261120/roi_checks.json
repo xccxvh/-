@@ -1,0 +1,48 @@
+{
+  "raw": {
+    "original": {
+      "valid": true,
+      "reason": "confirmed_upper_edge",
+      "bounds": [
+        241.0,
+        1063.0
+      ]
+    },
+    "synthetic_1deg_shift": {
+      "valid": true,
+      "reason": "confirmed_upper_edge",
+      "bounds": [
+        253.29164879038558,
+        1075.3424317210188
+      ]
+    },
+    "blank": {
+      "valid": false,
+      "reason": "reference_rotation_proposal_untrusted",
+      "bounds": null
+    }
+  },
+  "undistorted": {
+    "original": {
+      "valid": true,
+      "reason": "confirmed_upper_edge",
+      "bounds": [
+        184.298,
+        1126.874
+      ]
+    },
+    "synthetic_1deg_shift": {
+      "valid": true,
+      "reason": "confirmed_upper_edge",
+      "bounds": [
+        196.8556902812274,
+        1139.3894905111902
+      ]
+    },
+    "blank": {
+      "valid": false,
+      "reason": "reference_rotation_proposal_untrusted",
+      "bounds": null
+    }
+  }
+}
