@@ -35,7 +35,7 @@ from measurement_contract import calibrated_method
 from video_writer import AsyncVideoWriter
 from recording_schedule import RecordingSchedule
 from visualization import draw_overlay
-from position_feedback import FeedbackEncoder, SerialFeedback, G3519MonitorEncoder, LinkJournal
+from position_feedback import FeedbackEncoder, SerialFeedback, G3519PositionEncoder, LinkJournal
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_CONFIG = os.path.join(BASE, "config.json")
@@ -109,28 +109,45 @@ def main():
     calib = Calibration(calib_path) if calib_path else None
     preview = ReferencePreview(resolve(args.reference_preview), cfg) if args.reference_preview else None
 
+    use_motion = cfg.get('static_control_motion', False)
+    binary_link = bool(cfg.get('rail_coordinates', {}).get('enabled') and args.serial)
+    if binary_link and args.uart_enable_valid and not use_motion:
+        ap.error('binary control requires the calibrated static-control C configuration')
+    if use_motion:
+        from fusion_motion import MotionCandidates
+        from static_control_detection import supplement
+        from static_control_geometry import StaticControlCoordinates
+        motion = MotionCandidates()
+        cv2.setNumThreads(1)
     with ExitStack() as resources:
         if args.video:
             source = VideoFile(resolve(args.video))
         else:
-            source = Camera(cfg["camera"])
+            camera_cfg = cfg["camera"]
+            if binary_link and use_motion:
+                camera_cfg = dict(camera_cfg, verify_v4l2_time=True, buffer_size=2)
+            source = Camera(camera_cfg)
         if args.fps and args.fps > 0:
             source.fps_set = float(args.fps)
         resources.callback(source.release)
         W, H = source.width, source.height
         geometry = CameraGeometry(cfg.get('camera_geometry', {}), W, H, BASE)
-        rail_coordinates = RailCoordinates(cfg, geometry, BASE)
-        # 轨道厘米使用 G3519 二进制监测协议，显式禁止控制位；
-        # 旧几何路径仍保留原先的 BV1 接口。离线录像的串口禁用在打开设备前检查。
-        binary_monitor = bool(rail_coordinates.enabled and args.serial)
-        if rail_coordinates.enabled and (args.uart_enable_valid or preview is not None):
-            ap.error('rail coordinates support monitor only; control enable and legacy preview are forbidden')
-        if binary_monitor:
+        coordinates_type = StaticControlCoordinates if use_motion else RailCoordinates
+        detector_type = RailDetector
+        if use_motion and 'digit_boxes' in cfg['rail'].get('upper_reference', {}):
+            # 纸尺数字复核和专属标定成对加载，同一帧仅建立一套轨道姿态。
+            from static_control_reference import make_rail_detector
+            from static_reference_geometry import StaticReferenceCoordinates
+            detector_type, coordinates_type = make_rail_detector, StaticReferenceCoordinates
+        rail_coordinates = coordinates_type(cfg, geometry, BASE)
+        if rail_coordinates.enabled and preview is not None:
+            ap.error('rail coordinates and legacy preview cannot be combined')
+        if binary_link:
             args.csv = True
         if preview is not None and geometry.mode != 'raw':
             ap.error('legacy preview cannot use corrected image/point coordinates')
 
-        rail_det = RailDetector(cfg["rail"], W, H)
+        rail_det = detector_type(cfg["rail"], W, H)
         ball_cfg = dict(cfg["ball"])
         if "ball_search" in cfg:
             ball_cfg["ball_search"] = cfg["ball_search"]
@@ -193,6 +210,7 @@ def main():
                 "reference_y_px", "rail_s_px", "rail_x_cm", "rail_angle_deg", "reference_rotation_deg",
                 "reference_scale", "reference_residual_px", "rail_coordinate_status", "rail_binding_id",
                 "image_space", "camera_geometry_mode", "geometry_ms", "reference_match_ms", "coordinate_ms",
+                "uart_frame_time_ms", "timestamp_verified", "uart_age_ms", "measurement_source",
 
             ])
 
@@ -227,20 +245,20 @@ def main():
             resources.callback(cv2.destroyAllWindows)
         serial = None
         journal = None
-        encoder = G3519MonitorEncoder() if binary_monitor else FeedbackEncoder()
+        encoder = G3519PositionEncoder() if binary_link else FeedbackEncoder()
         try:
             if args.serial:
                 serial = SerialFeedback(args.serial)
                 resources.callback(serial.close)
-                if binary_monitor:
+                if binary_link:
                     # 独立事件表保留全部遥测。两端毫秒时钟不相减，不将旧 RX 冒充当前帧。
                     link_path = os.path.join(logs_dir, "link_%s_%s.csv" % (args.label, stamp))
                     stream = resources.enter_context(open(link_path, "x", newline="", buffering=1))
                     journal = LinkJournal(serial, stream)
                     resources.callback(journal.close)
-                    print("G3519 monitor CSV:", link_path)
+                    print("G3519 UART", "control" if args.uart_enable_valid else "monitor", link_path)
             while True:
-                ret, frame = source.read()
+                ret, frame = source.read(fresh=True) if use_motion and binary_link else source.read()
                 if not ret:
                     break
                 t_read = time.perf_counter()
@@ -269,7 +287,10 @@ def main():
                     capture_origin = track_ts
                 # 本帧的物理搜索边界供出界重获核验；参考失效时清除边界证据。
                 bounds = ball_det.last_roi if cfg.get('ball_search', {}).get('enabled') else None
-                out = tracker.update(candidates, track_ts, bounds)
+                tracking_bounds = bounds
+                if use_motion:
+                    candidates, tracking_bounds = supplement(motion, gray, rail, bounds, track_ts, candidates)
+                out = tracker.update(candidates, track_ts, tracking_bounds)
                 out["timestamp"] = time.time()
 
                 x_cm = None
@@ -307,12 +328,15 @@ def main():
                 state_counts[out["state"]] = state_counts.get(out["state"], 0) + 1
 
                 t_out = time.perf_counter()
+                # 运动估计沿用读帧时钟，控制帧年龄使用本张图像经核验的曝光时钟。
+                verified = getattr(source, "timestamp_verified", False)
+                frame_time = source.last_capture_ts if binary_link and verified else t_cap
                 line, feedback_valid, feedback_reason = encoder.encode(
-                    out, t_cap, t_out, pose_ok, args.uart_enable_valid,
-                    source_time_verified=getattr(source, "timestamp_verified", False))
+                    out, frame_time, t_out, pose_ok, args.uart_enable_valid,
+                    source_time_verified=verified)
                 if preview is not None:
                     feedback_valid, feedback_reason = False, 'reference_preview'
-                if rail_coordinates.enabled and not binary_monitor:
+                if rail_coordinates.enabled and not binary_link:
                     feedback_valid, feedback_reason = False, 'rail_measurement_only'
                 if serial is not None:
                     serial.send(line)
@@ -397,6 +421,10 @@ def main():
                         coordinate['reference_rotation_deg'], coordinate['reference_scale'], coordinate['reference_residual_px'],
                         coordinate['rail_coordinate_status'], coordinate['rail_binding_id'],
                         geometry.image_space, geometry.mode, geometry_ms, reference_match_ms, coordinate_ms,
+                        frame_time*1000 if binary_link and frame_time is not None else None, int(verified),
+                        (t_out-frame_time)*1000 if binary_link and frame_time is not None else None,
+                        (candidates[0].extra.get('proposal_source', out.get('method'))
+                         if use_motion and coordinate['cm_valid'] else None),
                     ])
 
                 frame_idx += 1

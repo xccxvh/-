@@ -1,0 +1,34 @@
+{
+  "sha256": {
+    "config_static_control_ruler_c.json": "e5c16d8565a2271bb343a0013ed69a347ce528b854b877d6e569ff449ff55a62",
+    "static_control_reference.py": "219e271d214054f1a06a60866bacdaebe29aebddb48e471817414ba4b8f27d74",
+    "static_reference_geometry.py": "50202c0b9cc4c68df95e0d4d9e3564aeb2eaa8a3fdfd8bb7b4b5078d4b511e7b",
+    "docs/static_control_c/replay.py": "89ffcbb041abec32103f353d0b04f693e139d703453a44044fbd63547420eb9b",
+    "main.py": "6862487404ab20828dc7b541d6cabee15b2c7351b023fc9c9dd85d0fcaf3ef0f",
+    "camera.py": "577d9c011a8d638da0b357b04459cffb8975cdcd3e0ac3aa1ac4c072ceaa7166",
+    "assets/topview_20261120/rail_cm_static_reference_c.json": "cffa4f4e420947470afeda1cc8d30af525018d4808985c6a872ddd963f65d402",
+    "ball_detector.py": "3d70234c64cff6f7d84956302634a0905f5f11d6102b8ae9389089acc1c1f1be",
+    "ball_tracker.py": "9938600045c58fcebea9b46935007ea25a3958120d15e2bbb3247ee70e359fec",
+    "measurement_contract.py": "58e1edd879f363b40535f2227211bbee4010d57d9a9ccbdb7e21530c76ede8fd",
+    "local_vision.py": "d10ef8baa257be26d5a55841ca87e3a4238a2d8095ebaa96b88d8ac85f818a62",
+    "ruler_reference.py": "0ec8c8a2dd873e0243226e58d69d2924eb6e0870b6859bf23aefa26ae985926f",
+    "rail_detector.py": "f4c246b96236e177e61e5e2e1d9f90bf2c831728ffefb867a50829b31ed32a1d",
+    "rail_coordinates.py": "9f7ca56abfcf55a2283b704504c949f20cff2757754b5b0bb705ca9a30fddbb1",
+    "camera_geometry.py": "0bf7037919abf8310789e0e70fdaaa34ebe0efe8d8bf81d435b6c25ad573d284",
+    "static_control_geometry.py": "d1babee12862765231f7d346107eb2ef5fdfb68a8e9c3c673967d87cbed4b6d6",
+    "assets/topview_20261120/rail_cm_static_control_c.json": "cfd6195fd50523ef79b512dc310bd5e9506743c8595ae868078641e93be1e41d"
+  },
+  "rail_binding_id": "4cc0299fd6a5f885b4e94690f0db6640a93a76f592b658f6f81109d11ea17fd9",
+  "calibration_status": "validated",
+  "formal_samples": 1312,
+  "total": 1350,
+  "max_abs_cm": 0.2824460746630333,
+  "weighted_mae_cm": 0.05199576666921988,
+  "reference_frames": {
+    "primary": 1947,
+    "fallback": 600,
+    "invalid": 3
+  },
+  "embedded_sessions_rehashed": 12,
+  "old_evidence_replay_byte_identical": true
+}
