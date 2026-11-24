@@ -118,7 +118,7 @@ def main():
         from static_control_detection import supplement
         from static_control_geometry import StaticControlCoordinates
         motion = MotionCandidates()
-        cv2.setNumThreads(1)
+        cv2.setNumThreads(2 if cfg['rail'].get('upper_reference', {}).get('fast_search') else 1)
     with ExitStack() as resources:
         if args.video:
             source = VideoFile(resolve(args.video))
@@ -134,7 +134,12 @@ def main():
         geometry = CameraGeometry(cfg.get('camera_geometry', {}), W, H, BASE)
         coordinates_type = StaticControlCoordinates if use_motion else RailCoordinates
         detector_type = RailDetector
-        if use_motion and 'digit_boxes' in cfg['rail'].get('upper_reference', {}):
+        ref_config = cfg['rail'].get('upper_reference', {})
+        if use_motion and ref_config.get('fast_search') is True:
+            from static_fast_reference import make_rail_detector
+            from static_fast_geometry import StaticFastCoordinates
+            detector_type, coordinates_type = make_rail_detector, StaticFastCoordinates
+        elif use_motion and 'digit_boxes' in ref_config:
             # 纸尺数字复核和专属标定成对加载，同一帧仅建立一套轨道姿态。
             from static_control_reference import make_rail_detector
             from static_reference_geometry import StaticReferenceCoordinates
@@ -232,6 +237,7 @@ def main():
         frame_idx = 0
         fps_ema = 0.0
         t_start = time.perf_counter()
+        captured_at_start = getattr(source, 'frames_captured', 0)
         t_prev = t_start
         state_counts = {"DETECTED": 0, "UNCERTAIN": 0, "LOST": 0}
         wait_ms_list = []
@@ -258,7 +264,14 @@ def main():
                     resources.callback(journal.close)
                     print("G3519 UART", "control" if args.uart_enable_valid else "monitor", link_path)
             while True:
-                ret, frame = source.read(fresh=True) if use_motion and binary_link else source.read()
+                if use_motion and binary_link:
+                    # 近期处理耗时仅用于选择当前单槽或下一帧。发送前仍按本帧 SOE
+                    # 实测年龄执行 100 ms 门限；冷启动时等待下一张新图。
+                    budget_ms = (encoder.max_age_ms - 2.0 - max(algo_ms_list[-4:])
+                                 if algo_ms_list else None)
+                    ret, frame = source.read(fresh=True, max_start_age_ms=budget_ms)
+                else:
+                    ret, frame = source.read()
                 if not ret:
                     break
                 t_read = time.perf_counter()
@@ -338,10 +351,13 @@ def main():
                     feedback_valid, feedback_reason = False, 'reference_preview'
                 if rail_coordinates.enabled and not binary_link:
                     feedback_valid, feedback_reason = False, 'rail_measurement_only'
-                if serial is not None:
+                if line is None:
+                    # 仅 G3519 有效控制模式可能跳过纯超时样本；保留本帧 track 和独立 drop 事件。
+                    journal.dropped(frame_idx, frame_time, feedback_reason)
+                elif serial is not None:
                     serial.send(line)
                     if journal is not None:
-                        journal.sent(line, frame_idx, feedback_reason, source.timestamp_verified)
+                        journal.sent(line, frame_idx, feedback_reason, verified)
                 algo_ms = (t_out - t0) * 1000.0
                 # 采集时刻到检测/跟踪结果产生时刻。不含曝光时间和显示延迟,
                 # 曝光时间需根据相机实际设置另行计入。
@@ -455,6 +471,11 @@ def main():
         print("frames: %d, elapsed: %.1fs, avg fps: %.1f" % (
             frame_idx, elapsed, frame_idx / elapsed if elapsed > 0 else 0.0))
         print("states: %s" % state_counts)
+        if hasattr(source, 'frames_captured'):
+            # 同一段运行时间内采集/处理分开计数；两者之差还包含单槽覆盖。
+            captured = source.frames_captured - captured_at_start
+            print("capture: %d frames, %.1f fps, wait-for-newer: %d" %
+                  (captured, captured / elapsed, source.skipped_for_age))
         if algo_ms_list:
             print("algo_ms: mean=%.2f p95=%.2f max=%.2f" % (
                 sum(algo_ms_list) / len(algo_ms_list),
