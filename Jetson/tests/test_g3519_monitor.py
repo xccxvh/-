@@ -34,7 +34,7 @@ class MonitorTests(unittest.TestCase):
                     reference_valid=True, predicted=False, rail_x_cm=-.97, confidence=.83)
         for change, age, verified, enabled, expected in [
                 ({}, .04, True, True, 3), ({}, .04, True, False, 2),
-                ({}, .04, False, True, 2), ({}, .101, True, True, 2),
+                ({}, .04, False, True, 2),  # 仅超时的无包/序号语义由 stale_drop 专测覆盖。
                 ({'valid': False}, .03, True, True, 2),
                 ({'predicted': True}, .03, True, True, 2),
                 ({'pixel_valid': False}, .03, True, True, 2),

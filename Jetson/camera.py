@@ -98,6 +98,9 @@ class Camera(object):
 
         self._q = queue.Queue(maxsize=1)
         self._stop = threading.Event()
+        # 计数采集线程实际读到的图像和消费端主动跳过的单槽帧，独立于有效率。
+        self.frames_captured = 0
+        self.skipped_for_age = 0
         # 公开字段描述最近一次消费的帧，初始化时尚无曝光时间。
         self.timestamp_verified = False
         self.last_capture_ts = None
@@ -112,6 +115,7 @@ class Camera(object):
                 time.sleep(0.01)
                 continue
             ts = time.perf_counter()
+            self.frames_captured += 1
             capture_ts = None
             if self._soe_source:
                 # POS_MSEC 属于刚读出的缓冲区。保留每个有效样本的上界记录，
@@ -132,13 +136,15 @@ class Camera(object):
             except queue.Full:
                 pass
 
-    def read(self, fresh=False):
-        # 静态控制的参考匹配慢于单帧周期。只开始处理在本轮就绪后读完的图像，
-        # 避免为队列里已经等了一帧的图像花费剩余的 100 ms 年龄预算。
+    def read(self, fresh=False, max_start_age_ms=None):
+        # 单槽中可能已有刚解码的最新帧。用 SOE 算剩余处理预算，只在预算
+        # 不足时等待下一帧；未核验的时钟交给发送端明确报无效。
         ready = time.perf_counter() if fresh else None
         try:
             frame, ts, capture_ts = self._q.get(timeout=3.0)
-            if fresh and ts < ready:
+            if fresh and ts < ready and (max_start_age_ms is None or
+                    (capture_ts is not None and (ready - capture_ts) * 1000 > max_start_age_ms)):
+                self.skipped_for_age += 1
                 frame, ts, capture_ts = self._q.get(timeout=3.0)
         except queue.Empty:
             self.last_capture_ts = None

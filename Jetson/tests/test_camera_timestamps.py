@@ -85,6 +85,18 @@ class CameraTimestampTests(unittest.TestCase):
         self.assertEqual((cam.last_ts, cam.last_capture_ts, cam.timestamp_verified),
                          (100.06, 100.03, True))
 
+    def test_ready_single_slot_uses_soe_budget_and_preserves_clock_failure(self):
+        # 读完时刻相同，只有经过验证且曝光年龄已耗尽预算的旧帧需要让位。
+        from unittest.mock import Mock
+        for soe, wanted in [(99.990, 'queued'), (99.960, 'next'), (None, 'queued')]:
+            cam = self.make_camera()
+            cam._q = Mock()
+            cam._q.get.side_effect = [('queued', 100.030, soe), ('next', 100.045, 100.001)]
+            with patch('camera.time.perf_counter', return_value=100.040):
+                self.assertEqual(cam.read(fresh=True, max_start_age_ms=60), (True, wanted))
+            self.assertEqual(cam.timestamp_verified, soe is not None)
+            self.assertEqual(cam.last_capture_ts, 100.001 if wanted == 'next' else soe)
+
     def test_exclusive_probe_then_publish_aged_frame(self):
         cam = self.make_camera()
         self.assertEqual(self.order, ['probe', 'open'])

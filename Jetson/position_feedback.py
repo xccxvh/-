@@ -2,6 +2,7 @@
 """Versioned, opt-in measurement telemetry. Does not command any actuator."""
 import csv
 import math
+from numbers import Real
 import os
 import select
 import struct
@@ -28,11 +29,12 @@ class FeedbackEncoder(object):
         self.last_capture = None
         self.max_age_ms = max_age_ms
 
-    def assess(self, out, x, capture_time, now, pose_ok, enabled, source_time_verified):
+    def assess(self, out, x, capture_time, now, pose_ok, enabled, source_time_verified,
+               position_control=False):
         # 两种协议共用帧时间、单调顺序和图像有效性门控；时钟只在 Jetson 内比较。
         reason = 'ok'
-        finite_time = (capture_time is not None and math.isfinite(capture_time)
-                       and math.isfinite(now) and 0 <= capture_time <= 2**53/1000
+        finite_time = (isinstance(capture_time, Real) and math.isfinite(capture_time)
+                       and isinstance(now, Real) and math.isfinite(now) and 0 <= capture_time <= 2**53/1000
                        and 0 <= now <= 2**53/1000)
         age = (now-capture_time)*1000 if finite_time else -1
         conf = out.get('confidence',0.)
@@ -40,18 +42,21 @@ class FeedbackEncoder(object):
             reason = 'clock'
         elif self.last_capture is not None and capture_time <= self.last_capture:
             reason = 'duplicate'
-        elif age > self.max_age_ms:
+        # 控制模式须先查完同帧测量与时间来源，才可判定是否仅因年龄跳过。
+        elif not position_control and age > self.max_age_ms:
             reason = 'stale'
         elif not pose_ok:
             reason = 'pose'
         elif not out.get('valid') or out.get('predicted'):
             reason = 'vision'
-        elif x is None or not math.isfinite(x) or not math.isfinite(conf) or not 0 <= conf <= 1:
+        elif (not isinstance(x, Real) or not math.isfinite(x) or
+              not isinstance(conf, Real) or not 0 <= conf <= 1):
             reason = 'calibration'
         elif not source_time_verified:
             reason = 'source_time'
         elif not enabled:
             reason = 'monitor'
+        # 有限且向前的时刻沿用原去重规则，静默跳过也不能让同一曝光再次发布。
         if finite_time and age >= 0 and (self.last_capture is None or capture_time > self.last_capture):
             self.last_capture = capture_time
         stamp = int(capture_time*1000) & 0xffffffff if finite_time else 0
@@ -130,11 +135,22 @@ class G3519MonitorEncoder(FeedbackEncoder):
         eligible = calibrated and out.get('cm_valid') and out.get('pixel_valid')
         control = enabled and self.control_capable
         reason, stamp, _ = self.assess(out, x if eligible else None, capture_time, now,
-                                       pose_ok and out.get('reference_valid'), control, source_time_verified)
+                                       pose_ok and out.get('reference_valid'), control, source_time_verified,
+                                       position_control=control)
         # source_time 只表示传感器时间未经验证。新鲜的本帧厘米值可监测；
         # 缺测、预测、过期等情况清空置信度，使用协议浮点占位值 0。
         if control and reason == 'source_time':
             reason = 'unverified_capture_time'
+        if control and reason == 'ok':
+            # vision_link.c 和 ball_control.c 均接受 ±30 cm、线上整数置信度 >= 20。
+            # 越界/低可信即使同时超时也发送无效包，使接收端立即感知该帧失效。
+            if abs(x) > 30.0:
+                reason = 'position_range'
+            elif round(out['confidence'] * 100) < 20:
+                reason = 'low_confidence'
+            elif now > capture_time + self.max_age_ms / 1000.0:
+                # 比较同一时钟上的截止点，恰好 100 ms 仍有效。返回前不分配序号。
+                return None, False, 'stale_only_drop'
         valid = reason == 'ok'
         present = valid or (not control and reason in ('monitor', 'source_time'))
         flags = int(valid) | (2 if calibrated else 0)
@@ -226,6 +242,14 @@ class LinkJournal(object):
                     self.rx_frames += 1
         except (OSError, ValueError) as exc:
             self.error = exc
+
+    def dropped(self, frame, capture_time, reason):
+        # 只有已核验 SOE 的仅超时控制样本走到这里。无线上包，因此序号和标志留空。
+        self._row(dict(event='drop', local_monotonic_ms=time.perf_counter()*1000.,
+                       frame=frame, capture_ms32=int(capture_time*1000) & 0xffffffff,
+                       reason=reason, timestamp_verified=1))
+        if self.error:
+            raise self.error
 
     def sent(self, packet, frame, reason, source_verified):
         # 主线程仅在整帧写完后记 TX；成功 write 不代表 G3519 已解码或应答。

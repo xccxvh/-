@@ -54,7 +54,12 @@ def components(config=CFG):
     geo = CameraGeometry(cfg['camera_geometry'], 1280, 720, JET)
     # 采样与结果模型的文件路径不参与测量绑定；所有采样均在未加载厘米模型时进行。
     cfg['rail_coordinates']['calibration_file'] = None
-    if 'digit_boxes' in ref:
+    if ref.get('fast_search') is True:
+        from static_fast_reference import make_rail_detector
+        from static_fast_geometry import StaticFastCoordinates
+        coords = StaticFastCoordinates(cfg, geo, JET)
+        detector = make_rail_detector(cfg['rail'], 1280, 720)
+    elif 'digit_boxes' in ref:
         # 使用与生产入口相同的工厂；历史配置保持旧的参考和原有 C 绑定。
         from static_control_reference import make_rail_detector
         from static_reference_geometry import StaticReferenceCoordinates
