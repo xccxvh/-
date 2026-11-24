@@ -6,10 +6,43 @@
 import json
 import os
 import queue
+import re
+import subprocess
 import threading
 import time
 
 import cv2
+
+
+def _probe_monotonic_soe(dev):
+    """在 OpenCV 占用设备前独占采四帧，逐条确认驱动标注的时钟与曝光起点。"""
+    device = "/dev/video%d" % dev if isinstance(dev, int) else dev
+    command = ["v4l2-ctl", "--device", device,
+               "--set-fmt-video=width=1280,height=720,pixelformat=MJPG",
+               "--stream-mmap=2", "--stream-count=4", "--verbose"]
+    try:
+        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                universal_newlines=True, env=dict(os.environ, LC_ALL="C"),
+                                timeout=4)
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    if result.returncode:
+        return False
+    records = [line.strip() for line in result.stdout.splitlines()
+               if line.lstrip().startswith("Timestamp:")]
+    if len(records) != 4:
+        return False
+    previous = 0.0
+    for line in records:
+        match = re.fullmatch(r"Timestamp:\s*([0-9]+(?:\.[0-9]+)?)s\s*"
+                             r"\(Monotonic,\s*Start-of-Exposure\)", line)
+        if not match:
+            return False
+        current = float(match.group(1))
+        if not previous < current:
+            return False
+        previous = current
+    return True
 
 
 class Camera(object):
@@ -22,14 +55,21 @@ class Camera(object):
     def __init__(self, cfg):
         self.cfg = cfg
         dev = cfg.get("device", 0)
+        # 仅正式采集模式可请求探查；run 返回后探查进程已释放设备。
+        width, height = int(cfg.get("width", 1280)), int(cfg.get("height", 720))
+        fourcc = cfg.get("fourcc", "MJPG")
+        self._soe_source = (cfg.get("verify_v4l2_time") is True and
+                            (width, height, fourcc) == (1280, 720, "MJPG") and
+                            _probe_monotonic_soe(dev))
+        # 新视频流的帧不会早于打开设备。这个下界也排除了从零开始的媒体时间。
+        self._previous_capture_ts = time.perf_counter() if self._soe_source else None
         self.cap = cv2.VideoCapture(dev, cv2.CAP_V4L2)
         if not self.cap.isOpened():
             raise RuntimeError("无法打开摄像头: %s" % dev)
 
-        fourcc = cfg.get("fourcc", "MJPG")
         self.cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*fourcc))
-        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, int(cfg.get("width", 1280)))
-        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, int(cfg.get("height", 720)))
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
         self.cap.set(cv2.CAP_PROP_FPS, int(cfg.get("fps", 30)))
         try:
             self.cap.set(cv2.CAP_PROP_BUFFERSIZE,
@@ -41,10 +81,15 @@ class Camera(object):
         self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         self.fps_set = float(self.cap.get(cv2.CAP_PROP_FPS))
 
+        if self._soe_source:
+            self._soe_source = ((self.width, self.height) == (width, height) and
+                                self.cap.get(cv2.CAP_PROP_FOURCC) == cv2.VideoWriter_fourcc(*fourcc))
+
         self._q = queue.Queue(maxsize=1)
         self._stop = threading.Event()
-        # OpenCV does not expose the sensor/V4L2 capture timestamp here.
+        # 公开字段描述最近一次消费的帧，初始化时尚无曝光时间。
         self.timestamp_verified = False
+        self.last_capture_ts = None
         self.last_ts = None
         self._thread = threading.Thread(target=self._capture_loop, daemon=True)
         self._thread.start()
@@ -56,21 +101,40 @@ class Camera(object):
                 time.sleep(0.01)
                 continue
             ts = time.perf_counter()
+            capture_ts = None
+            if self._soe_source:
+                # POS_MSEC 属于刚读出的缓冲区。保留每个有效样本的上界记录，
+                # 即使单槽随后覆盖了它，也能识别下一帧回退、重复或异常值。
+                try:
+                    sample = self.cap.get(cv2.CAP_PROP_POS_MSEC) / 1000.0
+                    if self._previous_capture_ts < sample <= ts:
+                        capture_ts = self._previous_capture_ts = sample
+                except (cv2.error, TypeError, ValueError):
+                    pass
             try:
                 while True:
                     self._q.get_nowait()
             except queue.Empty:
                 pass
             try:
-                self._q.put_nowait((frame, ts))
+                self._q.put_nowait((frame, ts, capture_ts))
             except queue.Full:
                 pass
 
-    def read(self):
+    def read(self, fresh=False):
+        # 静态控制的参考匹配慢于单帧周期。只开始处理在本轮就绪后读完的图像，
+        # 避免为队列里已经等了一帧的图像花费剩余的 100 ms 年龄预算。
+        ready = time.perf_counter() if fresh else None
         try:
-            frame, ts = self._q.get(timeout=3.0)
+            frame, ts, capture_ts = self._q.get(timeout=3.0)
+            if fresh and ts < ready:
+                frame, ts, capture_ts = self._q.get(timeout=3.0)
         except queue.Empty:
+            self.last_capture_ts = None
+            self.timestamp_verified = False
             return False, None
+        self.last_capture_ts = capture_ts
+        self.timestamp_verified = capture_ts is not None
         self.last_ts = ts
         return True, frame
 
@@ -104,8 +168,9 @@ class VideoFile(object):
                     self.fps_set = actual
             except Exception:
                 pass
-        # OpenCV does not expose the sensor/V4L2 capture timestamp here.
+        # 公开字段描述最近一次消费的帧，初始化时尚无曝光时间。
         self.timestamp_verified = False
+        self.last_capture_ts = None
         self.last_ts = None
 
     def read(self):

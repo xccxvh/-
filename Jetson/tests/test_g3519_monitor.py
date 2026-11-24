@@ -2,7 +2,7 @@
 import struct
 import unittest
 from binascii import crc_hqx
-from position_feedback import G3519MonitorEncoder, TelemetryParser
+from position_feedback import G3519MonitorEncoder, G3519PositionEncoder, TelemetryParser
 
 
 class MonitorTests(unittest.TestCase):
@@ -27,6 +27,32 @@ class MonitorTests(unittest.TestCase):
         self.assertEqual(wire(3.,3.01)[:3], (0.,0,2))
         out.update(predicted=False, calibration_valid=False)
         self.assertEqual(wire(4.,4.01)[:3], (0.,0,0))
+
+    def test_explicit_control_requires_same_frame_position_and_verified_time(self):
+        # 新协议与原板逐字节兼容；逐一注入错误，防止预测或旧时间开启 bit0。
+        base = dict(valid=True, pixel_valid=True, cm_valid=True, calibration_valid=True,
+                    reference_valid=True, predicted=False, rail_x_cm=-.97, confidence=.83)
+        for change, age, verified, enabled, expected in [
+                ({}, .04, True, True, 3), ({}, .04, True, False, 2),
+                ({}, .04, False, True, 2), ({}, .101, True, True, 2),
+                ({'valid': False}, .03, True, True, 2),
+                ({'predicted': True}, .03, True, True, 2),
+                ({'pixel_valid': False}, .03, True, True, 2),
+                ({'reference_valid': False}, .03, True, True, 2),
+                ({'cm_valid': False}, .03, True, True, 2),
+                ({'calibration_valid': False}, .03, True, True, 0)]:
+            enc = G3519PositionEncoder()
+            frame, valid, reason = enc.encode(dict(base, **change), 2., 2.+age, True, enabled, verified)
+            stamp, cm, conf, flags, reserved = struct.unpack('<IfBBH', frame[7:-2])
+            self.assertEqual((flags, valid, stamp, reserved), (expected, bool(expected & 1), 2000, 0))
+            self.assertEqual(crc_hqx(frame[2:-2], 0xffff), int.from_bytes(frame[-2:], 'little'))
+            if valid or reason == 'monitor':
+                self.assertAlmostEqual(cm, -.97)
+                self.assertEqual(conf, 83)
+            else:
+                self.assertEqual((cm, conf), (0., 0))
+            again, valid, reason = enc.encode(base, 2., 2.05, True, True, True)
+            self.assertEqual((reason, valid, int.from_bytes(again[5:7], 'little')), ('duplicate', False, 1))
 
     def test_split_frames_and_resynchronization(self):
         payload = struct.pack('<I5fHBBf', 99, 0., -.5, 1., .5, -2., 1480, 1, 0, -1.75)

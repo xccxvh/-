@@ -122,20 +122,32 @@ class SerialFeedback(object):
 
 class G3519MonitorEncoder(FeedbackEncoder):
     """按 vision_link.h 编码 0x01；监测坐标可读，但 bit0 永远清零。"""
+    control_capable = False
+
     def encode(self, out, capture_time, now, pose_ok, enabled=False, source_time_verified=False):
         x = out.get('rail_x_cm')
         calibrated = bool(out.get('calibration_valid'))
         eligible = calibrated and out.get('cm_valid') and out.get('pixel_valid')
+        control = enabled and self.control_capable
         reason, stamp, _ = self.assess(out, x if eligible else None, capture_time, now,
-                                       pose_ok and out.get('reference_valid'), False, source_time_verified)
+                                       pose_ok and out.get('reference_valid'), control, source_time_verified)
         # source_time 只表示传感器时间未经验证。新鲜的本帧厘米值可监测；
         # 缺测、预测、过期等情况清空置信度，使用协议浮点占位值 0。
-        present = reason in ('monitor', 'source_time')
+        if control and reason == 'source_time':
+            reason = 'unverified_capture_time'
+        valid = reason == 'ok'
+        present = valid or (not control and reason in ('monitor', 'source_time'))
+        flags = int(valid) | (2 if calibrated else 0)
         payload = struct.pack('<IfBBH', stamp, x if present else 0.,
-                              round(out['confidence']*100) if present else 0, 2 if calibrated else 0, 0)
+                              round(out['confidence']*100) if present else 0, flags, 0)
         body = struct.pack('<BBBH', 1, 1, len(payload), self.seq) + payload
         self.seq = (self.seq + 1) & 0xffff
-        return b'\xa5\x5a' + body + struct.pack('<H', crc16(body)), False, reason
+        return b'\xa5\x5a' + body + struct.pack('<H', crc16(body)), valid, reason
+
+
+class G3519PositionEncoder(G3519MonitorEncoder):
+    """仅在调用者显式使能且新鲜度、几何和身份均通过时设置 bit0。"""
+    control_capable = True
 
 
 class TelemetryParser(object):
@@ -172,7 +184,8 @@ class LinkJournal(object):
               'rail_x_cm', 'confidence_pct', 'position_flags', 'reason', 'timestamp_verified',
               'telemetry_seq', 'g3519_ms', 'target_cm', 'board_ball_cm', 'ball_v_cm_s',
               'position_error_cm', 'beam_cmd_deg', 'servo_pwm_us', 'control_state',
-              'telemetry_flags', 'beam_estimated_deg')
+              'telemetry_flags', 'beam_estimated_deg', 'board_vision_valid', 'board_auto_enabled',
+              'board_fault')
 
     def __init__(self, serial, stream):
         self.serial = serial
@@ -204,6 +217,10 @@ class LinkJournal(object):
                 self.rx_bytes += len(data)
                 for msg in self.parser.feed(data):
                     row = dict(zip(self.fields[10:], msg))
+                    # 0x81 的帧头序号属于遥测发送端，负载未回显接收的位置帧序号。
+                    flags = row['telemetry_flags']
+                    row.update(board_vision_valid=flags & 1, board_auto_enabled=(flags >> 1) & 1,
+                               board_fault=(flags >> 2) & 1)
                     row.update(event='rx', local_monotonic_ms=received)
                     self._row(row)
                     self.rx_frames += 1
@@ -215,7 +232,7 @@ class LinkJournal(object):
         seq, stamp, x, confidence, flags = struct.unpack_from('<HIfBB', packet, 5)
         self._row(dict(event='tx', local_monotonic_ms=time.perf_counter()*1000.,
                        frame=frame, position_seq=seq, capture_ms32=stamp,
-                       rail_x_cm=x if reason in ('monitor','source_time') else '',
+                       rail_x_cm=x if reason in ('monitor','source_time','ok') else '',
                        confidence_pct=confidence, position_flags=flags, reason=reason,
                        timestamp_verified=int(source_verified)))
         self.tx_frames += 1
