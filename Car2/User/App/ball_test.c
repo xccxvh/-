@@ -341,7 +341,13 @@ static void ball_test_poll_uart(void)
 
     (void)Vision_GetLatest(&measurement, &age_ms);
 
-    if (age_ms > 1000U) {
+    /*
+     * 只转发仍在视觉有效期内的帧：
+     * - 明确无效但刚收到的帧（age 很小）会转发，让控制器立即退出 AUTO；
+     * - 已经超龄的旧帧不再转发，避免旧数据把控制器的超时计时搅乱；
+     * - 完全没有新帧时，BallControl 自己按最后一次有效测量计时 150 ms。
+     */
+    if (age_ms > VISION_LINK_TIMEOUT_MS) {
         return;
     }
 

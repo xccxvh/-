@@ -30,6 +30,18 @@
 /* 视觉有效期：与 VISION_LINK_TIMEOUT_MS 保持一致，便于两处同时解释。 */
 #define BALL_CONTROL_VISION_TIMEOUT_MS      (150U)
 
+/*
+ * 短时缺测的指令保持时间。
+ *
+ * 30 Hz 视觉约 33 ms 一帧，偶发丢 1~2 帧时：
+ * - 年龄 <= 80 ms：保持上一次 PD 指令，不重算；
+ * - 年龄 > 80 ms 但未到 150 ms：放弃旧指令，限速回零等待下一帧；
+ * - 年龄 > 150 ms：退出 AUTO，转 VISION_LOST。
+ *
+ * 这样既不会因单帧丢失立刻中断，也不会把旧的大倾角指令无限保持。
+ */
+#define BALL_CONTROL_COMMAND_HOLD_MS        (80U)
+
 /* 帧间时间窗口：小于 10 ms 视为突发帧，大于 200 ms 视为断流，不参与速度计算。 */
 #define BALL_CONTROL_DT_MIN_MS              (10U)
 #define BALL_CONTROL_DT_MAX_MS              (200U)
@@ -360,6 +372,19 @@ void BallControl_Update(void)
         if (s_new_measurement) {
             s_new_measurement = false;
             ball_control_apply_pd();
+            return;
+        }
+
+        /*
+         * 短时缺测：
+         * - 80 ms 内保持上一次指令；
+         * - 超过 80 ms 仍未收到新帧，先限速回零等待，
+         *   避免旧的大倾角指令一直保持到 150 ms 超时。
+         * 状态仍是 AUTO，下一帧有效数据到达后会立即重新算 PD。
+         */
+        if (age_ms > BALL_CONTROL_COMMAND_HOLD_MS) {
+            s_beam_cmd_deg = 0.0f;
+            ball_control_hold_neutral();
         }
         return;
 

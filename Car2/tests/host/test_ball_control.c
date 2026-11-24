@@ -240,6 +240,50 @@ static void test_vision_timeout(void)
                "151 ms without frame -> VISION_LOST");
 }
 
+static void test_short_loss_hold(void)
+{
+    reset_all();
+
+    /* 先建立一个明显的 PD 输出：x=5cm，目标 0，输出被限幅到 -1°。 */
+    feed(5.0f, true, 95.0f);
+    BallControl_Update();
+    BallControl_Enable(true);
+    BallControl_Update();
+    check_near(BallControl_GetBeamAngleCmd(), -BALL_CONTROL_MAX_BEAM_DEG, 0.01f,
+               "AUTO has non-zero PD command before dropout");
+
+    /* 80 ms 内保持旧指令，不重算 PD。 */
+    host_time_advance_ms(80U);
+    BallControl_Update();
+    check_true(BallControl_GetState() == BALL_STATE_AUTO,
+               "80 ms dropout stays in AUTO");
+    check_near(BallControl_GetBeamAngleCmd(), -BALL_CONTROL_MAX_BEAM_DEG, 0.01f,
+               "short dropout holds last PD command");
+
+    /* 超过 80 ms：先限速回零等待，但仍未退出 AUTO。 */
+    host_time_advance_ms(1U);
+    BallControl_Update();
+    check_true(BallControl_GetState() == BALL_STATE_AUTO,
+               "81 ms dropout still AUTO");
+    check_near(BallControl_GetBeamAngleCmd(), 0.0f, 0.01f,
+               "command hold expires and target returns to zero");
+
+    /* 新有效帧到达：立即恢复 PD。 */
+    host_time_advance_ms(10U);
+    feed(5.0f, true, 95.0f);
+    BallControl_Update();
+    check_true(BallControl_GetState() == BALL_STATE_AUTO,
+               "new valid frame keeps AUTO");
+    check_near(BallControl_GetBeamAngleCmd(), -BALL_CONTROL_MAX_BEAM_DEG, 0.01f,
+               "new valid frame resumes PD");
+
+    /* 再断流 151 ms 才退出 AUTO。 */
+    host_time_advance_ms(151U);
+    BallControl_Update();
+    check_true(BallControl_GetState() == BALL_STATE_VISION_LOST,
+               "151 ms after last valid -> VISION_LOST");
+}
+
 static void test_position_jump_rejected(void)
 {
     ball_debug_t debug;
@@ -496,6 +540,7 @@ int main(void)
     test_pd_signs();
     test_vision_invalid_exits_auto();
     test_vision_timeout();
+    test_short_loss_hold();
     test_position_jump_rejected();
     test_velocity_filter();
     test_duplicate_frame_ignored();

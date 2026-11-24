@@ -20,6 +20,14 @@
 [PASS] vision recovery does not auto-resume AUTO
 [PASS] AUTO before timeout
 [PASS] 151 ms without frame -> VISION_LOST
+[PASS] AUTO has non-zero PD command before dropout (actual=-1.0000 expect=-1.0000)
+[PASS] 80 ms dropout stays in AUTO
+[PASS] short dropout holds last PD command (actual=-1.0000 expect=-1.0000)
+[PASS] 81 ms dropout still AUTO
+[PASS] command hold expires and target returns to zero (actual=0.0000 expect=0.0000)
+[PASS] new valid frame keeps AUTO
+[PASS] new valid frame resumes PD (actual=-1.0000 expect=-1.0000)
+[PASS] 151 ms after last valid -> VISION_LOST
 [PASS] 10 cm jump rejected
 [PASS] position unchanged after jump (actual=0.0000 expect=0.0000)
 [PASS] no velocity spike after jump (actual=0.0000 expect=0.0000)
@@ -40,4 +48,4 @@
 [PASS] closed loop settles within +/-1 cm at -5 cm
 [PASS] settle time <= 5 s for -5 cm
 [SIM] logged step response: settle=1287 ms final_x=-0.000 cm max|x|=5.000 cm
-=== 37 checks, 0 failures ===
+=== 45 checks, 0 failures ===
