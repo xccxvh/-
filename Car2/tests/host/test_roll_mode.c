@@ -386,6 +386,10 @@ static void test_remote_mode(void)
     check_near((float)rs.target_ticks, (float)neutral, 1.0f,
                "REMOTE starts at neutral target");
     check_true(rs.result == BALL_REMOTE_RESULT_STOP, "REMOTE starts STOP");
+    check_true((uint32_t)(Servo_GetSafeMaxTicks() - neutral) > 44U,
+               "safe range exceeds old +/-5 deg");
+    check_true(Servo_GetSlewRate() > 20.0f,
+               "slew rate is faster than old 20 deg/s");
 
     /* K1 现在只做本地停止，没有 0x02/START_REMOTE 时不会使能。 */
     tap_key(USER_KEY_K1);
@@ -408,9 +412,9 @@ static void test_remote_mode(void)
     check_true(rs.result == BALL_REMOTE_RESULT_TIMEOUT,
                "no-command timeout recorded");
 
-    /* 注入 0x02（零位 +20 ticks，处于 ±5° 安全范围内），
+    /* 注入 0x02（零位 +100 ticks，超过旧 ±5° 限幅），
      * 再由 0x03 START_REMOTE 使能。 */
-    host_vision_set_servo_command((uint16_t)(neutral + 20U), 7U);
+    host_vision_set_servo_command((uint16_t)(neutral + 100U), 7U);
     host_vision_set_control_command(BALL_CMD_START_REMOTE,
                                     BALL_TEST_MODE_REMOTE, 0.0f, 0.0f, 1U);
     BallTest_AppTask();
@@ -419,17 +423,17 @@ static void test_remote_mode(void)
     check_true(BallTest_GetLastCommandResult() == BALL_CMD_RESULT_OK,
                "START_REMOTE ack OK");
     check_true(rs.seq == 7U, "remote command seq recorded");
-    check_near((float)rs.target_ticks, (float)(neutral + 20U), 1.0f,
-               "remote target is neutral +20 ticks");
+    check_near((float)rs.target_ticks, (float)(neutral + 100U), 1.0f,
+               "remote target accepts > old +/-5 deg");
 
-    /* 200 ms 后输出应向 1400 ticks 靠近，但不超过目标。 */
+    /* 200 ms 后输出应向目标靠近，但不超过目标。 */
     for (int i = 0; i < 20; i++) {
         step_ms(10U);
     }
     BallTest_GetRemoteStatus(&rs);
     check_true(rs.enabled, "remote stays armed while commands are fresh");
     check_true(rs.output_ticks > neutral, "remote output moves up");
-    check_true(rs.output_ticks <= (uint16_t)(neutral + 20U),
+    check_true(rs.output_ticks <= (uint16_t)(neutral + 100U),
                "remote output does not overshoot");
 
     /* 超过 300 ms 没有新 0x02：退出远程并回零。 */
@@ -443,21 +447,21 @@ static void test_remote_mode(void)
                "timeout target returns to neutral");
 
     /* 新 0x02 + START_REMOTE 可重新使能。 */
-    host_vision_set_servo_command(1360U, 8U);
+    host_vision_set_servo_command((uint16_t)(neutral + 20U), 8U);
     host_vision_set_control_command(BALL_CMD_START_REMOTE,
                                     BALL_TEST_MODE_REMOTE, 0.0f, 0.0f, 2U);
     BallTest_AppTask();
     BallTest_GetRemoteStatus(&rs);
     check_true(rs.enabled, "START_REMOTE re-arms remote");
 
-    /* 超出零位 ±5° 的目标应被限幅并回执 CLAMP。 */
+    /* 超出实际安全行程的目标应被限幅并回执 CLAMP。 */
     host_vision_set_servo_command(1600U, 9U);
     step_ms(10U);
     BallTest_GetRemoteStatus(&rs);
     check_true(rs.enabled, "remote stays armed after clamp");
     check_near((float)rs.target_ticks,
-               (float)Servo_GetNeutralPulseTicks() + 44.0f, 1.0f,
-               "remote target clamped to neutral +5 deg");
+               (float)Servo_GetSafeMaxTicks(), 1.0f,
+               "remote target clamped to safe max");
     check_true(rs.result == BALL_REMOTE_RESULT_CLAMP,
                "clamp result recorded");
 
@@ -531,8 +535,14 @@ static void test_control_commands(void)
     check_true(BallControl_GetState() == BALL_STATE_IDLE,
                "STOP leaves AUTO");
 
+    host_vision_set_control_command(BALL_CMD_GET_PARAMS,
+                                    BALL_TEST_MODE_UART, 0.0f, 0.0f, 6U);
+    BallTest_AppTask();
+    check_true(BallTest_GetLastCommandResult() == BALL_CMD_RESULT_OK,
+               "GET_PARAMS ack OK");
+
     host_vision_set_control_command(BALL_CMD_SET_MODE,
-                                    BALL_TEST_MODE_MANUAL, 0.0f, 0.0f, 6U);
+                                    BALL_TEST_MODE_MANUAL, 0.0f, 0.0f, 7U);
     BallTest_AppTask();
     check_true(BallTest_GetLastCommandResult() == BALL_CMD_RESULT_OK,
                "SET_MODE MANUAL ack OK");

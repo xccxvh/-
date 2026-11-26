@@ -657,7 +657,7 @@ static void ball_test_roll_task(void)
  * 手动微调摆杆倾角，单位 °。
  *
  * 受 Servo 当前摆杆限幅约束（MANUAL 默认 5°，SERVO 模式 30°），
- * 底层还有 20°/s 斜率限制。
+ * 底层还有可配置的软件斜率限制（默认 180°/s）。
  * MANUAL 用 0.1° 步长逼近平衡点；SERVO 用 3° 步长做自由舵机角度测试。
  */
 static void ball_test_manual_adjust(float delta_deg)
@@ -748,25 +748,30 @@ static void ball_test_next_mode(void)
     BallTest_SetMode(next);
 }
 
-/*
- * REMOTE 目标 PWM 计数限幅：
- * - 先限制在零位 ±BALL_TEST_REMOTE_LIMIT_DEG（初始 ±5°）；
- * - 再交给 Servo_ClampPulseTicks() 做 10°~170° 机械限幅。
- */
-static uint16_t ball_test_remote_clamp_ticks(uint16_t raw_ticks)
+/* 发送 0x84 执行机构参数（12 字节，非阻塞）。 */
+static void ball_test_send_actuator_params(void)
 {
-    int32_t neutral = (int32_t)Servo_GetNeutralPulseTicks();
-    int32_t limit_ticks = (int32_t)(BALL_TEST_REMOTE_LIMIT_DEG * 1600.0f /
-                                    180.0f + 0.5f);
-    int32_t ticks = (int32_t)raw_ticks;
+    uint8_t payload[VISION_LINK_ACTUATOR_PARAMS_PAYLOAD_LEN];
+    uint16_t neutral = Servo_GetNeutralPulseTicks();
+    uint16_t min_ticks = Servo_GetSafeMinTicks();
+    uint16_t max_ticks = Servo_GetSafeMaxTicks();
+    uint16_t slew_x10 = (uint16_t)(Servo_GetSlewRate() * 10.0f + 0.5f);
 
-    if (ticks < (neutral - limit_ticks)) {
-        ticks = neutral - limit_ticks;
-    } else if (ticks > (neutral + limit_ticks)) {
-        ticks = neutral + limit_ticks;
-    }
+    payload[0] = (uint8_t)(neutral & 0xFFU);
+    payload[1] = (uint8_t)(neutral >> 8);
+    payload[2] = (uint8_t)(min_ticks & 0xFFU);
+    payload[3] = (uint8_t)(min_ticks >> 8);
+    payload[4] = (uint8_t)(max_ticks & 0xFFU);
+    payload[5] = (uint8_t)(max_ticks >> 8);
+    payload[6] = (uint8_t)(slew_x10 & 0xFFU);
+    payload[7] = (uint8_t)(slew_x10 >> 8);
+    payload[8] = 0U;
+    payload[9] = 0U;
+    payload[10] = 0U;
+    payload[11] = 0U;
 
-    return Servo_ClampPulseTicks((uint16_t)ticks);
+    (void)Vision_SendFrame(VISION_LINK_TYPE_ACTUATOR_PARAMS,
+                           payload, sizeof(payload));
 }
 
 /* 发送 0x82 远程舵机回执（12 字节，非阻塞）。 */
@@ -822,7 +827,7 @@ static void ball_test_remote_task(void)
             s_remote_target_ticks = Servo_GetNeutralPulseTicks();
             Servo_SetNeutral();
         } else if (have_cmd) {
-            uint16_t clamped = ball_test_remote_clamp_ticks(cmd.target_pwm_ticks);
+            uint16_t clamped = Servo_ClampSafePulseTicks(cmd.target_pwm_ticks);
 
             s_remote_target_ticks = clamped;
             s_remote_result = (clamped != cmd.target_pwm_ticks) ?
@@ -894,7 +899,7 @@ static bool ball_test_remote_start(void)
 
     if (Vision_GetServoCommand(&cmd, &age_ms) &&
         (age_ms <= BALL_TEST_REMOTE_TIMEOUT_MS)) {
-        uint16_t clamped = ball_test_remote_clamp_ticks(cmd.target_pwm_ticks);
+        uint16_t clamped = Servo_ClampSafePulseTicks(cmd.target_pwm_ticks);
 
         s_remote_seq = cmd.seq;
         s_remote_target_ticks = clamped;
@@ -1016,6 +1021,9 @@ static uint8_t ball_test_process_control(const ControlCommand *cmd)
         return ball_test_remote_start() ?
                BALL_CMD_RESULT_OK : BALL_CMD_RESULT_REJECTED;
 
+    case BALL_CMD_GET_PARAMS:
+        return BALL_CMD_RESULT_OK;
+
     default:
         return BALL_CMD_RESULT_REJECTED;
     }
@@ -1041,6 +1049,12 @@ static void ball_test_handle_control(void)
     s_last_control_seq = cmd.seq;
     s_last_cmd_result = ball_test_process_control(&cmd);
     ball_test_send_control_ack(cmd.seq, cmd.opcode, s_last_cmd_result);
+
+    if ((s_last_cmd_result == BALL_CMD_RESULT_OK) &&
+        ((cmd.opcode == BALL_CMD_GET_PARAMS) ||
+         (cmd.opcode == BALL_CMD_START_REMOTE))) {
+        ball_test_send_actuator_params();
+    }
 }
 
 /*
@@ -1188,12 +1202,6 @@ static void ball_test_fmt2_abs(char *buf, float value)
     sprintf(buf, "%ld.%02ld", (long)(scaled / 100), (long)(scaled % 100));
 }
 
-/* PWM 计数换算成绝对舵机角度，仅用于 LCD/回执显示。 */
-static float ball_test_ticks_to_angle(uint16_t ticks)
-{
-    return ((float)ticks - 400.0f) * 180.0f / 1600.0f;
-}
-
 static void ball_test_lcd_build(void)
 {
     ball_debug_t debug;
@@ -1231,24 +1239,24 @@ static void ball_test_lcd_build(void)
         snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "K1:+0.1 K2:-0.1");
         s_lcd_lines[6][0] = '\0';
     } else if (s_mode == BALL_TEST_MODE_REMOTE) {
-        /* REMOTE：Nano 目标 PWM 与 G3519 实际输出。 */
+        /* REMOTE：直接显示 PWM 计数，避免软件角度被误认为机械实测角。 */
         ball_remote_status_t remote;
-        float target_angle;
+        uint16_t range_min = Servo_GetSafeMinTicks();
+        uint16_t range_max = Servo_GetSafeMaxTicks();
 
         BallTest_GetRemoteStatus(&remote);
-        target_angle = ball_test_ticks_to_angle(remote.target_ticks);
-        ball_test_fmt2_abs(t, target_angle);
-        ball_test_fmt2_abs(servo, debug.servo_angle_cmd_deg);
 
         snprintf(s_lcd_lines[0], sizeof(s_lcd_lines[0]), "MODE: REMOTE");
         snprintf(s_lcd_lines[1], sizeof(s_lcd_lines[1]), "State: %s",
                  remote.enabled ? "RUN" : "STOP");
-        snprintf(s_lcd_lines[2], sizeof(s_lcd_lines[2]), "Target: %s deg", t);
-        snprintf(s_lcd_lines[3], sizeof(s_lcd_lines[3]), "Output: %s deg", servo);
+        snprintf(s_lcd_lines[2], sizeof(s_lcd_lines[2]), "Target:%4u ticks",
+                 (unsigned)remote.target_ticks);
+        snprintf(s_lcd_lines[3], sizeof(s_lcd_lines[3]), "Output:%4u ticks",
+                 (unsigned)remote.output_ticks);
         snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "PWM: %4u us",
                  (unsigned)debug.servo_pwm_us);
-        snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "Ticks: %4u",
-                 (unsigned)remote.output_ticks);
+        snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "Range:%4u~%4u",
+                 (unsigned)range_min, (unsigned)range_max);
         snprintf(s_lcd_lines[6], sizeof(s_lcd_lines[6]), "Seq:%05u R:%s",
                  (unsigned)remote.seq,
                  ball_test_remote_result_text(remote.result));

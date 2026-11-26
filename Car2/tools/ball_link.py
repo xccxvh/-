@@ -10,7 +10,7 @@ G3519 滚球控制串口联调工具。
               再发回 G3519，可在没有真实钢珠/摄像头时验证整条控制链路；
 4. remote  —— 发送 0x02 远程舵机 PWM 命令并解码 0x82 回执，用于执行机构标定；
 5. control —— 发送 0x03 控制指令（SET_MODE/START_AUTO/STOP/SET_TARGET/
-              SET_PD/START_REMOTE）并解码 0x83 回执。
+              SET_PD/START_REMOTE/GET_PARAMS）并解码 0x83/0x84 回执。
 
 协议与 Car2/BSP/VISION/vision_link.h 完全一致：
 帧 = A5 5A | ver(1) type(1) len(1) seq(2) | payload(len) | crc16(2, 小端)
@@ -39,6 +39,7 @@ TYPE_CONTROL_CMD = 0x03
 TYPE_TELEMETRY = 0x81
 TYPE_REMOTE_TELEMETRY = 0x82
 TYPE_CONTROL_ACK = 0x83
+TYPE_ACTUATOR_PARAMS = 0x84
 
 FRAME_OVERHEAD = 9  # 同步 2 + 版本/类型/长度/序号 5 + CRC 2
 
@@ -88,6 +89,19 @@ def parse_control_ack(payload: bytes):
         "result": result,
         "mode": mode,
         "control_state": state,
+    }
+
+
+def parse_actuator_params(payload: bytes):
+    """解析 12 字节 0x84 执行机构参数。"""
+    if len(payload) != 12:
+        return None
+    neutral, min_ticks, max_ticks, slew_x10 = struct.unpack("<HHHH", payload[:8])
+    return {
+        "neutral_ticks": neutral,
+        "min_ticks": min_ticks,
+        "max_ticks": max_ticks,
+        "slew_dps": slew_x10 / 10.0,
     }
 
 
@@ -353,6 +367,12 @@ def run_control(ser, args):
                           f"output={telemetry['output_ticks']} "
                           f"enabled={int(telemetry['enabled'])} "
                           f"result={telemetry['result']}")
+            elif frame_type == TYPE_ACTUATOR_PARAMS:
+                params = parse_actuator_params(payload)
+                if params:
+                    print(f"0x84: neutral={params['neutral_ticks']} "
+                          f"range={params['min_ticks']}~{params['max_ticks']} "
+                          f"slew={params['slew_dps']:.1f} deg/s")
 
 
 def run_remote(ser, args):
@@ -488,7 +508,7 @@ def main():
                                help="发送 0x03 控制指令并等待 0x83 回执")
     p_control.add_argument("--opcode", type=int, required=True,
                            help="1=SET_MODE 2=START_AUTO 3=STOP "
-                                "4=SET_TARGET 5=SET_PD 6=START_REMOTE")
+                                "4=SET_TARGET 5=SET_PD 6=START_REMOTE 7=GET_PARAMS")
     p_control.add_argument("--mode", type=int, default=2,
                            help="SET_MODE 模式：0=MANUAL 2=UART 5=REMOTE")
     p_control.add_argument("--arg0", type=float, default=0.0)
@@ -499,7 +519,7 @@ def main():
 
     p_remote = sub.add_parser("remote", parents=[common],
                               help="发送 0x02 远程舵机 PWM 命令并解码 0x82")
-    p_remote.add_argument("--ticks", type=int, default=1378,
+    p_remote.add_argument("--ticks", type=int, default=1324,
                           help="目标 PWM 高电平计数，400~2000")
     p_remote.add_argument("--rate", type=float, default=10.0)
     p_remote.set_defaults(func=run_remote)

@@ -91,14 +91,6 @@ typedef struct {
  * - 舵机目标每 10 ms 重发一次，保证斜率限制逐步到位；
  * - 0x82 回执 10 Hz。
  */
-/*
- * REMOTE 初始安全行程：相对当前零位限制 ±5°。
- * 现场空载确认后如需更大范围再调整；不要直接开放 SERVO 模式的 ±30°。
- */
-#ifndef BALL_TEST_REMOTE_LIMIT_DEG
-#define BALL_TEST_REMOTE_LIMIT_DEG      (5.0f)
-#endif
-
 #define BALL_TEST_REMOTE_TIMEOUT_MS     (300U)
 #define BALL_TEST_REMOTE_APPLY_MS       (10U)
 #define BALL_TEST_REMOTE_TELEMETRY_MS   (100U)
@@ -117,6 +109,7 @@ typedef struct {
 #define BALL_CMD_SET_TARGET             (4U)
 #define BALL_CMD_SET_PD                 (5U)
 #define BALL_CMD_START_REMOTE           (6U)
+#define BALL_CMD_GET_PARAMS             (7U)
 
 /* 0x83 控制回执 result。 */
 #define BALL_CMD_RESULT_OK              (0U)

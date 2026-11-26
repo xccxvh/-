@@ -35,7 +35,8 @@
  *   2     1     协议版本，当前 0x01
  *   3     1     帧类型：0x01=视觉位置，0x02=Nano 远程舵机目标，
  *               0x03=Nano 控制指令，0x81=视觉遥测，
- *               0x82=远程舵机回执，0x83=控制指令回执
+ *               0x82=远程舵机回执，0x83=控制指令回执，
+ *               0x84=执行机构参数
  *   4     1     负载长度 len
  *   5     2     帧序号 seq（uint16）
  *   7     len   负载
@@ -51,7 +52,7 @@
  *
  * 远程舵机命令（类型 0x02，len=2）负载：
  *   0   2     目标 PWM 高电平计数 target_pwm_ticks（uint16，小端）
- *              400=500us，2000=2500us，当前零位约 1378 ticks
+ *              400=500us，2000=2500us，当前零位约 1324 ticks
  * 帧序号沿用帧头 seq，Nano 负责把绝对舵机角度换算成 PWM 计数。
  *
  * 远程舵机回执（类型 0x82，len=12）负载：
@@ -76,6 +77,14 @@
  *                      3=PARAM_RANGE，4=FAULT，5=REJECTED）
  *   4   1     mode（当前生效模式）
  *   5   1     control_state（BallControl 状态）
+ *
+ * 执行机构参数（类型 0x84，len=12，G3519 → Nano）负载：
+ *   0   2     neutral_ticks（当前软件零位）
+ *   2   2     min_ticks（实际安全行程下限）
+ *   4   2     max_ticks（实际安全行程上限）
+ *   6   2     slew_rate_x10（软件速率 °/s × 10）
+ *   8   4     保留，填 0
+ * 可通过 0x03 opcode=7 GET_PARAMS 查询，START_REMOTE 成功后也会主动发送一次。
  *
  * 遥测帧（类型 0x81，len=32）负载：
  *   0   4     G3519 本地毫秒时间戳
@@ -106,10 +115,12 @@
 #define VISION_LINK_TYPE_TELEMETRY      (0x81U)
 #define VISION_LINK_TYPE_REMOTE_TELEMETRY (0x82U)
 #define VISION_LINK_TYPE_CONTROL_ACK    (0x83U)
+#define VISION_LINK_TYPE_ACTUATOR_PARAMS (0x84U)
 #define VISION_LINK_BALL_PAYLOAD_LEN    (12U)
 #define VISION_LINK_SERVO_CMD_PAYLOAD_LEN (2U)
 #define VISION_LINK_CONTROL_CMD_PAYLOAD_LEN (10U)
 #define VISION_LINK_CONTROL_ACK_PAYLOAD_LEN (6U)
+#define VISION_LINK_ACTUATOR_PARAMS_PAYLOAD_LEN (12U)
 #define VISION_LINK_REMOTE_TELEMETRY_PAYLOAD_LEN (12U)
 #define VISION_LINK_MAX_PAYLOAD_LEN     (32U)
 #define VISION_LINK_DEFAULT_BAUD        (115200U)

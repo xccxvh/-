@@ -54,7 +54,7 @@
 
 `Car2/` 是最终上车工程，在循迹之外新增了静态滚球闭环：
 
-- 舵机：PA9 / TIMA0 CCP1，50 Hz，零位初调 110°（左端偏高，待 MANUAL 复核）；
+- 舵机：PA9 / TIMA0 CCP1，50 Hz，零位 104°（约 1324 ticks / 1655 us）；
 - 视觉：UART0（PA10/PA11，Type-C/DAPLink，115200），二进制位置帧 + 遥测帧；
 - 控制：PD（Kp=0.60 °/cm，Kd=0.30 °/(cm/s)），±2° 限幅、20°/s 速率限制；
 - 安全：IDLE/MANUAL/AUTO/VISION_LOST/FAULT 状态机，视觉 150 ms 超时即退出闭环；

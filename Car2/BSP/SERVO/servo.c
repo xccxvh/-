@@ -12,8 +12,8 @@
  * 3. 所有动作都在函数内完成，不阻塞；斜率限制基于 1 ms 系统时基。
  *
  * 标定基准（来自 ServoTest）：
- * - ServoTest 早前测得 104° 时摆杆水平；当前按完整机械结构初调为 110°。
- *   该位置对应约 1722 us，但左端仍比右端高约 8 mm，必须用 MANUAL 复核。
+ * - 当前零位为 104°，对应约 1324 ticks / 1655 us；
+ *   该值仍需按 MANUAL 流程复核实际水平位置。
  * - 0° 对应 400 计数（0.5 ms），180° 对应 2000 计数（2.5 ms）。
  */
 
@@ -25,8 +25,8 @@
 
 /*
  * 零位与机械限位。
- * - 当前零位初调值为 110°，对应约 1722 us；实车左端仍高约 8 mm，
- *   说明它还不是最终平衡点。必须按 MANUAL 流程找到真正水平位置后写回本宏。
+ * - 当前零位为 104°，对应约 1324 ticks / 1655 us；
+ *   拆装或配重变化后必须按 MANUAL 流程重新确认并写回本宏。
  * - 标定方法：MANUAL 模式用 K1/K2 以 0.1° 微调，LCD/串口会显示
  *   “相对倾角”和“绝对舵机角度”，找到钢珠不持续滚动的角度后
  *   把本宏改成该绝对角度。
@@ -52,14 +52,11 @@
 #define SERVO_BEAM_DIR_SIGN             (1.0f)
 
 /*
- * 安全限幅：
- * - 摆杆最大倾角默认 5.0°；PD 控制器还会再限制到 ±2.0°，
- *   开环滚动测试在单次执行期间临时放宽到 15°。
- * - 舵机最大角速度 20°/s，对应 30 Hz 更新时每帧最多 0.67°，
- *   避免视觉噪声直接变成舵机抖动。
- * - 单次斜率计算的 dt 上限 50 ms，防止长时间未调用后一次性跳很大角度。
+ * 斜率限制：
+ * - 默认速率在 servo.h 中配置（SERVO_MAX_SLEW_DPS，当前 180°/s）；
+ * - 单次 dt 上限 50 ms，防止主循环停顿后一帧跳出很大角度；
+ * - 可通过 Servo_SetSlewRate() 运行时调整。
  */
-#define SERVO_MAX_SLEW_DPS              (20.0f)
 #define SERVO_SLEW_DT_CAP_MS            (50U)
 
 /* SysConfig 默认 TIMA0 为 80 MHz、预分频 0、周期 1000、计数器停止。 */
@@ -74,6 +71,7 @@ static float    s_servo_angle_deg = SERVO_NEUTRAL_ANGLE_DEG;
 static float    s_beam_limit_deg  = SERVO_BEAM_LIMIT_DEFAULT_DEG;
 static float    s_beam_ratio      = SERVO_BEAM_TO_SERVO_RATIO;
 static float    s_beam_dir_sign   = SERVO_BEAM_DIR_SIGN;
+static float    s_slew_dps        = SERVO_MAX_SLEW_DPS;
 static uint32_t s_last_update_ms  = 0U;
 
 /*
@@ -169,7 +167,7 @@ static float servo_slew_limit(float current, float target, bool *limited)
     }
     s_last_update_ms = now;
 
-    max_step = SERVO_MAX_SLEW_DPS * (float)dt_ms / 1000.0f;
+    max_step = s_slew_dps * (float)dt_ms / 1000.0f;
     delta = target - current;
 
     if (delta > max_step) {
@@ -215,6 +213,7 @@ void Servo_Init(void)
      */
     s_beam_limit_deg = SERVO_BEAM_LIMIT_DEFAULT_DEG;
     s_beam_ratio = SERVO_BEAM_TO_SERVO_RATIO;
+    s_slew_dps = SERVO_MAX_SLEW_DPS;
 
     /* 初始化时直接回零位，不经过斜率限制，保证上电姿态确定。 */
     s_servo_angle_deg = SERVO_NEUTRAL_ANGLE_DEG;
@@ -395,6 +394,75 @@ uint16_t Servo_GetNeutralPulseTicks(void)
     return servo_angle_to_pulse_ticks(SERVO_NEUTRAL_ANGLE_DEG);
 }
 
+/* 计算 REMOTE 安全行程的 PWM 计数边界（允许正负不对称）。 */
+static void servo_safe_tick_bounds(uint16_t *min_ticks, uint16_t *max_ticks)
+{
+    float min_angle = SERVO_NEUTRAL_ANGLE_DEG - SERVO_SAFE_NEG_DEG;
+    float max_angle = SERVO_NEUTRAL_ANGLE_DEG + SERVO_SAFE_POS_DEG;
+    uint16_t lo;
+    uint16_t hi;
+
+    min_angle = servo_clampf(min_angle, SERVO_MECH_MIN_DEG, SERVO_MECH_MAX_DEG);
+    max_angle = servo_clampf(max_angle, SERVO_MECH_MIN_DEG, SERVO_MECH_MAX_DEG);
+
+    lo = servo_angle_to_pulse_ticks(min_angle);
+    hi = servo_angle_to_pulse_ticks(max_angle);
+    if (lo > hi) {
+        uint16_t tmp = lo;
+        lo = hi;
+        hi = tmp;
+    }
+
+    *min_ticks = lo;
+    *max_ticks = hi;
+}
+
+uint16_t Servo_GetSafeMinTicks(void)
+{
+    uint16_t lo;
+    uint16_t hi;
+
+    servo_safe_tick_bounds(&lo, &hi);
+    return lo;
+}
+
+uint16_t Servo_GetSafeMaxTicks(void)
+{
+    uint16_t lo;
+    uint16_t hi;
+
+    servo_safe_tick_bounds(&lo, &hi);
+    return hi;
+}
+
+uint16_t Servo_ClampSafePulseTicks(uint16_t ticks)
+{
+    uint16_t lo;
+    uint16_t hi;
+
+    servo_safe_tick_bounds(&lo, &hi);
+    if (ticks < lo) {
+        ticks = lo;
+    } else if (ticks > hi) {
+        ticks = hi;
+    }
+
+    return Servo_ClampPulseTicks(ticks);
+}
+
+void Servo_SetSlewRate(float dps)
+{
+    if (!servo_float_is_finite(dps)) {
+        return;
+    }
+    s_slew_dps = servo_clampf(dps, 1.0f, 1000.0f);
+}
+
+float Servo_GetSlewRate(void)
+{
+    return s_slew_dps;
+}
+
 uint16_t Servo_ClampPulseTicks(uint16_t ticks)
 {
     float angle;
@@ -415,17 +483,56 @@ uint16_t Servo_ClampPulseTicks(uint16_t ticks)
 void Servo_SetTargetPulseTicks(uint16_t ticks)
 {
     uint16_t clamped;
+    int32_t current_ticks;
+    int32_t target_ticks;
+    int32_t max_step;
+    uint32_t now;
+    uint32_t dt_ms;
+    bool limited = false;
     float angle;
 
     if (!s_status.ready) {
         return;
     }
 
-    clamped = Servo_ClampPulseTicks(ticks);
-    angle = ((float)clamped - (float)SERVO_PULSE_MIN_TICKS) * 180.0f /
-            (float)(SERVO_PULSE_MAX_TICKS - SERVO_PULSE_MIN_TICKS);
+    clamped = Servo_ClampSafePulseTicks(ticks);
 
-    Servo_SetManualServoAngle(angle);
+    now = system_time_get_tick_ms();
+    dt_ms = (uint32_t)(now - s_last_update_ms);
+    if (dt_ms < 1U) {
+        dt_ms = 1U;
+    }
+    if (dt_ms > SERVO_SLEW_DT_CAP_MS) {
+        dt_ms = SERVO_SLEW_DT_CAP_MS;
+    }
+    s_last_update_ms = now;
+
+    /* 1° = 1600/180 ≈ 8.889 ticks；直接在计数域做斜率限制。 */
+    max_step = (int32_t)(s_slew_dps * (1600.0f / 180.0f) *
+                         (float)dt_ms / 1000.0f + 0.5f);
+    if (max_step < 1) {
+        max_step = 1;
+    }
+
+    current_ticks = (int32_t)s_status.pulse_ticks;
+    target_ticks = (int32_t)clamped;
+
+    if (target_ticks > (current_ticks + max_step)) {
+        target_ticks = current_ticks + max_step;
+        limited = true;
+    } else if (target_ticks < (current_ticks - max_step)) {
+        target_ticks = current_ticks - max_step;
+        limited = true;
+    }
+
+    servo_write_pulse_ticks((uint16_t)target_ticks);
+
+    angle = ((float)target_ticks - 400.0f) * 180.0f / 1600.0f;
+    s_servo_angle_deg = angle;
+    s_status.servo_angle_cmd_deg = angle;
+    s_status.beam_angle_cmd_deg =
+        (angle - SERVO_NEUTRAL_ANGLE_DEG) / (s_beam_dir_sign * s_beam_ratio);
+    s_status.rate_limited = limited;
 }
 
 bool Servo_IsReady(void)

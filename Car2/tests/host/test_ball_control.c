@@ -114,13 +114,13 @@ static void test_servo_mapping(void)
                "neutral angle maps to expected pulse");
 
     /*
-     * 单次调用间隔 1 s：dt 被限制到 50 ms，只能转 20°/s × 0.05 s = 1°。
-     * 这是防止主循环停顿后一帧跳出大角度的安全设计。
+     * 10 ms 周期、180°/s 斜率：单次最多移动 1.8°。
+     * 先下发 +2°，应停在 1.8°；再重复下发逐步到位。
      */
-    host_time_advance_ms(1000);
+    host_time_advance_ms(10);
     Servo_SetBeamAngle(2.0f);
-    check_near(Servo_GetBeamAngleActual(), 1.0f, 0.02f,
-               "slew limited to 1.0 deg per call after long gap");
+    check_near(Servo_GetBeamAngleActual(), 1.8f, 0.05f,
+               "180 deg/s slew moves 1.8 deg per 10 ms");
 
     /* 以 10 ms 节拍重复下发 +2°，让斜率限制逐步到位。 */
     for (int i = 0; i < 10; i++) {

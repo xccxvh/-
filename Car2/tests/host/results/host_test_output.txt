@@ -3,7 +3,7 @@
 [PASS] servo timer started
 [PASS] servo period = 16000 ticks (50 Hz)
 [PASS] neutral angle maps to expected pulse
-[PASS] slew limited to 1.0 deg per call after long gap (actual=1.0000 expect=1.0000)
+[PASS] 180 deg/s slew moves 1.8 deg per 10 ms (actual=1.8000 expect=1.8000)
 [PASS] servo reaches +2.0 deg (actual=2.0000 expect=2.0000)
 [PASS] beam +2 deg maps to expected pulse
 [PASS] servo returns to neutral (actual=0.0000 expect=0.0000)
@@ -37,15 +37,15 @@
 [PASS] manual +1.0 deg reached via periodic re-send (actual=1.0000 expect=1.0000)
 [PASS] manual -1.0 deg reached (actual=-1.0000 expect=-1.0000)
 [PASS] AUTO enabled for simulation
-[SIM] center hold: x=0.000 cm v=0.000 cm/s settle=1287 ms max|x|=5.000 cm
+[SIM] center hold: x=0.000 cm v=0.000 cm/s settle=1287 ms max|x|=4.998 cm
 [PASS] closed loop settles within +/-1 cm at 0 cm
 [PASS] settle time <= 5 s for 0 cm
 [PASS] overshoot bounded
 [SIM] target +5 cm: x=5.000 cm v=-0.000 cm/s settle=1287 ms max|x|=5.074 cm
 [PASS] closed loop settles within +/-1 cm at +5 cm
 [PASS] settle time <= 5 s for +5 cm
-[SIM] target -5 cm: x=-5.000 cm v=-0.000 cm/s settle=1716 ms max|x|=5.255 cm
+[SIM] target -5 cm: x=-5.000 cm v=-0.000 cm/s settle=1716 ms max|x|=5.254 cm
 [PASS] closed loop settles within +/-1 cm at -5 cm
 [PASS] settle time <= 5 s for -5 cm
-[SIM] logged step response: settle=1287 ms final_x=-0.000 cm max|x|=5.000 cm
+[SIM] logged step response: settle=1287 ms final_x=0.000 cm max|x|=4.998 cm
 === 45 checks, 0 failures ===

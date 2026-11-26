@@ -81,6 +81,8 @@
 [ROLL] stage=BACK+ target=+0.00 deg
 [ROLL] stage=NEG target=-10.00 deg
 [ROLL] stage=BACK- target=+0.00 deg
+[ROLL] stage=POS target=+10.00 deg
+[ROLL] stage=BACK+ target=+0.00 deg
 [PASS] max level reaches configured theta (actual=10.00)
 [ROLL] stopped by key, returning to balance point
 [PASS] max level test stopped by K1
@@ -95,27 +97,27 @@
 [BALL] K1=enable/step/run, K2=case/level, K1+K2=mode
 [BALL] mode=SERVO target=0.00 Kp=+0.60 Kd=+0.30
 [PASS] SERVO mode allows +/-30 deg (actual=30.00)
-[CAL] beam=+3.00 -> servo target=+107.00 current=+104.02 deg
+[CAL] beam=+3.00 -> servo target=+107.00 current=+104.18 deg
 [PASS] SERVO K1 +3 deg (actual=3.00)
-[CAL] beam=+0.00 -> servo target=+104.00 current=+104.02 deg
+[CAL] beam=+0.00 -> servo target=+104.00 current=+104.18 deg
 [PASS] SERVO K2 back to 0 (actual=0.00)
-[CAL] beam=-3.00 -> servo target=+101.00 current=+103.98 deg
+[CAL] beam=-3.00 -> servo target=+101.00 current=+103.82 deg
 [PASS] SERVO K2 -3 deg (actual=-3.00)
-[CAL] beam=+0.00 -> servo target=+104.00 current=+103.98 deg
-[CAL] beam=+3.00 -> servo target=+107.00 current=+104.02 deg
-[CAL] beam=+6.00 -> servo target=+110.00 current=+104.06 deg
-[CAL] beam=+9.00 -> servo target=+113.00 current=+104.10 deg
-[CAL] beam=+12.00 -> servo target=+116.00 current=+104.14 deg
-[CAL] beam=+15.00 -> servo target=+119.00 current=+104.18 deg
-[CAL] beam=+18.00 -> servo target=+122.00 current=+104.22 deg
-[CAL] beam=+21.00 -> servo target=+125.00 current=+104.26 deg
-[CAL] beam=+24.00 -> servo target=+128.00 current=+104.30 deg
-[CAL] beam=+27.00 -> servo target=+131.00 current=+104.34 deg
-[CAL] beam=+30.00 -> servo target=+134.00 current=+104.38 deg
+[CAL] beam=+0.00 -> servo target=+104.00 current=+103.82 deg
+[CAL] beam=+3.00 -> servo target=+107.00 current=+104.18 deg
+[CAL] beam=+6.00 -> servo target=+110.00 current=+104.54 deg
+[CAL] beam=+9.00 -> servo target=+113.00 current=+104.90 deg
+[CAL] beam=+12.00 -> servo target=+116.00 current=+105.26 deg
+[CAL] beam=+15.00 -> servo target=+119.00 current=+105.62 deg
+[CAL] beam=+18.00 -> servo target=+122.00 current=+105.98 deg
+[CAL] beam=+21.00 -> servo target=+125.00 current=+106.34 deg
+[CAL] beam=+24.00 -> servo target=+128.00 current=+106.70 deg
+[CAL] beam=+27.00 -> servo target=+131.00 current=+107.06 deg
+[CAL] beam=+30.00 -> servo target=+134.00 current=+107.42 deg
 [PASS] SERVO clamps at +30 deg (actual=30.00)
-[CAL] beam=+30.00 -> servo target=+134.00 current=+104.42 deg
+[CAL] beam=+30.00 -> servo target=+134.00 current=+107.78 deg
 [PASS] SERVO stays at +30 deg (actual=30.00)
-[CAL] beam=+27.00 -> servo target=+131.00 current=+104.46 deg
+[CAL] beam=+27.00 -> servo target=+131.00 current=+108.14 deg
 [PASS] SERVO K2 steps down from limit (actual=27.00)
 [BALL] mode=UART target=0.00 Kp=+0.60 Kd=+0.30
 [PASS] leaving SERVO restores default limit (actual=5.00)
@@ -128,6 +130,8 @@
 [PASS] REMOTE starts disarmed
 [PASS] REMOTE starts at neutral target (actual=1324.00)
 [PASS] REMOTE starts STOP
+[PASS] safe range exceeds old +/-5 deg
+[PASS] slew rate is faster than old 20 deg/s
 [PASS] K1 only stops remote
 [PASS] START_REMOTE enables without prior 0x02
 [PASS] remote starts in NO_CMD waiting state
@@ -136,7 +140,7 @@
 [PASS] START_REMOTE arms remote without K1
 [PASS] START_REMOTE ack OK
 [PASS] remote command seq recorded
-[PASS] remote target is neutral +20 ticks (actual=1344.00)
+[PASS] remote target accepts > old +/-5 deg (actual=1424.00)
 [PASS] remote stays armed while commands are fresh
 [PASS] remote output moves up
 [PASS] remote output does not overshoot
@@ -145,7 +149,7 @@
 [PASS] timeout target returns to neutral (actual=1324.00)
 [PASS] START_REMOTE re-arms remote
 [PASS] remote stays armed after clamp
-[PASS] remote target clamped to neutral +5 deg (actual=1368.00)
+[PASS] remote target clamped to safe max (actual=1502.00)
 [PASS] clamp result recorded
 [PASS] K1 local stop disarms remote
 [PASS] stop result recorded
@@ -166,7 +170,8 @@
 [PASS] SET_PD updates Kd (actual=0.20)
 [PASS] STOP ack OK
 [PASS] STOP leaves AUTO
+[PASS] GET_PARAMS ack OK
 [BALL] mode=MANUAL target=0.00 Kp=+0.60 Kd=+0.30
 [PASS] SET_MODE MANUAL ack OK
 [PASS] SET_MODE MANUAL enters manual
-=== 85 checks, 0 failures ===
+=== 88 checks, 0 failures ===

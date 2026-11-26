@@ -14,8 +14,7 @@
  * 实测要点（来自 ServoTest 副工程）：
  * - 本板 TIMA0 的 CC1 高电平时间 = “周期 - 比较值”，因此写比较值时要用
  *   16000 - 脉宽计数，不能直接写脉宽。
- * - 零位由 SERVO_NEUTRAL_ANGLE_DEG 定义（当前初调 110°，约 1722 us）；
- *   该位置左端仍略高，需 MANUAL 复核后写回。
+ * - 零位由 SERVO_NEUTRAL_ANGLE_DEG 定义（当前 104°，约 1324 ticks / 1655 us）。
  *
  * 分层约束：
  * - 本模块只负责“摆杆目标倾角 -> 舵机角度 -> PWM 比较值”的映射、限幅和
@@ -47,6 +46,29 @@
 #define SERVO_BEAM_LIMIT_MAX_DEG        (35.0f)
 
 /*
+ * REMOTE 直接 PWM 执行的安全行程（相对零位的舵机角度，允许正负不对称）。
+ *
+ * 默认 ±20° 只是空载起点，必须通过实际机械检查确认后再扩大/收紧；
+ * 不要直接把 SERVO_MECH_MIN_DEG~MAX_DEG 当成已验证的安全行程。
+ */
+#ifndef SERVO_SAFE_NEG_DEG
+#define SERVO_SAFE_NEG_DEG              (20.0f)
+#endif
+#ifndef SERVO_SAFE_POS_DEG
+#define SERVO_SAFE_POS_DEG              (20.0f)
+#endif
+
+/*
+ * 舵机软件斜率限制（°/s）。
+ *
+ * 早期 PD 调参用 20°/s 过于保守，REMOTE 快速反向制动会被软件限速卡住。
+ * 默认 180°/s 作为空载测试起点，确认机械和供电后再按实际舵机能力调整。
+ */
+#ifndef SERVO_MAX_SLEW_DPS
+#define SERVO_MAX_SLEW_DPS              (180.0f)
+#endif
+
+/*
  * 舵机模块运行状态快照，供 LCD、串口遥测和上层调试读取。
  *
  * 字段说明：
@@ -72,7 +94,7 @@ typedef struct {
  * 行为：
  * - 把 TIMA0 从 SysConfig 默认的 80 kHz 重新配置为 50 Hz 舵机时序；
  * - 只保留 CC1（PA9）输出，避免 PA8 继续输出无关脉冲；
- * - 立即把舵机写到零位 SERVO_NEUTRAL_ANGLE_DEG（当前初调 110°），
+ * - 立即把舵机写到零位 SERVO_NEUTRAL_ANGLE_DEG（当前 104°），
  *   然后启动计数器。
  *
  * 调用时机：
@@ -168,7 +190,7 @@ float Servo_GetBeamRatio(void);
 /* 返回当前摆杆倾角安全上限，单位 °。 */
 float Servo_GetBeamLimit(void);
 
-/* 返回当前舵机零位角度，单位 °（当前初调 110°）。 */
+/* 返回当前舵机零位角度，单位 °（当前 104°）。 */
 float Servo_GetNeutralAngle(void);
 
 /*
@@ -212,7 +234,7 @@ uint16_t Servo_GetPulseUs(void);
 /* 返回当前 PWM 高电平计数（1 tick = 1.25 us，周期 16000）。 */
 uint16_t Servo_GetPulseTicks(void);
 
-/* 返回零位对应的 PWM 计数（当前约 1378 ticks）。 */
+/* 返回零位对应的 PWM 计数（当前约 1324 ticks）。 */
 uint16_t Servo_GetNeutralPulseTicks(void);
 
 /*
@@ -225,15 +247,26 @@ uint16_t Servo_GetNeutralPulseTicks(void);
  */
 uint16_t Servo_ClampPulseTicks(uint16_t ticks);
 
+/* 取 REMOTE 安全行程边界（PWM 计数），允许 min/max 不对称。 */
+uint16_t Servo_GetSafeMinTicks(void);
+uint16_t Servo_GetSafeMaxTicks(void);
+
+/* 把目标 PWM 计数限制到 REMOTE 安全行程内。 */
+uint16_t Servo_ClampSafePulseTicks(uint16_t ticks);
+
+/* 运行时设置/读取软件斜率限制，单位 °/s。 */
+void Servo_SetSlewRate(float dps);
+float Servo_GetSlewRate(void);
+
 /*
  * 直接以 PWM 计数为目标驱动舵机（REMOTE 模式使用）。
  *
  * 参数：
- * - ticks：目标 PWM 高电平计数，内部先按 Servo_ClampPulseTicks() 限幅；
+ * - ticks：目标 PWM 高电平计数，内部先按 Servo_ClampSafePulseTicks() 限幅；
  *
  * 行为：
- * - 复用 SERVO_MAX_SLEW_DPS 斜率限制；
- * - 不经过摆杆倾角映射，直接换算成舵机角度；
+ * - 直接在 PWM 计数域做斜率限制，不再经过角度浮点换算，保留 1 tick 分辨率；
+ * - 复用运行时 Servo_SetSlewRate() 的速率；
  * - 非阻塞，只写比较值。
  */
 void Servo_SetTargetPulseTicks(uint16_t ticks);
