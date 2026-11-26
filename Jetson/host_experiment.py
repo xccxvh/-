@@ -9,7 +9,7 @@ import csv
 import math
 import time
 
-from servo_scan import command_packet, degrees_to_ticks, NEUTRAL, REMOTE_LIMITS
+from servo_scan import command_packet, degrees_to_ticks
 
 
 class BoardController:
@@ -46,7 +46,7 @@ class BoardController:
                 not self.confirmed_ticks[0] <= ticks <= self.confirmed_ticks[1]):
             raise ValueError('pulse outside confirmed tick range')
         seq = self.seq
-        self.send_packet(command_packet(seq, ticks, REMOTE_LIMITS))
+        self.send_packet(command_packet(seq, ticks, self.confirmed_ticks))
         self.seq = (seq + 1) & 65535
         return seq
 

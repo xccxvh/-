@@ -4,6 +4,8 @@ import argparse
 import csv
 from decimal import Decimal, ROUND_CEILING
 from itertools import chain
+import json
+from pathlib import Path
 import math
 import os
 import select
@@ -20,11 +22,19 @@ from position_feedback import LinkJournal, SerialFeedback, TelemetryParser, crc1
 PERIOD = .050
 TIMEOUT = .150
 READY_WAIT = 5.
-# 与固件 servo.h 的远程目标窗一致；现场还须显式确认本次扫描的较小窗口。
-NEUTRAL = 1324  # G3519 03991c7, absolute servo angle 104 degrees
-MIN_REMOTE_TICKS = NEUTRAL - 44
-MAX_REMOTE_TICKS = NEUTRAL + 44
-REMOTE_LIMITS = (MIN_REMOTE_TICKS, MAX_REMOTE_TICKS)
+# 旧版 0x82 没有端点字段，使用与板端构建对应的行程清单。
+def board_profile(path=None):
+    with open(path or Path(__file__).with_name('g3519_remote_03991c7.json')) as stream:
+        profile = json.load(stream)
+    if not (400 <= profile['min_ticks'] < profile['neutral_ticks'] < profile['max_ticks'] <= 2000
+            and profile['slew_ticks_per_s'] > 0):
+        raise ValueError('invalid board stroke')
+    return profile
+
+
+DEFAULT_BOARD = board_profile()
+NEUTRAL = DEFAULT_BOARD['neutral_ticks']
+REMOTE_LIMITS = (DEFAULT_BOARD['min_ticks'], DEFAULT_BOARD['max_ticks'])
 Target = namedtuple('Target', 'deg ticks')
 CONTROL_FIELDS = LinkJournal.fields[12:]
 CSV_FIELDS = ('event', 'nano_timestamp', 'command_seq', 'target_servo_deg',
@@ -195,7 +205,7 @@ class RemoteSession(object):
             raise TimeoutError('READY or remote telemetry/command echo timeout')
 
 
-def run_scan(plan, hold_ms, read, send, stream, clock=time.monotonic):
+def run_scan(plan, hold_ms, read, send, stream, clock=time.monotonic, limits=REMOTE_LIMITS):
     """read(wait) 返回收到的字节，空块表示等待超时；断线由传输层抛异常。"""
     log = csv.DictWriter(stream, fieldnames=CSV_FIELDS, lineterminator="\n")
     log.writeheader()
@@ -244,7 +254,7 @@ def run_scan(plan, hold_ms, read, send, stream, clock=time.monotonic):
                         break
                     continue
                 seq = session.next_seq
-                send(command_packet(seq, target.ticks))
+                send(command_packet(seq, target.ticks, limits))
                 written = clock()
                 # TX 只记整帧写入完成时刻，最后一个平台保持满时且收到最终回显才完成。
                 log.writerow(dict(event='tx', nano_timestamp=written, command_seq=seq,
@@ -262,34 +272,33 @@ def run_scan(plan, hold_ms, read, send, stream, clock=time.monotonic):
     return True
 
 
-def _set_single(unit, value, hold_ms, read, send, stream, confirmed_bounds, clock):
-    limits = (MIN_REMOTE_TICKS, MAX_REMOTE_TICKS)
+def _set_single(unit, value, hold_ms, read, send, stream, confirmed_bounds, clock, limits):
     low, high = confirmed_bounds
     _target(unit, low, limits)
     _target(unit, high, limits)
     if not low <= value <= high:
         raise ValueError('setpoint outside confirmed bounds')
-    plan = make_plan(unit, value, value, 1, hold_ms)
-    return run_scan(plan, hold_ms, read, send, stream, clock=clock)
+    plan = make_plan(unit, value, value, 1, hold_ms, limits=limits)
+    return run_scan(plan, hold_ms, read, send, stream, clock=clock, limits=limits)
 
 
-def set_servo_angle(degrees, hold_ms, read, send, stream, *, confirmed_bounds, clock=time.monotonic):
+def set_servo_angle(degrees, hold_ms, read, send, stream, *, confirmed_bounds, clock=time.monotonic, limits=REMOTE_LIMITS):
     """执行一个绝对舵机角平台，返回是否完成并获得末包回显。边界单位也是度。
 
     例：set_servo_angle(104.1, 500, read, send, csv_stream, confirmed_bounds=(103, 105))
     read(wait_seconds) 与 send(packet) 由调用方提供；可接模拟链路或已显式打开的串口。
     每次调用等待新的 READY。连续多级实验应一次调用 run_scan。
     """
-    return _set_single('deg', degrees, hold_ms, read, send, stream, confirmed_bounds, clock)
+    return _set_single('deg', degrees, hold_ms, read, send, stream, confirmed_bounds, clock, limits)
 
 
-def set_pwm_ticks(ticks, hold_ms, read, send, stream, *, confirmed_bounds, clock=time.monotonic):
+def set_pwm_ticks(ticks, hold_ms, read, send, stream, *, confirmed_bounds, clock=time.monotonic, limits=REMOTE_LIMITS):
     """执行一个整数脉宽平台，每计数 1.25 µs；边界单位也是 ticks。
 
     例：set_pwm_ticks(1324, 500, read, send, csv_stream, confirmed_bounds=(1320, 1330))
     与 set_servo_angle 共用 20 Hz、READY 与回显超时规则，并各自记录本次会话。
     """
-    return _set_single('ticks', ticks, hold_ms, read, send, stream, confirmed_bounds, clock)
+    return _set_single('ticks', ticks, hold_ms, read, send, stream, confirmed_bounds, clock, limits)
 
 
 def read_serial(port, wait):
@@ -304,6 +313,7 @@ def read_serial(port, wait):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument('--board-profile', help='stroke for the flashed G3519 build')
     ap.add_argument('--unit', choices=('deg', 'ticks'), default='deg')
     ap.add_argument('--min', type=float, dest='low', help='扫描下限，绝对舵机角或脉宽计数')
     ap.add_argument('--max', type=float, dest='high', help='扫描上限，与 --min 使用同一单位')
@@ -320,11 +330,16 @@ def main(argv=None):
         ap.error('--live requires --device, --log, --min, --max and --confirm-bounds')
     if not args.live and args.log:
         ap.error('--log is for live events; the dry plan is printed on stdout')
-    defaults = (103, 105) if args.unit == 'deg' else (1323, 1325)
+    profile = board_profile(args.board_profile) if args.board_profile else DEFAULT_BOARD
+    limits = (profile['min_ticks'], profile['max_ticks'])
+    mid = profile['neutral_ticks']
+    defaults = (mid-1, mid+1)
+    if args.unit == 'deg':
+        defaults = tuple(ticks_to_degrees(t) for t in defaults)
     low = defaults[0] if args.low is None else args.low
     high = defaults[1] if args.high is None else args.high
     try:
-        plan = make_plan(args.unit, low, high, args.step, args.hold_ms, args.direction)
+        plan = make_plan(args.unit, low, high, args.step, args.hold_ms, args.direction, limits=limits)
     except ValueError as exc:
         ap.error(str(exc))
     if not args.live:
@@ -346,7 +361,7 @@ def main(argv=None):
                 raise
             with closing(port):
                 return 0 if run_scan(plan, args.hold_ms, lambda wait: read_serial(port, wait),
-                                     port.send, stream) else 1
+                                     port.send, stream, limits=limits) else 1
     except (OSError, termios.error) as exc:
         print(str(exc), file=sys.stderr)
         return 1

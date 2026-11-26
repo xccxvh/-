@@ -30,3 +30,17 @@ python3 -B analyze_servo_response.py joined.csv --accel-noise "$MEASURED_NOISE" 
 ```
 
 离板复核可运行 `python3 -B -m unittest discover -s tests -p 'test_*experiment*.py' -v`。伪终端测试使用模拟应答，AUTO 实验有上述实板日志，独立机械标定和两侧回中仍待验证。
+
+## 自适应 REMOTE 控制更新（离板）
+
+扫描和自适应控制都接受 `--board-profile`。默认清单 `g3519_remote_03991c7.json` 对应 03991c7 的构建参数：104° 舵机中位、REMOTE ±5°、20°/s 限速。该固件的 0x82 只提供已接受的目标、实际输出、状态与序号，未提供行程端点。更换固件后使用该构建对应的清单，单位为 ticks 和 ticks/s，命令行给出现场确认的更窄区间。进入 REMOTE 后检查解除使能状态的中位回显；遇到板端 CLAMP 或非预期回显会 STOP。
+
+试探递增和递减 PWM 应分别运行。日志标记 `probe_motion` 时记录该次试探推断出的方向，需结合起始速度、相对刻度位移及反向试探复核。证据不足时不会给出方向确认。确定极性后在回中命令显式传入 +1 或 -1。
+
+```sh
+python3 -B nano_experiment.py --serial "$PORT" adaptive --board-profile "$PROFILE" --min-ticks "$LOW" --max-ticks "$HIGH" --probe-sign 1
+python3 -B nano_experiment.py --serial "$PORT" adaptive --board-profile "$PROFILE" --min-ticks "$LOW" --max-ticks "$HIGH" --probe-sign -1
+python3 -B nano_experiment.py --serial "$PORT" adaptive --board-profile "$PROFILE" --min-ticks "$LOW" --max-ticks "$HIGH" --polarity "$POLARITY" --seconds 15
+```
+
+启动时在短窗内拟合真实测量速度，支持安全区内正在滚动的钢珠。停滞加力按目标距离及可用行程缩放，观察时间包含已测 PWM 回应滞后与剩余行程时间。高速靠近目标时可立即卸力或反向制动。短暂缺测撤回驱动，在恢复可靠速度前保持中位；220 ms 无可靠运动测量则停止。100 ms 曝光年龄要求、通信丢失退出和轨道端部保护继续生效。软件测试覆盖新版宽窗口、移动启动、制动和失测处理。新控制律尚无实板回中或保持数据。

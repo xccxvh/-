@@ -1,0 +1,7 @@
+{
+  "firmware": "03991c7",
+  "neutral_ticks": 1324,
+  "min_ticks": 1280,
+  "max_ticks": 1368,
+  "slew_ticks_per_s": 177.7777778
+}

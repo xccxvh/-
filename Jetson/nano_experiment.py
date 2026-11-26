@@ -3,8 +3,8 @@ import argparse
 import math
 from pathlib import Path
 
-from host_experiment import BoardController, run_auto, run_remote, NEUTRAL, REMOTE_LIMITS
-from servo_scan import make_plan
+from host_experiment import BoardController, run_auto, run_remote
+from servo_scan import make_plan, board_profile, DEFAULT_BOARD
 
 
 def main():
@@ -19,7 +19,7 @@ def main():
     scan = sub.add_parser('scan')
     scan.add_argument('--min-ticks', type=int, required=True, help='field-confirmed safe limit')
     scan.add_argument('--max-ticks', type=int, required=True, help='field-confirmed safe limit')
-    scan.add_argument('--neutral', type=int, required=True)
+    scan.add_argument('--neutral', type=int, help='optional cross-check of board neutral')
     scan.add_argument('--step', type=int, required=True)
     scan.add_argument('--hold-ms', type=int, required=True)
     scan.add_argument('--direction', choices=('up','down'), default='up')
@@ -27,17 +27,28 @@ def main():
     adaptive.add_argument('--min-ticks', type=int, required=True)
     adaptive.add_argument('--max-ticks', type=int, required=True)
     adaptive.add_argument('--seconds', type=float, default=15.)
+    for mode in (adaptive, scan):
+        mode.add_argument('--board-profile', help='PWM stroke for the flashed G3519 build')
+    adaptive.add_argument('--probe-sign', type=int, choices=(-1, 1), help='probe one PWM direction then STOP')
+    adaptive.add_argument('--polarity', type=int, choices=(-1, 1), default=1,
+                          help='sign of measured x acceleration under increasing PWM')
     args = ap.parse_args()
+    if args.experiment in ('adaptive','scan'):
+        profile = board_profile(args.board_profile) if args.board_profile else DEFAULT_BOARD
+        neutral = profile['neutral_ticks']
+        limits = (profile['min_ticks'],profile['max_ticks'])
+        if not limits[0] <= args.min_ticks <= neutral <= args.max_ticks <= limits[1]:
+            ap.error('experiment stroke exceeds board profile or excludes neutral')
     if args.experiment == 'auto':
         if not all(math.isfinite(v) for v in (args.target_cm,args.kp,args.kd,args.seconds)) or args.seconds <= 0:
             ap.error('auto needs finite target, gains and positive duration')
     elif args.experiment == 'scan':
-        if not args.min_ticks <= args.neutral <= args.max_ticks or args.hold_ms < 200:
+        if args.neutral not in (None,neutral) or args.hold_ms < 200:
             ap.error('neutral must be inside confirmed stroke, hold-ms >= 200')
-        plan = make_plan('ticks', args.min_ticks, args.max_ticks, args.step, args.hold_ms, args.direction, limits=REMOTE_LIMITS)
+        plan = make_plan('ticks', args.min_ticks, args.max_ticks, args.step, args.hold_ms, args.direction, limits=limits)
     elif args.experiment == 'adaptive':
-        if not REMOTE_LIMITS[0] <= args.min_ticks < NEUTRAL < args.max_ticks <= REMOTE_LIMITS[1]:
-            ap.error('confirmed limits must straddle neutral within %s' % (REMOTE_LIMITS,))
+        if not args.min_ticks < neutral < args.max_ticks:
+            ap.error('confirmed limits must straddle neutral within %s' % (limits,))
         if not math.isfinite(args.seconds) or args.seconds <= 0:
             ap.error('duration must be positive')
     else:
@@ -61,10 +72,10 @@ def main():
             from adaptive_return import run
             port.adaptive = True
             board = BoardController(port.execute, port.send, (args.min_ticks,args.max_ticks))
-            run(board, port, log, args.seconds, cancelled)
+            run(board, port, log, args.seconds, cancelled, profile, args.probe_sign, args.polarity)
         else:
             board = BoardController(port.execute, port.send, (args.min_ticks,args.max_ticks))
-            run_remote(board, port.next_debug, log, plan, args.hold_ms, args.neutral,
+            run_remote(board, port.next_debug, log, plan, args.hold_ms, neutral,
                        cancelled=cancelled)
 
     from main import main as vision
