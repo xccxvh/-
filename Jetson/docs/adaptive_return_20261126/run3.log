@@ -1,0 +1,43 @@
+source: /dev/video0  1280x720  fps=30.0
+calibration: rail model: validated
+G3519 UART control /home/jetson/adaptive_r1/logs/link_host_adaptive_20260324_162918.csv
+G3519 ACK seq=50637 SET_MODE OK mode=5 state=0
+G3519 ACK seq=50638 START_REMOTE OK mode=5 state=0
+frame=30 fps=26.5 x=553.6 state=DETECTED conf=0.87 algo=34.3ms
+frame=60 fps=25.1 x=553.7 state=DETECTED conf=0.87 algo=34.0ms
+frame=90 fps=26.6 x=553.9 state=DETECTED conf=0.88 algo=34.5ms
+frame=120 fps=27.5 x=553.8 state=DETECTED conf=0.88 algo=33.6ms
+frame=150 fps=26.5 x=554.2 state=DETECTED conf=0.88 algo=34.1ms
+frame=180 fps=24.5 x=556.7 state=DETECTED conf=0.88 algo=33.3ms
+frame=210 fps=24.6 x=558.1 state=DETECTED conf=0.88 algo=35.4ms
+frame=240 fps=25.2 x=559.3 state=DETECTED conf=0.87 algo=35.1ms
+frame=270 fps=25.6 x=560.0 state=DETECTED conf=0.88 algo=34.1ms
+frame=300 fps=27.0 x=560.0 state=DETECTED conf=0.87 algo=34.6ms
+G3519 ACK seq=50639 STOP OK mode=5 state=0
+G3519 TX=318 RX_bytes=8167 telemetry=131 CRC_errors=0
+Traceback (most recent call last):
+  File "nano_experiment.py", line 79, in <module>
+    main()
+  File "nano_experiment.py", line 75, in main
+    vision(argv=vision_args, experiment=experiment, codec=codec)
+  File "/home/jetson/adaptive_r1/main.py", line 483, in main
+    task.result()
+  File "/usr/lib/python3.6/concurrent/futures/_base.py", line 425, in result
+    return self.__get_result()
+  File "/usr/lib/python3.6/concurrent/futures/_base.py", line 384, in __get_result
+    raise self._exception
+  File "/home/jetson/adaptive_r1/main.py", line 282, in main
+    task.result()
+  File "/usr/lib/python3.6/concurrent/futures/_base.py", line 425, in result
+    return self.__get_result()
+  File "/usr/lib/python3.6/concurrent/futures/_base.py", line 384, in __get_result
+    raise self._exception
+  File "/usr/lib/python3.6/concurrent/futures/thread.py", line 56, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "nano_experiment.py", line 64, in experiment
+    run(board, port, log, args.seconds, cancelled)
+  File "/home/jetson/adaptive_r1/adaptive_return.py", line 187, in run
+    target,v,phase,stalled=law.step(t,x,output)
+  File "/home/jetson/adaptive_r1/adaptive_return.py", line 82, in step
+    raise ValueError('PWM limit reached without rolling')
+ValueError: PWM limit reached without rolling

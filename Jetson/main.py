@@ -368,6 +368,10 @@ def main(argv=None, experiment=None, codec=None):
                     feedback_valid, feedback_reason = False, 'reference_preview'
                 if rail_coordinates.enabled and not binary_link:
                     feedback_valid, feedback_reason = False, 'rail_measurement_only'
+                if experiment is not None and getattr(serial, 'adaptive', False):
+                    # Atomic latest sample; expose invalid frames as well as verified SOE measurements.
+                    serial.measurement = (frame_idx, frame_time, x_cm if feedback_valid else None,
+                                          feedback_reason, t_out)
                 if line is None:
                     # 仅 G3519 有效控制模式可能跳过纯超时样本；保留本帧 track 和独立 drop 事件。
                     journal.dropped(frame_idx, frame_time, feedback_reason)

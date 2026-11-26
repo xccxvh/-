@@ -21,8 +21,10 @@ PERIOD = .050
 TIMEOUT = .150
 READY_WAIT = 5.
 # 与固件 servo.h 的远程目标窗一致；现场还须显式确认本次扫描的较小窗口。
-MIN_REMOTE_TICKS = 1333
-MAX_REMOTE_TICKS = 1422
+NEUTRAL = 1324  # G3519 03991c7, absolute servo angle 104 degrees
+MIN_REMOTE_TICKS = NEUTRAL - 44
+MAX_REMOTE_TICKS = NEUTRAL + 44
+REMOTE_LIMITS = (MIN_REMOTE_TICKS, MAX_REMOTE_TICKS)
 Target = namedtuple('Target', 'deg ticks')
 CONTROL_FIELDS = LinkJournal.fields[12:]
 CSV_FIELDS = ('event', 'nano_timestamp', 'command_seq', 'target_servo_deg',
@@ -44,7 +46,7 @@ def ticks_to_degrees(ticks):
     return (ticks - 400) * 180. / 1600
 
 
-def _target(unit, value):
+def _target(unit, value, limits):
     if unit == 'deg':
         ticks = degrees_to_ticks(value)
         degrees = value
@@ -53,12 +55,12 @@ def _target(unit, value):
         ticks = int(value)
     else:
         raise ValueError('unit must be deg or ticks')
-    if not MIN_REMOTE_TICKS <= ticks <= MAX_REMOTE_TICKS:
-        raise ValueError('target outside firmware remote window 1333..1422 ticks')
+    if not limits[0] <= ticks <= limits[1]:
+        raise ValueError('target outside remote window %d..%d ticks' % limits)
     return Target(degrees, ticks)
 
 
-def make_plan(unit, low, high, step, hold_ms, direction='up'):
+def make_plan(unit, low, high, step, hold_ms, direction='up', limits=REMOTE_LIMITS):
     """先检查两端与固件窗口，再返回平台迭代器。down 从高端沿相同台阶折返。"""
     if not all(math.isfinite(v) for v in (low, high, step)) or low > high or step <= 0:
         raise ValueError('expected finite min <= max and positive step')
@@ -68,8 +70,8 @@ def make_plan(unit, low, high, step, hold_ms, direction='up'):
         raise ValueError('direction must be up or down')
     if unit == 'ticks' and int(step) != step:
         raise ValueError('expected integer tick step')
-    _target(unit, low)
-    _target(unit, high)
+    _target(unit, low, limits)
+    _target(unit, high, limits)
 
     # 按十进制计算台阶，避免浮点累加在折返点多生成一级。最后不足一步时仍含端点。
     low, high, step = (Decimal(str(v)) for v in (low, high, step))
@@ -78,12 +80,12 @@ def make_plan(unit, low, high, step, hold_ms, direction='up'):
         indices = chain(range(last + 1), range(last - 1, -1, -1))
     else:
         indices = chain(range(last, -1, -1), range(1, last + 1))
-    return (_target(unit, float(min(high, low + i * step))) for i in indices)
+    return (_target(unit, float(min(high, low + i * step)), limits) for i in indices)
 
 
-def command_packet(seq, ticks):
+def command_packet(seq, ticks, limits=REMOTE_LIMITS):
     """0x02 的序号位于帧头，两字节负载仅含绝对脉宽计数。"""
-    if not MIN_REMOTE_TICKS <= ticks <= MAX_REMOTE_TICKS:
+    if not limits[0] <= ticks <= limits[1]:
         raise ValueError('command outside firmware remote window')
     body = struct.pack('<BBBHH', 1, 2, 2, seq, ticks)
     return b'\xa5\x5a' + body + struct.pack('<H', crc16(body))
@@ -261,9 +263,10 @@ def run_scan(plan, hold_ms, read, send, stream, clock=time.monotonic):
 
 
 def _set_single(unit, value, hold_ms, read, send, stream, confirmed_bounds, clock):
+    limits = (MIN_REMOTE_TICKS, MAX_REMOTE_TICKS)
     low, high = confirmed_bounds
-    _target(unit, low)
-    _target(unit, high)
+    _target(unit, low, limits)
+    _target(unit, high, limits)
     if not low <= value <= high:
         raise ValueError('setpoint outside confirmed bounds')
     plan = make_plan(unit, value, value, 1, hold_ms)
@@ -273,7 +276,7 @@ def _set_single(unit, value, hold_ms, read, send, stream, confirmed_bounds, cloc
 def set_servo_angle(degrees, hold_ms, read, send, stream, *, confirmed_bounds, clock=time.monotonic):
     """执行一个绝对舵机角平台，返回是否完成并获得末包回显。边界单位也是度。
 
-    例：set_servo_angle(110.1, 500, read, send, csv_stream, confirmed_bounds=(109, 111))
+    例：set_servo_angle(104.1, 500, read, send, csv_stream, confirmed_bounds=(103, 105))
     read(wait_seconds) 与 send(packet) 由调用方提供；可接模拟链路或已显式打开的串口。
     每次调用等待新的 READY。连续多级实验应一次调用 run_scan。
     """
@@ -283,7 +286,7 @@ def set_servo_angle(degrees, hold_ms, read, send, stream, *, confirmed_bounds, c
 def set_pwm_ticks(ticks, hold_ms, read, send, stream, *, confirmed_bounds, clock=time.monotonic):
     """执行一个整数脉宽平台，每计数 1.25 µs；边界单位也是 ticks。
 
-    例：set_pwm_ticks(1378, 500, read, send, csv_stream, confirmed_bounds=(1370, 1380))
+    例：set_pwm_ticks(1324, 500, read, send, csv_stream, confirmed_bounds=(1320, 1330))
     与 set_servo_angle 共用 20 Hz、READY 与回显超时规则，并各自记录本次会话。
     """
     return _set_single('ticks', ticks, hold_ms, read, send, stream, confirmed_bounds, clock)
@@ -317,7 +320,7 @@ def main(argv=None):
         ap.error('--live requires --device, --log, --min, --max and --confirm-bounds')
     if not args.live and args.log:
         ap.error('--log is for live events; the dry plan is printed on stdout')
-    defaults = (109, 111) if args.unit == 'deg' else (1377, 1379)
+    defaults = (103, 105) if args.unit == 'deg' else (1323, 1325)
     low = defaults[0] if args.low is None else args.low
     high = defaults[1] if args.high is None else args.high
     try:

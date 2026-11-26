@@ -1,0 +1,4 @@
+event,nano_s,frame,capture_s,x_cm,target_cm,error_cm,velocity_cm_s,valid,reason,phase,stalled,target_ticks,output_ticks,seq,board_ms
+vision,4465.839352514,14,4465.737848000001,,,,,0,ok,,,,1324,,
+abort,4465.83946892,,,,,,,,invalid current image: ok,,,,,,
+stop_confirmed,4465.933943399,,,,,,,,,,,,1324,,1626540

@@ -3,7 +3,7 @@ import argparse
 import math
 from pathlib import Path
 
-from host_experiment import BoardController, run_auto, run_remote
+from host_experiment import BoardController, run_auto, run_remote, NEUTRAL, REMOTE_LIMITS
 from servo_scan import make_plan
 
 
@@ -23,6 +23,10 @@ def main():
     scan.add_argument('--step', type=int, required=True)
     scan.add_argument('--hold-ms', type=int, required=True)
     scan.add_argument('--direction', choices=('up','down'), default='up')
+    adaptive = sub.add_parser('adaptive')
+    adaptive.add_argument('--min-ticks', type=int, required=True)
+    adaptive.add_argument('--max-ticks', type=int, required=True)
+    adaptive.add_argument('--seconds', type=float, default=15.)
     args = ap.parse_args()
     if args.experiment == 'auto':
         if not all(math.isfinite(v) for v in (args.target_cm,args.kp,args.kd,args.seconds)) or args.seconds <= 0:
@@ -30,9 +34,14 @@ def main():
     elif args.experiment == 'scan':
         if not args.min_ticks <= args.neutral <= args.max_ticks or args.hold_ms < 200:
             ap.error('neutral must be inside confirmed stroke, hold-ms >= 200')
-        plan = make_plan('ticks', args.min_ticks, args.max_ticks, args.step, args.hold_ms, args.direction)
+        plan = make_plan('ticks', args.min_ticks, args.max_ticks, args.step, args.hold_ms, args.direction, limits=REMOTE_LIMITS)
+    elif args.experiment == 'adaptive':
+        if not REMOTE_LIMITS[0] <= args.min_ticks < NEUTRAL < args.max_ticks <= REMOTE_LIMITS[1]:
+            ap.error('confirmed limits must straddle neutral within %s' % (REMOTE_LIMITS,))
+        if not math.isfinite(args.seconds) or args.seconds <= 0:
+            ap.error('duration must be positive')
     else:
-        ap.error('choose auto or scan')
+        ap.error('choose auto, scan or adaptive')
 
     # The firmware team supplies the 0x03 payload and 0x83 result definitions.
     # Fail before opening any devices until a matching Nano codec is available.
@@ -48,6 +57,11 @@ def main():
             board = BoardController(port.execute, port.send)
             run_auto(board, port.next_status, log, args.target_cm, args.kp, args.kd,
                      args.seconds, cancelled=cancelled)
+        elif args.experiment == 'adaptive':
+            from adaptive_return import run
+            port.adaptive = True
+            board = BoardController(port.execute, port.send, (args.min_ticks,args.max_ticks))
+            run(board, port, log, args.seconds, cancelled)
         else:
             board = BoardController(port.execute, port.send, (args.min_ticks,args.max_ticks))
             run_remote(board, port.next_debug, log, plan, args.hold_ms, args.neutral,
@@ -56,7 +70,7 @@ def main():
     from main import main as vision
     vision_args = ['--config', str(Path(__file__).with_name('config_static_fast_c.json')),
                    '--csv', '--serial', args.serial, '--label','host_'+args.experiment]
-    if args.experiment == 'auto':
+    if args.experiment in ('auto', 'adaptive'):
         vision_args.append('--uart-enable-valid')
     vision(argv=vision_args, experiment=experiment, codec=codec)
 

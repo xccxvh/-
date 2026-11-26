@@ -20,11 +20,11 @@ class FakeBoard:
         self.enable_on_start = True
         self.wire = []
         self.enabled = False
-        self.ticks = 1378
+        self.ticks = 1324
         self.ack = 0
         self.next_report = .1
         self.target = 0
-        self.host = BoardController(self.execute, self.send, (1378,1379))
+        self.host = BoardController(self.execute, self.send, (1324,1325))
 
     def execute(self, name, *args):
         self.calls.append(name)
@@ -38,7 +38,7 @@ class FakeBoard:
             self.enabled = True
         if name == 'STOP':
             self.auto = self.enabled = False
-            self.ticks = 1378
+            self.ticks = 1324
 
     def send(self, packet):
         self.wire.append(packet)
@@ -111,25 +111,25 @@ class Experiments(unittest.TestCase):
 
     def test_remote_step(self):
         target=namedtuple('Target','ticks')
-        run_remote(self.b.host,self.b.debug,self.log,[target(i) for i in (1378,1379,1378)],
-                   500,1378,lambda:self.b.now)
+        run_remote(self.b.host,self.b.debug,self.log,[target(i) for i in (1324,1325,1324)],
+                   500,1324,lambda:self.b.now)
         self.assertEqual(self.b.calls,['SET_MODE','START_REMOTE','STOP'])
         self.assertIn('stop_confirmed',self.log.getvalue())
-        self.assertTrue(any(p[7:9]==b'\x63\x05' for p in self.b.wire))
+        self.assertTrue(any(p[7:9]==b'\x2d\x05' for p in self.b.wire))
 
     def test_confirmed_window_and_encoding(self):
-        self.b.host.set_servo_angle(110.)
-        self.assertEqual(self.b.wire,[command_packet(0,1378)])
+        self.b.host.set_servo_angle(104.)
+        self.assertEqual(self.b.wire,[command_packet(0,1324,(1280,1368))])
         with self.assertRaises(ValueError):
-            self.b.host.set_pwm_ticks(1380)
+            self.b.host.set_pwm_ticks(1326)
         self.assertEqual(len(self.b.wire),1)
 
     def test_measured_acceleration(self):
-        rows=[dict(event='tx',plateau_index=0,target_pwm_ticks=1378,nano_timestamp=0,cm_valid='0')]
+        rows=[dict(event='tx',plateau_index=0,target_pwm_ticks=1324,nano_timestamp=0,cm_valid='0')]
         for i in range(11):
             t=i/20.
-            rows.append(dict(event='remote',remote_enabled='1',output_pwm_ticks=1378,
+            rows.append(dict(event='remote',remote_enabled='1',output_pwm_ticks=1324,
                              cm_valid='1',vision_read_ms=t*1000,nano_timestamp=t,
                              ball_x_cm=2*t*t+.1*t))
-        self.assertEqual(analyze(rows,.1,self.log),[(0,1378,0,1)])
+        self.assertEqual(analyze(rows,.1,self.log),[(0,1324,0,1)])
         self.assertAlmostEqual(float(list(csv.reader(io.StringIO(self.log.getvalue())))[1][5]),4.)
