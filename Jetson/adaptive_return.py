@@ -208,7 +208,8 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=1
         ack_seq = None
         active = False
         waiting = False
-        last_valid = received
+        last_valid = last_position = received
+        speed_wait = None
         while now()-started < seconds:
             if cancelled.is_set():
                 raise RuntimeError('vision stopped')
@@ -235,18 +236,18 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=1
                 law.feedback(row['received'], output, row['target_pwm_ticks'])
             if now()-last_ack > .25:
                 raise TimeoutError('no advancing PWM echo')
-            if now()-last_valid > .22:
-                raise TimeoutError('no reliable fresh motion for 220 ms')
             m = port.measurement
             if m[0] != frame:
                 frame, t, x, reason, received = m
                 fresh = x is not None and 0 <= now()-t <= .1
                 if fresh:
+                    last_position = received
                     if abs(x) >= 5.7:
                         raise ValueError('rail end guard')
                     v = motion.add(t, x)
                     if v is not None:
                         last_valid = received
+                        speed_wait = None
                         waiting = False
                         if active:
                             target, phase, stalled = law.step(t, x, v)
@@ -261,12 +262,26 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=1
                             break
                     else:
                         waiting = True
+                        if speed_wait is None:
+                            speed_wait = now()
                         record('vision', frame=frame,capture_s=t,x_cm=x,valid=1,phase='wait_speed',
                                reason='velocity evidence incomplete')
                 else:
-                    waiting = True
+                    # An age-only drop withdraws any unsent increase. Keep the last
+                    # actuator setting briefly while awaiting a fresh exposure.
+                    age_only = reason == 'stale_only_drop' or (x is not None and reason == 'ok')
+                    if age_only:
+                        target = last_sent
+                    else:
+                        waiting = True
                     record('vision', frame=frame, capture_s=t, valid=0, phase='pause',
                            reason=('aged_before_decision' if reason=='ok' else reason), output_ticks=output)
+            # Consume this frame before testing the deadline. Fresh positions may
+            # return before there are three exposures for a velocity estimate.
+            if now()-last_position > .22:
+                raise TimeoutError('no fresh measured position for 220 ms')
+            if speed_wait is not None and now()-speed_wait > .22:
+                raise TimeoutError('fresh positions without reliable velocity for 220 ms')
             gap = now()-last_valid
             if waiting or gap > .11:
                 # Withdraw torque while keeping the session alive. Never advance a ramp on a missing frame.
@@ -275,10 +290,20 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=1
             law.check_actuator(now())
             if now() >= due:
                 if target != neutral and not (m[2] is not None and 0 <= now()-m[1] <= .1):
+                    # Heartbeat and exposure clocks are asynchronous. Wait briefly for the
+                    # next measured frame before issuing a non-neutral write.
+                    if now() - due < .035:
+                        time.sleep(.003)
+                        continue
                     target = neutral
                     law.reset_observation()
                 # The field limit applies to each actual write, including withdrawal on brief loss.
                 step_limit = int(15*1600/180)
+                if target != neutral and (target-neutral)*(last_sent-neutral) >= 0 and abs(target-neutral) > abs(last_sent-neutral):
+                    # Spread outward drive over the observed response time. A sudden
+                    # tilt can move the ruler while the ball stays at the same mark.
+                    drive_step = max(1, round(abs(law.target-neutral)*.05 / (.10+law.response)))
+                    step_limit = min(step_limit, drive_step)
                 last_sent += clip(target-last_sent, -step_limit, step_limit)
                 seq = board.set_pwm_ticks(last_sent)
                 sent[seq] = last_sent

@@ -22,6 +22,7 @@ class ExperimentPort:
         self.acks = queue.Queue()
         self.status = queue.Queue()
         self.debug = queue.Queue()
+        self.params = queue.Queue()
         self.buffer = bytearray()
         self.crc_errors = 0
 
@@ -59,6 +60,20 @@ class ExperimentPort:
                 pass
         raise TimeoutError(kind + ' timeout')
 
+    def actuator_profile(self):
+        started = time.monotonic()
+        self.execute('GET_PARAMS')
+        while True:
+            stamp, neutral, lo, hi, rate, reserved = self._get(self.params, started + 1., '0x84')
+            if stamp >= started:
+                break
+        if not (400 <= lo < neutral < hi <= 2000 and rate > 0 and reserved == 0):
+            raise ValueError('invalid 0x84 actuator parameters')
+        profile = dict(firmware='G3519:0x84', neutral_ticks=neutral, min_ticks=lo,
+                       max_ticks=hi, slew_ticks_per_s=rate * 1600. / 1800.)
+        print('Actuator parameters: %s' % profile, flush=True)
+        return profile
+
     def next_status(self, end):
         return self._get(self.status, end, '0x81')
 
@@ -79,7 +94,7 @@ class ExperimentPort:
             if len(buf) < 7:
                 break
             version, kind, n, seq = struct.unpack_from('<BBBH', buf, 2)
-            if version != 1 or kind not in (0x81, 0x82, 0x83) or n > 32:
+            if version != 1 or kind not in (0x81, 0x82, 0x83, 0x84) or n > 32:
                 del buf[:1]
                 continue
             if len(buf) < 9+n:
@@ -90,7 +105,9 @@ class ExperimentPort:
                 del buf[:1]
                 continue
             del buf[:9+n]
-            if kind == 0x83:
+            if kind == 0x84 and n == 12:
+                self.params.put((received,) + struct.unpack_from('<HHHHI', frame, 7))
+            elif kind == 0x83:
                 self.acks.put((received,) + tuple(self.codec.ack(seq, frame[7:-2])))
             elif kind == 0x82 and n == 12:
                 ack, ms, target, output, enabled, result = struct.unpack_from('<HIHHBB', frame, 7)

@@ -29,6 +29,26 @@ class FakeCodec:
 
 
 class PortTest(unittest.TestCase):
+    def test_get_params_requires_current_packet_and_board_ack(self):
+        import g3519_command_codec as codec
+
+        class Loopback:
+            def send(self, packet):
+                seq = struct.unpack_from('<H', packet, 5)[0]
+                self.test.assertEqual(packet[7:-2], struct.pack('<BBff', 7, 0, 0., 0.))
+                ack = struct.pack('<HBBBB', seq, 7, 0, 5, 0)
+                params = struct.pack('<HHHHI', 1324, 1147, 1502, 1800, 0)
+                self.owner.split_rx(frame(0x83, 22, ack) + frame(0x84, 23, params), time.monotonic())
+
+        loop = Loopback()
+        loop.test = self
+        port = loop.owner = ExperimentPort(loop, codec)
+        port.params.put((0., 1300, 1256, 1344, 200, 0))
+        result = port.actuator_profile()
+        self.assertEqual((result['min_ticks'], result['neutral_ticks'], result['max_ticks']),
+                         (1147, 1324, 1502))
+        self.assertAlmostEqual(result['slew_ticks_per_s'], 1600.)
+
     def test_shared_pty_and_distinct_acks(self):
         master, slave = pty.openpty()
         self.addCleanup(os.close, master)
