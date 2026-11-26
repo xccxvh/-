@@ -12,17 +12,25 @@ LOSS = .220
 
 
 def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-1,
-        offset=None, model=None):
+        offset=None, model=None, platforms=None, brake_ticks=None):
     now = time.monotonic
     neutral = profile['neutral_ticks']
     lo, hi = board.confirmed_ticks
     slew = profile['slew_ticks_per_s']
     if probe is not None and offset is None:
         offset = round((hi-neutral if probe > 0 else lo-neutral)*.5)
+    if platforms:
+        sides = [(t-neutral) for t in platforms]
+        if (any(not lo <= t <= hi for t in platforms) or sides[0] == 0
+                or any(b*a <= 0 or abs(b) <= abs(a) for a,b in zip(sides,sides[1:]))):
+            raise ValueError('identification needs increasing magnitudes on one confirmed side')
+        offset = sides[0]
+    if brake_ticks is not None and (offset is None or (brake_ticks-neutral)*offset>=0 or not lo<=brake_ticks<=hi):
+        raise ValueError('brake must be on the opposite confirmed side')
     if offset is not None and (offset == 0 or not lo <= neutral+offset <= hi):
         raise ValueError('identification pulse outside confirmed stroke')
     state = AlphaBeta()
-    law = VelocityPlan((lo, hi), neutral, polarity, model)
+    law = VelocityPlan((lo, hi), neutral, polarity, model) if offset is None else None
     fields = ('event','nano_s','frame','capture_s','received_s','last_capture_s',
               'last_received_s','x_cm','valid','estimate_cm','predicted_cm','velocity_cm_s',
               'target_cm','error_cm','v_ref','a_cmd','start_bias','balance_ticks','phase',
@@ -77,7 +85,8 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
         while now() < deadline:
             if cancelled.is_set():
                 raise RuntimeError('vision stopped')
-            if observe() and state.count >= 3 and abs(state.predict(now())[0]) < 5.5:
+            if (observe() and state.count >= 3 and abs(state.predict(now())[0]) < 5.5
+                    and (offset is None or abs(state.v)<.35)):
                 break
             time.sleep(.002)
         else:
@@ -97,6 +106,7 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
         planned_stamp = state.stamp
         pulse_origin = state.x
         brake_start = at_level = None
+        stage_index = 0
         output_progress = now()
         last_output = neutral
         output_history = deque(maxlen=24)
@@ -160,23 +170,35 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
                 else:
                     # 辨识时使用恒定目标，回读到位后计时。观测到起滚后反向施加制动。
                     travel = (state.x-pulse_origin)*polarity*(1 if offset>0 else -1)
-                    if travel < -.40:
+                    if brake_start is None and travel < -.40:
                         raise ValueError('identification moved opposite expected direction')
                     if brake_start is None and travel > .28 and v*offset*polarity > 0:
                         brake_start = tick
+                        record('roll_onset',capture_s=state.stamp,estimate_cm=state.x,velocity_cm_s=v,
+                               target_ticks=command,output_ticks=trusted_output,reason='signed displacement and velocity')
                     if brake_start is None:
                         requested,phase = neutral+offset,'identify_drive'
                         if output == requested:
                             if at_level is None:
                                 at_level = tick
-                            if tick-at_level > 2.5 and travel < .12:
-                                record('no_motion',output_ticks=output,reason='plateau 2.5 s')
-                                break
+                            if tick-at_level > 2.5 and abs(v)<.3 and abs(travel)<.12:
+                                last = not platforms or stage_index+1 == len(platforms)
+                                record('no_motion' if last else 'plateau_no_motion', output_ticks=output,
+                                       reason='stationary on confirmed plateau')
+                                if last:
+                                    break
+                                stage_index += 1
+                                requested = platforms[stage_index]
+                                offset = requested-neutral
+                                at_level = None
+                        else:
+                            at_level = None
                     else:
-                        requested = max(lo,min(hi, neutral-offset))
+                        requested = brake_ticks if brake_ticks is not None else max(lo,min(hi, neutral-offset))
                         phase = 'identify_brake'
                         if v*offset*polarity <= 0 or tick-brake_start > .7:
-                            record('brake_end',output_ticks=output,reason='measured reversal or pulse deadline')
+                            record('brake_end',capture_s=state.stamp,estimate_cm=state.x,velocity_cm_s=v,
+                                   output_ticks=output,reason='observed sign reversal' if v*offset*polarity<=0 else 'brake deadline')
                             break
             elif active and not blocked and offset is None and plan and abs(v) > .35:
                 # 纯预测只可降低原驱动；不把预测写入实测列，也不据此增加反向驱动。
@@ -193,7 +215,7 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
                     requested, phase = trusted_output, 'last_observed_drive'
             # 有效观测之间保持已发量；新目标只在有观测时推进。单次写入不超过现场 15°。
             max_step = min(133,max(1,int(slew*PERIOD)))
-            if (requested-neutral)*(command-neutral) >= 0 and abs(requested-neutral)>abs(command-neutral):
+            if offset is None and (requested-neutral)*(command-neutral) >= 0 and abs(requested-neutral)>abs(command-neutral):
                 # 缓升避免阶跃造成纹理突然位移；制动和撤力仍可使用板端全速。
                 max_step = min(max_step, max(1,round((hi-lo)*PERIOD/.7)))
             command = int(round(max(lo,min(hi,command + max(-max_step,min(max_step,requested-command))))))
@@ -201,7 +223,8 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
             sent[seq] = command
             record('tx',seq=seq,target_ticks=command,output_ticks=output,predicted_cm=x,
                    velocity_cm_s=v,target_cm=0,error_cm=-x,phase=phase,
-                   breakaway_pos_ticks=law.breakaway_ticks[1],breakaway_neg_ticks=law.breakaway_ticks[-1],
+                   breakaway_pos_ticks=law.breakaway_ticks[1] if law else None,
+                   breakaway_neg_ticks=law.breakaway_ticks[-1] if law else None,
                    **{k:plan[k] for k in ('v_ref','a_cmd','start_bias','balance_ticks') if k in plan})
             updated = False
             # 按绝对期限调度。操作系统延误时跳过已错过周期，避免补发成串旧指令。

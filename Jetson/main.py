@@ -83,6 +83,7 @@ def main(argv=None, experiment=None, codec=None):
     ap.add_argument("--serial", default=None, help="显式启用 UART 监测，115200 8N1")
     ap.add_argument("--uart-enable-valid", action="store_true",
                     help="现场验证和接收端协议确认后才允许有效测量；默认只发送无效监测帧")
+    ap.add_argument('--ruler-samples', action='store_true', help='保存带曝光时刻的原图以核对恒定平台')
     args = ap.parse_args(argv)
     if args.record_fps is not None and (not math.isfinite(args.record_fps) or args.record_fps <= 0):
         ap.error("--record-fps must be finite and positive")
@@ -237,6 +238,10 @@ def main(argv=None, experiment=None, codec=None):
         frame_idx = 0
         fps_ema = 0.0
         t_start = time.perf_counter()
+        if args.ruler_samples:
+            sample_dir = os.path.join(recordings_dir, 'ruler_%d' % (time.time()*1000))
+            os.makedirs(sample_dir)
+            sample_due = 0.
         captured_at_start = getattr(source, 'frames_captured', 0)
         t_prev = t_start
         state_counts = {"DETECTED": 0, "UNCERTAIN": 0, "LOST": 0}
@@ -298,6 +303,13 @@ def main(argv=None, experiment=None, codec=None):
                 wait_ms = ((t_read - t_cap) * 1000.0
                            if t_cap is not None else 0.0)
                 t0 = time.perf_counter()
+                if args.ruler_samples and t_read >= sample_due:
+                    exposure = getattr(source, 'last_capture_ts', None)
+                    if exposure is not None:
+                        path = os.path.join(sample_dir, '%.6f.jpg' % exposure)
+                        if not cv2.imwrite(path, frame):
+                            raise OSError('cannot save ruler sample ' + path)
+                    sample_due = t_read + .40
                 frame = geometry.prepare_frame(frame)
                 geometry_ms = (time.perf_counter() - t0) * 1000.0
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)

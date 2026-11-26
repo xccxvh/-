@@ -1,0 +1,33 @@
+source: /dev/video0  1280x720  fps=30.0
+calibration: rail model: validated
+G3519 UART control /home/jetson/roll_field1/logs/link_host_adaptive_20260324_190703.csv
+G3519 ACK seq=12767 GET_PARAMS OK mode=5 state=0
+Actuator parameters: {'firmware': 'G3519:0x84', 'neutral_ticks': 1324, 'min_ticks': 1147, 'max_ticks': 1502, 'slew_ticks_per_s': 1600.0}
+G3519 ACK seq=12768 SET_MODE OK mode=5 state=0
+G3519 ACK seq=12769 START_REMOTE OK mode=5 state=0
+G3519 ACK seq=12770 STOP OK mode=5 state=0
+G3519 TX=18 RX_bytes=937 telemetry=13 CRC_errors=0
+Traceback (most recent call last):
+  File "nano_experiment.py", line 118, in <module>
+    main()
+  File "nano_experiment.py", line 114, in main
+    vision(argv=vision_args, experiment=experiment, codec=codec)
+  File "/home/jetson/roll_field1/main.py", line 495, in main
+    task.result()
+  File "/usr/lib/python3.6/concurrent/futures/_base.py", line 425, in result
+    return self.__get_result()
+  File "/usr/lib/python3.6/concurrent/futures/_base.py", line 384, in __get_result
+    raise self._exception
+  File "/home/jetson/roll_field1/main.py", line 287, in main
+    task.result()
+  File "/usr/lib/python3.6/concurrent/futures/_base.py", line 425, in result
+    return self.__get_result()
+  File "/usr/lib/python3.6/concurrent/futures/_base.py", line 384, in __get_result
+    raise self._exception
+  File "/usr/lib/python3.6/concurrent/futures/thread.py", line 56, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "nano_experiment.py", line 89, in experiment
+    args.identify_offset, model, args.identify_platforms, args.brake_ticks)
+  File "/home/jetson/roll_field1/adaptive_return.py", line 154, in run
+    raise TimeoutError('no accepted measurement received for 220 ms')
+TimeoutError: no accepted measurement received for 220 ms

@@ -1,0 +1,16 @@
+source: /dev/video0  1280x720  fps=30.0
+calibration: rail model: validated
+G3519 UART monitor /home/jetson/roll_field1/logs/link_initial76_20260324_190520.csv
+
+--- summary ---
+frames: 27, elapsed: 2.0s, avg fps: 13.3
+states: {'DETECTED': 18, 'UNCERTAIN': 9, 'LOST': 0}
+capture: 60 frames, 29.5 fps, wait-for-newer: 26
+algo_ms: mean=58.40 p95=102.00 max=102.59
+queue_wait_ms: mean=0.26 p95=0.34 max=0.39
+capture_to_result_ms: mean=58.66 p95=102.27 max=102.90 (n=27)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=58.88 p95=102.42 max=102.98
+csv: /home/jetson/roll_field1/logs/track_initial76_20260324_190520.csv
+G3519 TX=28 RX_bytes=1240 telemetry=20 CRC_errors=0

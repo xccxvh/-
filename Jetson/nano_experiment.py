@@ -5,7 +5,7 @@ import math
 from pathlib import Path
 
 from host_experiment import BoardController, run_auto, run_remote
-from servo_scan import make_plan, board_profile
+from servo_scan import make_plan, board_profile, Target, ticks_to_degrees
 
 
 def main():
@@ -21,7 +21,10 @@ def main():
     scan.add_argument('--min-ticks', type=int, required=True, help='field-confirmed safe limit')
     scan.add_argument('--max-ticks', type=int, required=True, help='field-confirmed safe limit')
     scan.add_argument('--neutral', type=int, help='optional cross-check of board neutral')
-    scan.add_argument('--step', type=int, required=True)
+    route = scan.add_mutually_exclusive_group(required=True)
+    route.add_argument('--step', type=int)
+    route.add_argument('--platforms', type=int, nargs='+', help='ordered absolute PWM plateaus')
+    scan.add_argument('--record', action='store_true', help='save video and raw plateau samples')
     scan.add_argument('--hold-ms', type=int, required=True)
     scan.add_argument('--direction', choices=('up','down'), default='up')
     adaptive = sub.add_parser('adaptive')
@@ -33,7 +36,10 @@ def main():
     adaptive.add_argument('--probe-sign', type=int, choices=(-1, 1), help='probe one PWM direction then STOP')
     adaptive.add_argument('--polarity', type=int, choices=(-1, 1), default=-1,
                           help='sign of measured x acceleration under increasing PWM')
-    adaptive.add_argument('--identify-offset', type=int, help='signed PWM offset from live neutral')
+    identify = adaptive.add_mutually_exclusive_group()
+    identify.add_argument('--identify-platforms', nargs='+', type=int, help='ordered absolute PWM targets with ball')
+    identify.add_argument('--identify-offset', type=int, help='signed PWM offset from live neutral')
+    adaptive.add_argument('--brake-ticks', type=int, help='verified opposite-side brake target')
     adaptive.add_argument('--model', help='directional acceleration gains and braking parameters JSON')
     adaptive.add_argument('--record', action='store_true', help='save timestamped experiment video')
     args = ap.parse_args()
@@ -80,13 +86,19 @@ def main():
                 with open(args.model) as stream:
                     model = json.load(stream)
             run(board, port, log, args.seconds, cancelled, profile, args.probe_sign, args.polarity,
-                args.identify_offset, model)
+                args.identify_offset, model, args.identify_platforms, args.brake_ticks)
         else:
             board = BoardController(port.execute, port.send, (args.min_ticks,args.max_ticks))
             if args.neutral not in (None, neutral):
                 raise ValueError('neutral differs from board')
-            plan = make_plan('ticks', args.min_ticks, args.max_ticks, args.step, args.hold_ms,
-                             args.direction, limits=limits)
+            if args.platforms:
+                # 完整序列在使能前核对，避免执行到一半才发现下一平台越界。
+                if any(not args.min_ticks <= ticks <= args.max_ticks for ticks in args.platforms):
+                    raise ValueError('plateau outside field-confirmed stroke')
+                plan = [Target(ticks_to_degrees(t), t) for t in args.platforms]
+            else:
+                plan = make_plan('ticks', args.min_ticks, args.max_ticks, args.step, args.hold_ms,
+                                 args.direction, limits=limits)
             run_remote(board, port.next_debug, log, plan, args.hold_ms, neutral,
                        cancelled=cancelled)
 
@@ -95,7 +107,9 @@ def main():
                    '--csv', '--serial', args.serial, '--label','host_'+args.experiment]
     if args.experiment in ('auto', 'adaptive'):
         vision_args.append('--uart-enable-valid')
-    if args.experiment == 'adaptive' and args.record:
+    if args.experiment == 'scan' and args.record:
+        vision_args.append('--ruler-samples')
+    if args.experiment in ('adaptive', 'scan') and args.record:
         vision_args.extend(['--record', '--record-fps', '8', '--record-scale', '.5'])
     vision(argv=vision_args, experiment=experiment, codec=codec)
 
