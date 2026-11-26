@@ -1,0 +1,26 @@
+source: /dev/video0  1280x720  fps=30.0
+calibration: rail model: validated
+G3519 UART control /home/jetson/velocity_stage1/logs/link_host_adaptive_20260324_182525.csv
+G3519 ACK seq=5714 GET_PARAMS OK mode=5 state=0
+Actuator parameters: {'firmware': 'G3519:0x84', 'neutral_ticks': 1324, 'min_ticks': 1147, 'max_ticks': 1502, 'slew_ticks_per_s': 1600.0}
+G3519 ACK seq=5715 SET_MODE OK mode=5 state=0
+G3519 ACK seq=5716 START_REMOTE OK mode=5 state=0
+frame=30 fps=24.9 x=506.4 state=DETECTED conf=0.88 algo=33.2ms
+frame=60 fps=25.4 x=506.6 state=DETECTED conf=0.87 algo=33.4ms
+G3519 ACK seq=5717 STOP OK mode=5 state=0
+
+--- summary ---
+frames: 78, elapsed: 3.4s, avg fps: 22.6
+states: {'DETECTED': 71, 'UNCERTAIN': 7, 'LOST': 0}
+capture: 103 frames, 29.9 fps, wait-for-newer: 24
+algo_ms: mean=35.71 p95=41.60 max=78.34
+queue_wait_ms: mean=3.64 p95=9.31 max=13.20
+capture_to_result_ms: mean=39.36 p95=48.87 max=78.61 (n=78)
+draw_ms: mean=0.99 p95=3.03 max=3.38
+write_ms: mean=0.18 p95=0.56 max=0.61
+frame_ms: mean=37.50 p95=43.10 max=82.58
+annotated video: /home/jetson/velocity_stage1/recordings/annotated_host_adaptive_20260324_182525.mp4
+recording timestamps: /home/jetson/velocity_stage1/recordings/annotated_host_adaptive_20260324_182525.mp4.timestamps.jsonl (CFR video is display-only; use timestamps for timing)
+recording queued=28 dropped=0
+csv: /home/jetson/velocity_stage1/logs/track_host_adaptive_20260324_182525.csv
+G3519 TX=78 RX_bytes=2334 telemetry=36 CRC_errors=0

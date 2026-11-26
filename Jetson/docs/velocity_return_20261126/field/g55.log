@@ -1,0 +1,18 @@
+source: /dev/video0  1280x720  fps=30.0
+calibration: rail model: validated
+G3519 UART control /home/jetson/velocity_stage1/logs/link_g55_20260324_183112.csv
+frame=30 fps=27.3 x=531.9 state=DETECTED conf=0.88 algo=35.9ms
+frame=60 fps=28.7 x=532.1 state=DETECTED conf=0.90 algo=33.4ms
+
+--- summary ---
+frames: 68, elapsed: 2.5s, avg fps: 26.9
+states: {'DETECTED': 58, 'UNCERTAIN': 4, 'LOST': 6}
+capture: 75 frames, 29.7 fps, wait-for-newer: 7
+algo_ms: mean=33.64 p95=35.89 max=52.11
+queue_wait_ms: mean=5.04 p95=13.51 max=15.75
+capture_to_result_ms: mean=38.68 p95=47.30 max=52.36 (n=68)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=34.09 p95=36.32 max=52.55
+csv: /home/jetson/velocity_stage1/logs/track_g55_20260324_183112.csv
+G3519 TX=69 RX_bytes=1592 telemetry=26 CRC_errors=0

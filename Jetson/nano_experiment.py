@@ -1,5 +1,6 @@
 """Run one Nano experiment using the protocol codec shipped for the G3519 firmware."""
 import argparse
+import json
 import math
 from pathlib import Path
 
@@ -30,8 +31,11 @@ def main():
     for mode in (adaptive, scan):
         mode.add_argument('--board-profile', help='PWM stroke for the flashed G3519 build')
     adaptive.add_argument('--probe-sign', type=int, choices=(-1, 1), help='probe one PWM direction then STOP')
-    adaptive.add_argument('--polarity', type=int, choices=(-1, 1), default=1,
+    adaptive.add_argument('--polarity', type=int, choices=(-1, 1), default=-1,
                           help='sign of measured x acceleration under increasing PWM')
+    adaptive.add_argument('--identify-offset', type=int, help='signed PWM offset from live neutral')
+    adaptive.add_argument('--model', help='directional acceleration gains and braking parameters JSON')
+    adaptive.add_argument('--record', action='store_true', help='save timestamped experiment video')
     args = ap.parse_args()
     if args.experiment in ('auto', 'adaptive'):
         if not math.isfinite(args.seconds) or args.seconds <= 0:
@@ -55,7 +59,8 @@ def main():
 
     def experiment(port, log, cancelled):
         if args.experiment in ('scan', 'adaptive'):
-            profile = board_profile(args.board_profile) if args.board_profile else port.actuator_profile()
+            profile = (board_profile(args.board_profile) if args.experiment == 'scan' and args.board_profile
+                       else port.actuator_profile())
             neutral = profile['neutral_ticks']
             limits = (profile['min_ticks'], profile['max_ticks'])
             if not limits[0] <= args.min_ticks <= neutral <= args.max_ticks <= limits[1]:
@@ -70,7 +75,12 @@ def main():
             from adaptive_return import run
             port.adaptive = True
             board = BoardController(port.execute, port.send, (args.min_ticks,args.max_ticks))
-            run(board, port, log, args.seconds, cancelled, profile, args.probe_sign, args.polarity)
+            model = None
+            if args.model:
+                with open(args.model) as stream:
+                    model = json.load(stream)
+            run(board, port, log, args.seconds, cancelled, profile, args.probe_sign, args.polarity,
+                args.identify_offset, model)
         else:
             board = BoardController(port.execute, port.send, (args.min_ticks,args.max_ticks))
             if args.neutral not in (None, neutral):
@@ -85,6 +95,8 @@ def main():
                    '--csv', '--serial', args.serial, '--label','host_'+args.experiment]
     if args.experiment in ('auto', 'adaptive'):
         vision_args.append('--uart-enable-valid')
+    if args.experiment == 'adaptive' and args.record:
+        vision_args.extend(['--record', '--record-fps', '8', '--record-scale', '.5'])
     vision(argv=vision_args, experiment=experiment, codec=codec)
 
 

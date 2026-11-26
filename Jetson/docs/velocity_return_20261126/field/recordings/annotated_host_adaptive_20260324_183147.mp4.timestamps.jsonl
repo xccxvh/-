@@ -1,0 +1,24 @@
+{"event": "frame", "submission_index": 0, "timestamp": 11856.341495632, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 0}
+{"event": "frame", "submission_index": 1, "timestamp": 11856.510223705, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 1}
+{"event": "frame", "submission_index": 2, "timestamp": 11856.607990059, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 2}
+{"event": "frame", "submission_index": 3, "timestamp": 11856.744783028, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 3}
+{"event": "frame", "submission_index": 4, "timestamp": 11856.847069798, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 4}
+{"event": "frame", "submission_index": 5, "timestamp": 11856.976137715, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 5}
+{"event": "frame", "submission_index": 6, "timestamp": 11857.115580215, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 6}
+{"event": "frame", "submission_index": 7, "timestamp": 11857.279902038, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 7}
+{"event": "frame", "submission_index": 8, "timestamp": 11857.347908809, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 8}
+{"event": "frame", "submission_index": 9, "timestamp": 11857.481906309, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 9}
+{"event": "frame", "submission_index": 10, "timestamp": 11857.648245996, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 10}
+{"event": "frame", "submission_index": 11, "timestamp": 11857.784074121, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 11}
+{"event": "frame", "submission_index": 12, "timestamp": 11857.851854486, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 12}
+{"event": "frame", "submission_index": 13, "timestamp": 11858.0201136, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 13}
+{"event": "frame", "submission_index": 14, "timestamp": 11858.120403079, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 14}
+{"event": "frame", "submission_index": 15, "timestamp": 11858.220304381, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 15}
+{"event": "frame", "submission_index": 16, "timestamp": 11858.352351308, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 16}
+{"event": "frame", "submission_index": 17, "timestamp": 11858.489831673, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 17}
+{"event": "frame", "submission_index": 18, "timestamp": 11858.624305058, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 18}
+{"event": "frame", "submission_index": 19, "timestamp": 11858.724495527, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 19}
+{"event": "frame", "submission_index": 20, "timestamp": 11858.892150371, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 20}
+{"event": "frame", "submission_index": 21, "timestamp": 11858.991738756, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 21}
+{"event": "frame", "submission_index": 22, "timestamp": 11859.091759016, "timestamp_source": "caller", "accepted": true, "reason": "accepted", "frame_index": 22}
+{"event": "summary", "accepted": 23, "dropped": 0, "written": 23, "fps": 8.0, "timeline": "constant_fps", "returncode": 0, "complete": true, "error": null}

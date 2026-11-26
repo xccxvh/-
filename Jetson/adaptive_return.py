@@ -1,216 +1,107 @@
-"""Adaptive REMOTE control using SOE-timed measurements and actual PWM readback."""
+"""Nano 连续回中。曝光时钟更新估计，单调时钟调度 50 Hz REMOTE PWM。"""
+from collections import deque
 import csv
+import math
 import queue
 import time
-from collections import deque
+
+from velocity_return import AlphaBeta, VelocityPlan
+
+PERIOD = .020
+LOSS = .220
 
 
-
-def clip(value, low, high):
-    return min(high, max(low, value))
-
-
-def sign(value):
-    return (value > 0) - (value < 0)
-
-
-class Motion:
-    """Fit velocity in cm/s on a short window of measured rail coordinates."""
-    def __init__(self):
-        self.samples = deque()
-
-    def add(self, stamp, x):
-        if self.samples and not 0 < stamp - self.samples[-1][0] <= .15:
-            self.samples.clear()
-        self.samples.append((stamp, x))
-        while stamp - self.samples[0][0] > .24:
-            self.samples.popleft()
-        if len(self.samples) < 3 or stamp - self.samples[0][0] < .08:
-            return None
-        t0 = sum(t for t, _ in self.samples) / len(self.samples)
-        x0 = sum(p for _, p in self.samples) / len(self.samples)
-        variance = sum((t-t0)**2 for t, _ in self.samples)
-        v = sum((t-t0)*(p-x0) for t, p in self.samples) / variance
-        if max(abs(p-x0-v*(t-t0)) for t, p in self.samples) > .12:
-            return None
-        return v
-
-
-class ReturnLaw:
-    def __init__(self, bounds, neutral, slew, polarity=1, probe=None):
-        self.bounds = bounds
-        self.neutral = neutral
-        self.slew = slew
-        self.polarity = polarity
-        self.probe = probe
-        self.target = neutral
-        self.changed = None
-        self.anchor = None
-        self.last_applied = neutral
-        self.holding = False
-        self.response = .12  # one 0x82 period plus scheduling
-        self.command_time = None
-        self.command_origin = neutral
-        self.pwm_goal = neutral
-        self.start_x = None
-        self.start_v = None
-
-    def written(self, stamp, target, applied):
-        if self.pwm_goal != target:
-            self.pwm_goal = target
-            self.command_time = stamp
-            self.command_origin = applied
-
-    def feedback(self, stamp, output, echoed_target):
-        if self.command_time is not None and output == echoed_target == self.pwm_goal:
-            travel = abs(output - self.command_origin) / self.slew
-            lag = clip(stamp - self.command_time - travel, .05, .30)
-            self.response = .75*self.response + .25*lag
-            self.command_time = None
-        self.last_applied = output
-
-    def check_actuator(self, stamp):
-        if self.command_time is not None:
-            travel = abs(self.pwm_goal-self.command_origin) / self.slew
-            if stamp-self.command_time > travel + 2*self.response + .12:
-                raise TimeoutError('no corresponding PWM response within travel time')
-
-    def reset_observation(self):
-        self.changed = None
-        self.target = self.neutral
-        self.start_x = None
-
-    def step(self, stamp, x, v):
-        neutral = self.neutral
-        distance = abs(x)
-        direction = sign(-x)
-        toward = direction*v
-        if distance >= 5.7 or abs(x + (.12+self.response)*v) >= 5.9:
-            raise ValueError('rail end guard')
-        if self.changed is None:
-            self.changed, self.anchor = stamp, x
-        if self.start_x is None:
-            self.start_x, self.start_v, self.start_stamp = x, v, stamp
-
-        drive = self.probe if self.probe else direction*self.polarity
-        room = self.bounds[1]-neutral if drive > 0 else neutral-self.bounds[0]
-        elapsed = stamp-self.changed
-        moved = x-self.anchor
-        stalled = abs(moved) < .08 and abs(v) < .35
-        # Use exposure-time evidence, the observed response lag and remaining PWM travel.
-        remaining = abs(self.last_applied-self.target)
-        observe = self.response + remaining/self.slew + .10 + .12/(1+distance)
-        near_stop = distance <= .16 + self.response*max(0.,toward) + max(0.,toward)**2/16.
-        desired, phase = self.target, 'observe'
-
-        if self.probe:
-            # An already-moving ball does not by itself prove the sign of acceleration.
-            residual = x - self.start_x - self.start_v*(stamp-self.start_stamp)
-            if (sign(self.last_applied-neutral) == self.probe and abs(residual) >= .14
-                    and abs(v-self.start_v) >= .55 and residual*(v-self.start_v) > 0):
-                return neutral, 'probe_motion', stalled
-        elif distance < (.30 if self.holding else .18) and abs(v)<.45:
-            self.holding = True
-            desired, phase = neutral, 'hold'
-        elif (near_stop and toward > .45) or (distance < .20 and abs(v) > .55):
-            self.holding = False
-            brake = -sign(v)*self.polarity
-            available = self.bounds[1]-neutral if brake > 0 else neutral-self.bounds[0]
-            fraction = clip(abs(v)*(.18+self.response)/max(.18,distance), .08, 1.)
-            desired, phase = neutral + brake*max(1, round(available*fraction)), 'brake'
-        elif toward > max(.8, min(3., distance*1.25)):
-            self.holding = False
-            desired, phase = neutral, 'coast'
-
-        if phase == 'observe' and elapsed >= observe:
-            self.holding = False
-            if self.probe or stalled or toward < max(.4, min(1.4, distance)):
-                # Allow at most one unobserved increase; braking is independent of arrival.
-                increment = max(1, round(room*clip(.05+.09*distance, .06, .35)))
-                if not stalled and not self.probe:
-                    increment = max(1, round(increment*.5))
-                if remaining <= max(1, increment//3):
-                    desired = neutral + drive*(max(0, drive*(self.target-neutral)) + increment)
-                    desired = clip(desired, *self.bounds)
-                    phase = 'probe' if self.probe else ('unstick' if stalled else 'drive')
-                    if (desired == self.target == self.last_applied and
-                            elapsed > observe + .5 and (self.probe or stalled or toward < 0)):
-                        raise ValueError('stroke limit without useful motion')
-        if desired != self.target:
-            self.target = int(desired)
-            self.changed, self.anchor = stamp, x
-        return self.target, phase, stalled
-
-
-
-def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=1):
+def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-1,
+        offset=None, model=None):
     now = time.monotonic
     neutral = profile['neutral_ticks']
-    fields = ('event', 'nano_s', 'frame', 'capture_s', 'x_cm', 'target_cm', 'error_cm',
-              'velocity_cm_s', 'valid', 'reason', 'phase', 'stalled', 'target_ticks',
-              'output_ticks', 'seq', 'board_ms')
-    log = csv.DictWriter(stream, fields)
-    log.writeheader()
+    lo, hi = board.confirmed_ticks
+    slew = profile['slew_ticks_per_s']
+    if probe is not None and offset is None:
+        offset = round((hi-neutral if probe > 0 else lo-neutral)*.5)
+    if offset is not None and (offset == 0 or not lo <= neutral+offset <= hi):
+        raise ValueError('identification pulse outside confirmed stroke')
+    state = AlphaBeta()
+    law = VelocityPlan((lo, hi), neutral, polarity, model)
+    fields = ('event','nano_s','frame','capture_s','received_s','last_capture_s',
+              'last_received_s','x_cm','valid','estimate_cm','predicted_cm','velocity_cm_s',
+              'target_cm','error_cm','v_ref','a_cmd','start_bias','balance_ticks','phase',
+              'target_ticks','output_ticks','seq','board_ms','reason','breakaway_pos_ticks','breakaway_neg_ticks')
+    writer = csv.DictWriter(stream, fields)
+    writer.writeheader()
+    last_received = frame = None
 
-    def record(event, **values):
-        log.writerow(dict(values, event=event, nano_s=now()))
+    def record(event, **row):
+        row.update(event=event, nano_s=now(), last_capture_s=state.stamp, last_received_s=last_received)
+        writer.writerow(row)
 
-    def remote_after(t, end):
-        while now() < end:
+    def observe():
+        nonlocal frame, last_received
+        m = getattr(port, 'measurement', None)
+        if not m or m[0] == frame:
+            return None
+        frame, stamp, x, reason, received = m
+        decision = now()
+        # 每个帧号仅接纳一次；即使排队延迟，摄像头 SOE 到使用时仍须在 100 ms 内。
+        accepted = False
+        if x is not None and 0 <= decision-stamp <= .1:
+            if abs(x) >= 5.7:
+                raise ValueError('measured rail end')
+            accepted = state.update(stamp, x)
+            if not accepted:
+                reason = 'duplicate or implausible innovation'
+        elif x is not None:
+            reason = 'aged_before_admission'
+        if accepted:
+            last_received = received
+        record('vision', frame=frame,capture_s=stamp,received_s=received,
+               **dict(x_cm=x,valid=int(accepted),reason=reason,estimate_cm=state.x,
+                      velocity_cm_s=state.v,phase='update' if accepted else 'pause'))
+        return accepted
+
+    def debug_after(start, end):
+        while True:
             row = port.next_debug(end)
-            if row['received'] >= t:
+            if row['received'] >= start:
                 return row
-        raise TimeoutError('remote telemetry missing')
 
     try:
         board.set_mode('REMOTE')
-        after = now()
-        end = after + 1.
+        start = now()
         while True:
-            row = remote_after(after, end)
-            if (not row['remote_enabled'] and
-                    row['target_pwm_ticks'] == row['output_pwm_ticks'] == neutral):
+            row = debug_after(start,start+1.)
+            if not row['remote_enabled'] and row['target_pwm_ticks'] == row['output_pwm_ticks'] == neutral:
                 break
         board.seq = (row['command_seq']+1) & 65535
-        motion = Motion()
-        frame = None
-        end = now()+4.
-        while now() < end:
+        deadline = now()+4.
+        while now() < deadline:
             if cancelled.is_set():
                 raise RuntimeError('vision stopped')
-            m = getattr(port, 'measurement', None)
-            if m and m[0] != frame:
-                frame, t, x, _, received = m
-                if x is None or not 0 <= now()-t <= .1:
-                    motion.samples.clear()
-                else:
-                    v = motion.add(t, x)
-                    if v is not None:
-                        if abs(x) >= 5.5 or abs(x+.25*v) >= 5.7:
-                            raise ValueError('unsafe position or approach to rail end at startup')
-                        break
-            time.sleep(.003)
+            if observe() and state.count >= 3 and abs(state.predict(now())[0]) < 5.5:
+                break
+            time.sleep(.002)
         else:
-            raise TimeoutError('no fresh position and velocity at startup')
-
+            raise TimeoutError('no reliable starting position')
         seq = board.set_pwm_ticks(neutral)
-        after = now()
-        end = after+.25
-        while remote_after(after, end)['command_seq'] != seq:
+        start = now()
+        while debug_after(start,start+.25)['command_seq'] != seq:
             pass
         board.start_remote()
-        started = now()
-        law = ReturnLaw(board.confirmed_ticks, neutral, profile['slew_ticks_per_s'], polarity, probe)
-        record('armed', reason=profile['firmware'], target_ticks=neutral, output_ticks=neutral)
-        sent = {seq: neutral}
-        target = output = last_sent = neutral
-        last_ack = due = started
+        start = due = last_ack = now()
+        record('armed', target_ticks=neutral, output_ticks=neutral,reason=profile['firmware'])
+        sent = {seq:neutral}
+        output = command = neutral
         ack_seq = None
-        active = False
-        waiting = False
-        last_valid = last_position = received
-        speed_wait = None
-        while now()-started < seconds:
+        active = blocked = updated = False
+        plan = {}
+        planned_stamp = state.stamp
+        pulse_origin = state.x
+        brake_start = at_level = None
+        output_progress = now()
+        last_output = neutral
+        output_history = deque(maxlen=24)
+        trusted_output = neutral
+        while now()-start < seconds:
             if cancelled.is_set():
                 raise RuntimeError('vision stopped')
             while True:
@@ -218,108 +109,113 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=1
                     row = port.debug.get_nowait()
                 except queue.Empty:
                     break
-                if row['received'] < started:
+                if row['received'] < start:
                     continue
-                output = row['output_pwm_ticks']
                 ack = row['command_seq']
-                record('rx', seq=ack, board_ms=row['board_timestamp'], target_ticks=row['target_pwm_ticks'],
-                       output_ticks=output, reason='result=%d enabled=%d' % (row['result'],row['remote_enabled']))
-                if not row['remote_enabled'] or row['result'] != 0:
-                    raise RuntimeError('REMOTE stopped or board clamped: result=%s' % row['result'])
-                if not board.confirmed_ticks[0] <= output <= board.confirmed_ticks[1]:
-                    raise ValueError('output outside confirmed range')
-                if ack not in sent or sent[ack] != row['target_pwm_ticks']:
-                    raise RuntimeError('unexpected PWM echo')
+                output = row['output_pwm_ticks']
+                echoed = row['target_pwm_ticks']
+                record('rx', seq=ack, board_ms=row['board_timestamp'], target_ticks=echoed,
+                       output_ticks=output,reason='enabled=%d result=%d' % (row['remote_enabled'],row['result']))
+                if not row['remote_enabled'] or row['result'] or not lo <= output <= hi or sent.get(ack) != echoed:
+                    raise RuntimeError('unexpected REMOTE state, clamp or PWM echo')
                 if ack != ack_seq:
-                    last_ack, ack_seq = row['received'], ack
+                    ack_seq,last_ack = ack,row['received']
+                if output == echoed or output != last_output:
+                    output_progress = row['received']
+                elif row['received']-output_progress > .25 + abs(output-echoed)/slew:
+                    raise TimeoutError('PWM output not following commands')
+                output_history.append((row['received'],output))
+                last_output = output
                 active = True
-                law.feedback(row['received'], output, row['target_pwm_ticks'])
-            if now()-last_ack > .25:
-                raise TimeoutError('no advancing PWM echo')
-            m = port.measurement
-            if m[0] != frame:
-                frame, t, x, reason, received = m
-                fresh = x is not None and 0 <= now()-t <= .1
-                if fresh:
-                    last_position = received
-                    if abs(x) >= 5.7:
-                        raise ValueError('rail end guard')
-                    v = motion.add(t, x)
-                    if v is not None:
-                        last_valid = received
-                        speed_wait = None
-                        waiting = False
-                        if active:
-                            target, phase, stalled = law.step(t, x, v)
-                        else:
-                            target, phase, stalled = neutral, 'await_echo', False
-                        if phase == 'probe_motion':
-                            reason = 'observed_pwm_to_x_sign=%+d' % (probe*sign(v-law.start_v))
-                        record('vision', frame=frame, capture_s=t, x_cm=x, target_cm=0, error_cm=-x,
-                               velocity_cm_s=v, phase=phase, stalled=int(stalled), valid=1,
-                               target_ticks=target, output_ticks=output, reason=reason)
-                        if phase == 'probe_motion':
+            accepted = observe()
+            if accepted is not None:
+                blocked = not accepted
+                updated = accepted
+                if accepted:
+                    for stamp, ticks in reversed(output_history):
+                        if stamp <= state.stamp:
+                            trusted_output = ticks
                             break
-                    else:
-                        waiting = True
-                        if speed_wait is None:
-                            speed_wait = now()
-                        record('vision', frame=frame,capture_s=t,x_cm=x,valid=1,phase='wait_speed',
-                               reason='velocity evidence incomplete')
+            tick = now()
+            if tick-last_ack > .25:
+                raise TimeoutError('no advancing PWM echo')
+            if tick-last_received > LOSS:
+                # 从最后接纳帧交付时计缺测；该帧的曝光年龄已验证不超过 100 ms。
+                raise TimeoutError('no accepted measurement received for 220 ms')
+            if tick < due:
+                time.sleep(min(.002,due-tick))
+                continue
+            x,v = state.predict(tick)
+            if max(abs(x),abs(x+.15*v)) >= 5.85:
+                raise ValueError('predicted rail end')
+            requested = command
+            phase = 'hold_command'
+            if active and updated and not blocked:
+                dt = state.stamp-planned_stamp
+                planned_stamp = state.stamp
+                if offset is None:
+                    plan = law.step(x,v,dt,output,observed_x=state.x)
+                    requested = plan['target_ticks']
+                    phase = plan['phase']
                 else:
-                    # An age-only drop withdraws any unsent increase. Keep the last
-                    # actuator setting briefly while awaiting a fresh exposure.
-                    age_only = reason == 'stale_only_drop' or (x is not None and reason == 'ok')
-                    if age_only:
-                        target = last_sent
+                    # 辨识时使用恒定目标，回读到位后计时。观测到起滚后反向施加制动。
+                    travel = (state.x-pulse_origin)*polarity*(1 if offset>0 else -1)
+                    if travel < -.40:
+                        raise ValueError('identification moved opposite expected direction')
+                    if brake_start is None and travel > .28 and v*offset*polarity > 0:
+                        brake_start = tick
+                    if brake_start is None:
+                        requested,phase = neutral+offset,'identify_drive'
+                        if output == requested:
+                            if at_level is None:
+                                at_level = tick
+                            if tick-at_level > 2.5 and travel < .12:
+                                record('no_motion',output_ticks=output,reason='plateau 2.5 s')
+                                break
                     else:
-                        waiting = True
-                    record('vision', frame=frame, capture_s=t, valid=0, phase='pause',
-                           reason=('aged_before_decision' if reason=='ok' else reason), output_ticks=output)
-            # Consume this frame before testing the deadline. Fresh positions may
-            # return before there are three exposures for a velocity estimate.
-            if now()-last_position > .22:
-                raise TimeoutError('no fresh measured position for 220 ms')
-            if speed_wait is not None and now()-speed_wait > .22:
-                raise TimeoutError('fresh positions without reliable velocity for 220 ms')
-            gap = now()-last_valid
-            if waiting or gap > .11:
-                # Withdraw torque while keeping the session alive. Never advance a ramp on a missing frame.
-                target = neutral
-                law.reset_observation()
-            law.check_actuator(now())
-            if now() >= due:
-                if target != neutral and not (m[2] is not None and 0 <= now()-m[1] <= .1):
-                    # Heartbeat and exposure clocks are asynchronous. Wait briefly for the
-                    # next measured frame before issuing a non-neutral write.
-                    if now() - due < .035:
-                        time.sleep(.003)
-                        continue
-                    target = neutral
-                    law.reset_observation()
-                # The field limit applies to each actual write, including withdrawal on brief loss.
-                step_limit = int(15*1600/180)
-                if target != neutral and (target-neutral)*(last_sent-neutral) >= 0 and abs(target-neutral) > abs(last_sent-neutral):
-                    # Spread outward drive over the observed response time. A sudden
-                    # tilt can move the ruler while the ball stays at the same mark.
-                    drive_step = max(1, round(abs(law.target-neutral)*.05 / (.10+law.response)))
-                    step_limit = min(step_limit, drive_step)
-                last_sent += clip(target-last_sent, -step_limit, step_limit)
-                seq = board.set_pwm_ticks(last_sent)
-                sent[seq] = last_sent
-                law.written(now(), last_sent, output)
-                record('tx', seq=seq, target_ticks=last_sent, output_ticks=output)
-                due = now()+.05
-            time.sleep(.003)
+                        requested = max(lo,min(hi, neutral-offset))
+                        phase = 'identify_brake'
+                        if v*offset*polarity <= 0 or tick-brake_start > .7:
+                            record('brake_end',output_ticks=output,reason='measured reversal or pulse deadline')
+                            break
+            elif active and not blocked and offset is None and plan and abs(v) > .35:
+                # 纯预测只可降低原驱动；不把预测写入实测列，也不据此增加反向驱动。
+                preview = law.step(x,v,0.,output)
+                delta = preview['a_cmd'] - plan['a_cmd']
+                desired = plan['target_ticks'] + polarity * delta / law.gains[1 if plan['a_cmd'] >= 0 else -1]
+                if (desired-command)*(command-neutral) < 0:
+                    requested = max(neutral,desired) if command > neutral else min(neutral,desired)
+                    phase = 'ease_prediction'
+            if blocked and tick-last_received > .11 and trusted_output != neutral:
+                # 多帧缺测且刚向外加力：退至上一张可信曝光时已经回读的同向输出。
+                # 只撤销未经视觉验证的增量，保留已起作用的偏置；单帧掉帧仍保持。
+                if (trusted_output-neutral)*(command-neutral)>0 and abs(trusted_output-neutral)<abs(command-neutral):
+                    requested, phase = trusted_output, 'last_observed_drive'
+            # 有效观测之间保持已发量；新目标只在有观测时推进。单次写入不超过现场 15°。
+            max_step = min(133,max(1,int(slew*PERIOD)))
+            if (requested-neutral)*(command-neutral) >= 0 and abs(requested-neutral)>abs(command-neutral):
+                # 缓升避免阶跃造成纹理突然位移；制动和撤力仍可使用板端全速。
+                max_step = min(max_step, max(1,round((hi-lo)*PERIOD/.7)))
+            command = int(round(max(lo,min(hi,command + max(-max_step,min(max_step,requested-command))))))
+            seq = board.set_pwm_ticks(command)
+            sent[seq] = command
+            record('tx',seq=seq,target_ticks=command,output_ticks=output,predicted_cm=x,
+                   velocity_cm_s=v,target_cm=0,error_cm=-x,phase=phase,
+                   breakaway_pos_ticks=law.breakaway_ticks[1],breakaway_neg_ticks=law.breakaway_ticks[-1],
+                   **{k:plan[k] for k in ('v_ref','a_cmd','start_bias','balance_ticks') if k in plan})
+            updated = False
+            # 按绝对期限调度。操作系统延误时跳过已错过周期，避免补发成串旧指令。
+            due += PERIOD*max(1,math.floor((now()-due)/PERIOD)+1)
     except BaseException as exc:
-        record('abort', reason=str(exc))
+        record('abort',reason=str(exc))
         raise
     finally:
-        after = now()
+        start = now()
+        record('stop_requested')
         board.stop()
-        end = now()+.45+(board.confirmed_ticks[1]-board.confirmed_ticks[0])/profile['slew_ticks_per_s']
+        end = now()+.45+(hi-lo)/slew
         while True:
-            row = remote_after(after, end)
+            row = debug_after(start,end)
             if not row['remote_enabled'] and row['output_pwm_ticks'] == neutral:
-                record('stop_confirmed', output_ticks=neutral, board_ms=row['board_timestamp'])
+                record('stop_confirmed',output_ticks=neutral,board_ms=row['board_timestamp'])
                 break
