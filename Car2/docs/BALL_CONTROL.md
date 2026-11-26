@@ -97,13 +97,14 @@
 
 必须用 MANUAL 模式找到真正水平位置后写回本宏；再次拆装或配重变化也要复核。
 
-拆装舵盘、摆杆或改变配重后必须重新标定。MANUAL 模式提供 0.1° 微调：
+拆装舵盘、摆杆或改变配重后必须重新标定。MANUAL 模式提供 0.5° 步进、±15° 范围：
 
 1. 小车固定、底盘调水平，摆杆不带钢珠先回当前零位 104°；
 2. 用 K1+K2 切到 MANUAL，LCD 显示 `MODE: MANUAL`、`Servo: 104.00 deg`；
 3. 把钢珠放到轨道中心 O 附近，观察是否持续向某一侧滚动；
-4. K1/K2 的步长由 `BALL_TEST_MANUAL_STEP_DEG` 决定（当前代码 0.1°；
-   标定时建议改为 0.1~0.2° 做精细试探），每次调整后等摆杆稳定再观察；
+4. K1/K2 的步长由 `BALL_TEST_MANUAL_STEP_DEG` 决定（当前 0.5°），
+   范围由 `BALL_TEST_MANUAL_LIMIT_DEG` 决定（当前 ±15°）；
+   需要精细试探时可临时把步长改小，每次调整后等摆杆稳定再观察；
 5. 接近平衡点时可在 `ball_test.h` 把 `BALL_TEST_MANUAL_STEP_DEG`
    改为 0.05 做更细的试探；
 6. 找到“钢珠不持续单向滚动”的位置后，读取 LCD/串口的 `servo` 值，
@@ -145,7 +146,7 @@
    `ratio = 舵机角度增量 / θ_actual`，写回 `SERVO_BEAM_TO_SERVO_RATIO`，
    或在初始化后调用 `Servo_SetBeamRatio(ratio)`。
 
-示例：命令 +1.0°，舵机从 110.0° 转到 111.5°，但摆杆实际只倾斜 0.5°，
+示例：命令 +1.0°，舵机从 104.0° 转到 105.5°，但摆杆实际只倾斜 0.5°，
 则 `ratio = 1.5 / 0.5 = 3.0`。不能默认“舵机转 2° = 摆杆倾 2°”。
 
 ### 4.3 角度与 PWM 映射表
@@ -173,9 +174,15 @@ TIMA0：80 MHz ÷ 100 = 800 kHz，周期 16000 计数 = 20 ms（50 Hz）。
 2. 摆杆输入：默认 ±5.0°（`SERVO_BEAM_LIMIT_DEFAULT_DEG`）；
 3. 机械角度：10°~170°，软件斜率默认 180°/s（`SERVO_MAX_SLEW_DPS`，可配置）。
 
-开环滚动测试是例外：K1 启动连续 ROLL 期间，摆杆输入上限临时放宽到
-`BALL_TEST_ROLL_BEAM_LIMIT_DEG`（默认 15.0°）；停止、正常结束、超时中止
-或切换模式时立即恢复默认 5.0°。PD 的 ±1° 和机械角度 10°~170° 始终不变。
+模式例外：
+- MANUAL：摆杆输入上限 `BALL_TEST_MANUAL_LIMIT_DEG`（当前 ±15°），
+  步长 `BALL_TEST_MANUAL_STEP_DEG`（当前 0.5°）；
+- ROLL：K1 启动期间临时放宽到 `BALL_TEST_ROLL_BEAM_LIMIT_DEG`（15.0°），
+  停止/结束后恢复默认 5.0°；
+- SERVO（历史）：±30°，不在常用切换流程；
+- REMOTE：直接 PWM，使用 Servo 安全行程（默认零位 ±20°）。
+
+PD 的 ±1° 和机械角度 10°~170° 始终不变。
 
 ---
 
@@ -354,7 +361,7 @@ SIM、ROLL、SERVO 源码保留，但暂时移出常用切换流程。
 
 | 模式 | K1 | K2 |
 |---|---|---|
-| MANUAL | +0.1° | −0.1° |
+| MANUAL | +0.5° | −0.5°（范围 ±15°） |
 | REMOTE | 本地停止远程控制 | 暂不分配 |
 | UART | 本地停止 PD | 暂不分配 |
 
@@ -378,7 +385,7 @@ Servo: 104.00 deg
 PWM:    1655 us
 Ticks:  1324
 Offset:+0.00 deg
-K1:+0.1 K2:-0.1
+K1:+0.5 K2:-0.5
 ```
 
 **REMOTE LCD**
@@ -420,8 +427,8 @@ INV=无效帧/异常数据，TMO=150 ms 超时，FLT=故障。
 1. 切换到 MANUAL（K1+K2 循环到 MANUAL）；
 2. LCD 确认 `MODE: MANUAL`、`Servo: 104.00 deg`、`Offset:+0.00 deg`；
 3. 钢珠放 O 点附近，多次从不同起始位置释放，不得持续单向滚动；
-4. K1/K2 按 `BALL_TEST_MANUAL_STEP_DEG` 调整（当前代码 0.1°，精细标定时
-   建议改 0.1~0.2°），观察增量是否与 `SERVO_MAX_SLEW_DPS` 和机械结构相符；
+4. K1/K2 按 `BALL_TEST_MANUAL_STEP_DEG` 调整（当前 0.5°，范围 ±15°），
+   观察增量是否与 `SERVO_MAX_SLEW_DPS` 和机械结构相符；
 5. 记录新零位并写回 `SERVO_NEUTRAL_ANGLE_DEG`，重新上电复验。
 
 ### 8.1b 自由舵机角度测试（SERVO）
@@ -585,7 +592,7 @@ K2 在 0 / +5 / −5 cm 之间切换，目标在 5 s 内到位且误差 ≤1 cm�
 |---|---|---|
 | `ball_test_host.exe` | 45 checks, 0 failures | 角度/脉宽映射、斜率限制、机械限幅、PD 符号、当前 PD 限幅、80 ms 指令保持/回零、150 ms 超时、失效帧退出、跳变剔除、速度滤波、重复帧、手动保持、闭环仿真 |
 | `vision_link_host.exe` | 50 checks, 0 failures | 0x01/0x02/0x03 帧解析、CRC、字段、重复序号、0x02 超龄、0x03 参数、遥测组包 |
-| `roll_mode_host.exe` | 88 checks, 0 failures | 历史模式、REMOTE 无 0x02 使能/超时/回零/安全行程限幅、SET_MODE/START_AUTO/STOP/SET_TARGET/SET_PD/GET_PARAMS |
+| `roll_mode_host.exe` | 93 checks, 0 failures | 历史模式、MANUAL 0.5°/±15°、REMOTE 安全行程、SET_MODE/START_AUTO/STOP/SET_TARGET/SET_PD/GET_PARAMS |
 
 一键运行：
 
@@ -610,7 +617,7 @@ sh Car2/tests/host/run_tests.sh
 
 **注意**：以上是模型仿真结果，不是实车数据；真实钢珠受摩擦、舵机死区、
 视觉延迟和机械间隙影响，必须按 8.4/8.5 节重新调参。开环三档的软件验证
-（88 项）只覆盖状态机、限幅切换、0x03 控制逻辑和时序，不能替代实车标定。
+（93 项）只覆盖状态机、限幅切换、0x03 控制逻辑和时序，不能替代实车标定。
 
 ---
 

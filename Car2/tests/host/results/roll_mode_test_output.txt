@@ -88,8 +88,8 @@
 [PASS] max level test stopped by K1
 [PASS] max level stop restores default beam limit (actual=5.00)
 [BALL] mode=MANUAL target=0.00 Kp=+0.60 Kd=+0.30
-[PASS] leaving ROLL restores default beam limit (actual=5.00)
-[PASS] MANUAL still clamps beam to default limit (actual=5.00)
+[PASS] leaving ROLL enters MANUAL 15 deg limit (actual=15.00)
+[PASS] MANUAL clamps beam to +15 deg (actual=15.00)
 
 [BALL] G3519 ball balance control init
 [BALL] mode=UART target=0.00 Kp=+0.60 Kd=+0.30
@@ -174,4 +174,136 @@
 [BALL] mode=MANUAL target=0.00 Kp=+0.60 Kd=+0.30
 [PASS] SET_MODE MANUAL ack OK
 [PASS] SET_MODE MANUAL enters manual
-=== 88 checks, 0 failures ===
+
+[BALL] G3519 ball balance control init
+[BALL] mode=UART target=0.00 Kp=+0.60 Kd=+0.30
+[BALL] servo PA9/TIMA0 50Hz, vision UART0 PA10/PA11 115200
+[BALL] K1=enable/step/run, K2=case/level, K1+K2=mode
+[BALL] mode=MANUAL target=0.00 Kp=+0.60 Kd=+0.30
+[PASS] MANUAL beam limit is 15 deg (actual=15.00)
+[CAL] beam=+0.50 -> servo target=+104.50 current=+104.18 deg
+[PASS] MANUAL K1 step is 0.5 deg (actual=0.50)
+[CAL] beam=+1.00 -> servo target=+105.00 current=+104.54 deg
+[CAL] beam=+1.50 -> servo target=+105.50 current=+105.18 deg
+[CAL] beam=+2.00 -> servo target=+106.00 current=+105.68 deg
+[CAL] beam=+2.50 -> servo target=+106.50 current=+106.18 deg
+[CAL] beam=+3.00 -> servo target=+107.00 current=+106.68 deg
+[CAL] beam=+3.50 -> servo target=+107.50 current=+107.18 deg
+[CAL] beam=+4.00 -> servo target=+108.00 current=+107.68 deg
+[CAL] beam=+4.50 -> servo target=+108.50 current=+108.18 deg
+[CAL] beam=+5.00 -> servo target=+109.00 current=+108.68 deg
+[CAL] beam=+5.50 -> servo target=+109.50 current=+109.18 deg
+[CAL] beam=+6.00 -> servo target=+110.00 current=+109.68 deg
+[CAL] beam=+6.50 -> servo target=+110.50 current=+110.18 deg
+[CAL] beam=+7.00 -> servo target=+111.00 current=+110.68 deg
+[CAL] beam=+7.50 -> servo target=+111.50 current=+111.18 deg
+[CAL] beam=+8.00 -> servo target=+112.00 current=+111.68 deg
+[CAL] beam=+8.50 -> servo target=+112.50 current=+112.18 deg
+[CAL] beam=+9.00 -> servo target=+113.00 current=+112.68 deg
+[CAL] beam=+9.50 -> servo target=+113.50 current=+113.18 deg
+[CAL] beam=+10.00 -> servo target=+114.00 current=+113.68 deg
+[CAL] beam=+10.50 -> servo target=+114.50 current=+114.18 deg
+[CAL] beam=+11.00 -> servo target=+115.00 current=+114.68 deg
+[CAL] beam=+11.50 -> servo target=+115.50 current=+115.18 deg
+[CAL] beam=+12.00 -> servo target=+116.00 current=+115.68 deg
+[CAL] beam=+12.50 -> servo target=+116.50 current=+116.18 deg
+[CAL] beam=+13.00 -> servo target=+117.00 current=+116.68 deg
+[CAL] beam=+13.50 -> servo target=+117.50 current=+117.18 deg
+[CAL] beam=+14.00 -> servo target=+118.00 current=+117.68 deg
+[CAL] beam=+14.50 -> servo target=+118.50 current=+118.18 deg
+[CAL] beam=+15.00 -> servo target=+119.00 current=+118.68 deg
+[CAL] beam=+15.00 -> servo target=+119.00 current=+119.00 deg
+[CAL] beam=+15.00 -> servo target=+119.00 current=+119.00 deg
+[CAL] beam=+15.00 -> servo target=+119.00 current=+119.00 deg
+[CAL] beam=+15.00 -> servo target=+119.00 current=+119.00 deg
+[CAL] beam=+15.00 -> servo target=+119.00 current=+119.00 deg
+[CAL] beam=+15.00 -> servo target=+119.00 current=+119.00 deg
+[CAL] beam=+15.00 -> servo target=+119.00 current=+119.00 deg
+[CAL] beam=+15.00 -> servo target=+119.00 current=+119.00 deg
+[CAL] beam=+15.00 -> servo target=+119.00 current=+119.00 deg
+[CAL] beam=+15.00 -> servo target=+119.00 current=+119.00 deg
+[CAL] beam=+15.00 -> servo target=+119.00 current=+119.00 deg
+[PASS] MANUAL upper limit clamps at +15 deg (actual=15.00)
+[CAL] beam=+14.50 -> servo target=+118.50 current=+118.82 deg
+[CAL] beam=+14.00 -> servo target=+118.00 current=+118.32 deg
+[CAL] beam=+13.50 -> servo target=+117.50 current=+117.82 deg
+[CAL] beam=+13.00 -> servo target=+117.00 current=+117.32 deg
+[CAL] beam=+12.50 -> servo target=+116.50 current=+116.82 deg
+[CAL] beam=+12.00 -> servo target=+116.00 current=+116.32 deg
+[CAL] beam=+11.50 -> servo target=+115.50 current=+115.82 deg
+[CAL] beam=+11.00 -> servo target=+115.00 current=+115.32 deg
+[CAL] beam=+10.50 -> servo target=+114.50 current=+114.82 deg
+[CAL] beam=+10.00 -> servo target=+114.00 current=+114.32 deg
+[CAL] beam=+9.50 -> servo target=+113.50 current=+113.82 deg
+[CAL] beam=+9.00 -> servo target=+113.00 current=+113.32 deg
+[CAL] beam=+8.50 -> servo target=+112.50 current=+112.82 deg
+[CAL] beam=+8.00 -> servo target=+112.00 current=+112.32 deg
+[CAL] beam=+7.50 -> servo target=+111.50 current=+111.82 deg
+[CAL] beam=+7.00 -> servo target=+111.00 current=+111.32 deg
+[CAL] beam=+6.50 -> servo target=+110.50 current=+110.82 deg
+[CAL] beam=+6.00 -> servo target=+110.00 current=+110.32 deg
+[CAL] beam=+5.50 -> servo target=+109.50 current=+109.82 deg
+[CAL] beam=+5.00 -> servo target=+109.00 current=+109.32 deg
+[CAL] beam=+4.50 -> servo target=+108.50 current=+108.82 deg
+[CAL] beam=+4.00 -> servo target=+108.00 current=+108.32 deg
+[CAL] beam=+3.50 -> servo target=+107.50 current=+107.82 deg
+[CAL] beam=+3.00 -> servo target=+107.00 current=+107.32 deg
+[CAL] beam=+2.50 -> servo target=+106.50 current=+106.82 deg
+[CAL] beam=+2.00 -> servo target=+106.00 current=+106.32 deg
+[CAL] beam=+1.50 -> servo target=+105.50 current=+105.82 deg
+[CAL] beam=+1.00 -> servo target=+105.00 current=+105.32 deg
+[CAL] beam=+0.50 -> servo target=+104.50 current=+104.82 deg
+[CAL] beam=+0.00 -> servo target=+104.00 current=+104.32 deg
+[CAL] beam=-0.50 -> servo target=+103.50 current=+103.82 deg
+[CAL] beam=-1.00 -> servo target=+103.00 current=+103.32 deg
+[CAL] beam=-1.50 -> servo target=+102.50 current=+102.82 deg
+[CAL] beam=-2.00 -> servo target=+102.00 current=+102.32 deg
+[CAL] beam=-2.50 -> servo target=+101.50 current=+101.82 deg
+[CAL] beam=-3.00 -> servo target=+101.00 current=+101.32 deg
+[CAL] beam=-3.50 -> servo target=+100.50 current=+100.82 deg
+[CAL] beam=-4.00 -> servo target=+100.00 current=+100.32 deg
+[CAL] beam=-4.50 -> servo target=+99.50 current=+99.82 deg
+[CAL] beam=-5.00 -> servo target=+99.00 current=+99.32 deg
+[CAL] beam=-5.50 -> servo target=+98.50 current=+98.82 deg
+[CAL] beam=-6.00 -> servo target=+98.00 current=+98.32 deg
+[CAL] beam=-6.50 -> servo target=+97.50 current=+97.82 deg
+[CAL] beam=-7.00 -> servo target=+97.00 current=+97.32 deg
+[CAL] beam=-7.50 -> servo target=+96.50 current=+96.82 deg
+[CAL] beam=-8.00 -> servo target=+96.00 current=+96.32 deg
+[CAL] beam=-8.50 -> servo target=+95.50 current=+95.82 deg
+[CAL] beam=-9.00 -> servo target=+95.00 current=+95.32 deg
+[CAL] beam=-9.50 -> servo target=+94.50 current=+94.82 deg
+[CAL] beam=-10.00 -> servo target=+94.00 current=+94.32 deg
+[CAL] beam=-10.50 -> servo target=+93.50 current=+93.82 deg
+[CAL] beam=-11.00 -> servo target=+93.00 current=+93.32 deg
+[CAL] beam=-11.50 -> servo target=+92.50 current=+92.82 deg
+[CAL] beam=-12.00 -> servo target=+92.00 current=+92.32 deg
+[CAL] beam=-12.50 -> servo target=+91.50 current=+91.82 deg
+[CAL] beam=-13.00 -> servo target=+91.00 current=+91.32 deg
+[CAL] beam=-13.50 -> servo target=+90.50 current=+90.82 deg
+[CAL] beam=-14.00 -> servo target=+90.00 current=+90.32 deg
+[CAL] beam=-14.50 -> servo target=+89.50 current=+89.82 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.32 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
+[PASS] MANUAL lower limit clamps at -15 deg (actual=-15.00)
+[PASS] MANUAL actual angle reaches -15 deg (actual=-15.00)
+=== 93 checks, 0 failures ===

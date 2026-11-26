@@ -312,17 +312,17 @@ static void test_max_level(void)
     check_near(Servo_GetBeamLimit(), SERVO_BEAM_LIMIT_DEFAULT_DEG, 0.001f,
                "max level stop restores default beam limit");
 
-    /* 回到 MANUAL 后必须恢复默认限幅（当前工程配置为 5°）。 */
+    /* 回到 MANUAL 后使用 MANUAL 自己的 ±15° 限幅。 */
     BallTest_SetMode(BALL_TEST_MODE_MANUAL);
-    check_near(Servo_GetBeamLimit(), SERVO_BEAM_LIMIT_DEFAULT_DEG, 0.001f,
-               "leaving ROLL restores default beam limit");
+    check_near(Servo_GetBeamLimit(), BALL_TEST_MANUAL_LIMIT_DEG, 0.001f,
+               "leaving ROLL enters MANUAL 15 deg limit");
 
     for (int i = 0; i < 100; i++) {
         host_time_advance_ms(10U);
         Servo_SetBeamAngle(20.0f);
     }
-    check_near(Servo_GetBeamAngleActual(), SERVO_BEAM_LIMIT_DEFAULT_DEG, 0.02f,
-               "MANUAL still clamps beam to default limit");
+    check_near(Servo_GetBeamAngleActual(), BALL_TEST_MANUAL_LIMIT_DEG, 0.02f,
+               "MANUAL clamps beam to +15 deg");
 }
 
 /* ===================== 自由舵机角度模式（SERVO） ===================== */
@@ -472,6 +472,40 @@ static void test_remote_mode(void)
 }
 
 
+/* ===================== MANUAL 步长与范围 ===================== */
+
+static void test_manual_range(void)
+{
+    host_time_reset();
+    BallTest_AppInit();
+    BallTest_SetMode(BALL_TEST_MODE_MANUAL);
+
+    check_near(Servo_GetBeamLimit(), BALL_TEST_MANUAL_LIMIT_DEG, 0.001f,
+               "MANUAL beam limit is 15 deg");
+
+    tap_key(USER_KEY_K1);
+    check_near(Servo_GetBeamAngle(), BALL_TEST_MANUAL_STEP_DEG, 0.01f,
+               "MANUAL K1 step is 0.5 deg");
+
+    /* 连续按到上限，验证目标被限制在 +15°。 */
+    for (int i = 0; i < 40; i++) {
+        tap_key(USER_KEY_K1);
+        step_ms(20U);
+    }
+    check_near(Servo_GetBeamAngle(), BALL_TEST_MANUAL_LIMIT_DEG, 0.01f,
+               "MANUAL upper limit clamps at +15 deg");
+
+    /* 连续按到下限，验证目标被限制在 -15°。 */
+    for (int i = 0; i < 80; i++) {
+        tap_key(USER_KEY_K2);
+        step_ms(20U);
+    }
+    check_near(Servo_GetBeamAngle(), -BALL_TEST_MANUAL_LIMIT_DEG, 0.01f,
+               "MANUAL lower limit clamps at -15 deg");
+    check_near(Servo_GetBeamAngleActual(), -BALL_TEST_MANUAL_LIMIT_DEG, 0.1f,
+               "MANUAL actual angle reaches -15 deg");
+}
+
 /* ===================== 0x03 控制指令 ===================== */
 
 static void test_control_commands(void)
@@ -561,6 +595,7 @@ int main(void)
     test_servo_mode();
     test_remote_mode();
     test_control_commands();
+    test_manual_range();
 
     printf("=== %d checks, %d failures ===\n", g_checks, g_failures);
     return (g_failures == 0) ? 0 : 1;

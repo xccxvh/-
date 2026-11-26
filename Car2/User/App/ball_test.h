@@ -8,14 +8,14 @@
  * 运行，也不会修改循迹代码。
  *
  * 常用模式（K1+K2 循环）：MANUAL -> REMOTE -> UART -> MANUAL。
- * - MANUAL：不启用 PD，手动以 0.1° 步长微调摆杆，用于平衡点标定；
+ * - MANUAL：不启用 PD，手动以 0.5° 步长微调摆杆，范围 ±15°；
  * - REMOTE：接收 Nano 0x02 远程 PWM 目标，K1 允许/停止远程控制；
  * - UART：接收 Jetson 0x01 厘米位置，K1 启动/停止 PD，K2 切换目标。
  *
  * 历史模式 SIM / ROLL / SERVO 保留源码，但暂时移出常用切换流程。
  *
  * 按键操作：
- * - MANUAL：K1 = +BALL_TEST_MANUAL_STEP_DEG，K2 = -BALL_TEST_MANUAL_STEP_DEG；
+ * - MANUAL：K1 = +0.5°，K2 = -0.5°，相对零位限制在 ±15°；
  * - ROLL：K1 = 启动连续左右滚动（运行中再按 = 立即停止并回平衡点），
  *         K2 = 切换 5°/7.5°/10° 档位（运行中忽略）；
  * - SERVO：K1 = +3°，K2 = -3°，相对零位限制在 ±30°；
@@ -125,13 +125,16 @@ typedef struct {
 #endif
 
 /*
- * MANUAL 模式单次按键的倾角步长（°）。
+ * MANUAL 模式单次按键的倾角步长和相对零位范围。
  *
- * 平衡点标定建议先用 0.2° 快速接近，再改为 0.1° 精调；
- * 修改本宏后重新编译即可。
+ * 0.5° 步长便于快速扫过较大范围；范围 ±15° 只在 MANUAL 模式生效，
+ * 不改变 REMOTE 的安全行程，也不改变 UART/PD 的内部限幅。
  */
 #ifndef BALL_TEST_MANUAL_STEP_DEG
-#define BALL_TEST_MANUAL_STEP_DEG       (0.1f)
+#define BALL_TEST_MANUAL_STEP_DEG       (0.5f)
+#endif
+#ifndef BALL_TEST_MANUAL_LIMIT_DEG
+#define BALL_TEST_MANUAL_LIMIT_DEG      (15.0f)
 #endif
 
 /*

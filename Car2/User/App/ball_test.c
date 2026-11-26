@@ -1236,7 +1236,9 @@ static void ball_test_lcd_build(void)
         snprintf(s_lcd_lines[3], sizeof(s_lcd_lines[3]), "Ticks: %4u",
                  (unsigned)Servo_GetPulseTicks());
         snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Offset:%s deg", b);
-        snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "K1:+0.1 K2:-0.1");
+        snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "K1:+%.1f K2:-%.1f",
+                 (double)BALL_TEST_MANUAL_STEP_DEG,
+                 (double)BALL_TEST_MANUAL_STEP_DEG);
         s_lcd_lines[6][0] = '\0';
     } else if (s_mode == BALL_TEST_MODE_REMOTE) {
         /* REMOTE：直接显示 PWM 计数，避免软件角度被误认为机械实测角。 */
@@ -1479,12 +1481,21 @@ void BallTest_SetMode(ball_test_mode_t mode)
     BallControl_Enable(false);
 
     /*
-     * 自由舵机模式需要 ±30°，其余模式恢复默认 5° 安全限幅。
-     * ROLL 仍在 K1 启动时单独放宽到 15°，停止/结束后恢复默认。
+     * 各模式的摆杆倾角上限：
+     * - MANUAL：±15°，便于手动快速找平衡点；
+     * - SERVO：±30°，保留历史自由舵机调试能力；
+     * - 其他：默认 ±5°，ROLL 只在 K1 启动后临时放宽到 15°。
      */
-    Servo_SetBeamLimit((mode == BALL_TEST_MODE_SERVO) ?
-                       BALL_TEST_SERVO_LIMIT_DEG :
-                       SERVO_BEAM_LIMIT_DEFAULT_DEG);
+    {
+        float beam_limit = SERVO_BEAM_LIMIT_DEFAULT_DEG;
+
+        if (mode == BALL_TEST_MODE_MANUAL) {
+            beam_limit = BALL_TEST_MANUAL_LIMIT_DEG;
+        } else if (mode == BALL_TEST_MODE_SERVO) {
+            beam_limit = BALL_TEST_SERVO_LIMIT_DEG;
+        }
+        Servo_SetBeamLimit(beam_limit);
+    }
 
     s_mode = mode;
     s_manual_target_deg = 0.0f;
