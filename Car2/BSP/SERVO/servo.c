@@ -33,7 +33,7 @@
  * - 10°~170° 避开 MG995/MG996R 的机械端点，防止堵转发热。
  * - 拆装舵盘、摆杆或改变配重后零位会漂移，需要重新标定并修改本宏。
  */
-#define SERVO_NEUTRAL_ANGLE_DEG         (110.0f)
+#define SERVO_NEUTRAL_ANGLE_DEG         (104.0f)
 #define SERVO_MECH_MIN_DEG              (10.0f)
 #define SERVO_MECH_MAX_DEG              (170.0f)
 

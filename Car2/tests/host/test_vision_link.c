@@ -120,6 +120,32 @@ static uint16_t build_servo_cmd_frame(uint8_t *out, uint16_t seq, uint16_t ticks
     return 11U;
 }
 
+/* 按 0x03 控制指令格式组帧：len=10。 */
+static uint16_t build_control_cmd_frame(uint8_t *out, uint16_t seq,
+                                        uint8_t opcode, uint8_t mode,
+                                        float arg0, float arg1)
+{
+    uint16_t crc;
+
+    out[0] = 0xA5U;
+    out[1] = 0x5AU;
+    out[2] = 0x01U;
+    out[3] = 0x03U;
+    out[4] = 10U;
+    out[5] = (uint8_t)(seq & 0xFFU);
+    out[6] = (uint8_t)(seq >> 8);
+    out[7] = opcode;
+    out[8] = mode;
+    Vision_WriteF32LE(&out[9], arg0);
+    Vision_WriteF32LE(&out[13], arg1);
+
+    crc = crc16_ccitt(&out[2], 5U + 10U);
+    out[17] = (uint8_t)(crc & 0xFFU);
+    out[18] = (uint8_t)(crc >> 8);
+
+    return 19U;
+}
+
 static void uart_push(const uint8_t *data, uint16_t len)
 {
     uint16_t i;
@@ -334,6 +360,39 @@ static void test_servo_command_frame(void)
     check_true(age >= 301U, "0x02 age advances for remote timeout");
 }
 
+static void test_control_command_frame(void)
+{
+    uint8_t frame[19];
+    ControlCommand cmd;
+    uint32_t age = 0U;
+    vision_link_status_t status;
+
+    prepare();
+    uart_push(frame, build_control_cmd_frame(frame, 0x7788U, 5U, 2U,
+                                             0.75f, -0.25f));
+    uart_service();
+
+    check_true(Vision_GetControlCommand(&cmd, &age) == true,
+               "0x03 control command accepted");
+    check_true(cmd.seq == 0x7788U, "0x03 seq parsed");
+    check_true(cmd.opcode == 5U, "0x03 opcode parsed");
+    check_true(cmd.mode == 2U, "0x03 mode parsed");
+    check_near(cmd.arg0, 0.75f, 0.001f, "0x03 arg0 parsed");
+    check_near(cmd.arg1, -0.25f, 0.001f, "0x03 arg1 parsed");
+    check_true(age <= 1U, "0x03 command age fresh");
+
+    Vision_GetStatus(&status);
+    check_true(status.have_control_cmd, "status.have_control_cmd set");
+    check_true(status.control_cmd_frames == 1U, "control cmd frame counted");
+
+    uart_push(frame, build_control_cmd_frame(frame, 0x7788U, 5U, 2U,
+                                             0.75f, -0.25f));
+    uart_service();
+    Vision_GetStatus(&status);
+    check_true(status.control_cmd_duplicate == 1U,
+               "duplicate 0x03 counted");
+}
+
 int main(void)
 {
     printf("=== vision_link protocol host tests ===\n");
@@ -345,6 +404,7 @@ int main(void)
     test_low_confidence_and_range();
     test_telemetry_frame();
     test_servo_command_frame();
+    test_control_command_frame();
 
     printf("=== %d checks, %d failures ===\n", g_checks, g_failures);
     return (g_failures == 0) ? 0 : 1;

@@ -190,7 +190,7 @@ TIMA0：80 MHz ÷ 100 = 800 kHz，周期 16000 计数 = 20 ms（50 Hz）。
 | 0 | 1 | `0xA5` |
 | 1 | 1 | `0x5A` |
 | 2 | 1 | 版本 `0x01` |
-| 3 | 1 | 类型：`0x01` 位置帧，`0x02` 远程舵机命令，`0x81` 视觉遥测，`0x82` 远程回执 |
+| 3 | 1 | 类型：`0x01` 位置帧，`0x02` 远程舵机命令，`0x03` 控制指令，`0x81`/`0x82`/`0x83` 遥测与回执 |
 | 4 | 1 | 负载长度 len |
 | 5 | 2 | 帧序号 seq |
 | 7 | len | 负载 |
@@ -232,6 +232,25 @@ CRC 覆盖偏移 2 到 6+len（版本、类型、长度、序号、负载）。
 | 8 | uint16 | output_pwm_ticks（当前实际写入的 PWM 计数） |
 | 10 | uint8 | remote_enabled（0/1） |
 | 11 | uint8 | result（0=OK，1=STOP，2=TIMEOUT，3=NO_CMD，4=CLAMP） |
+
+控制指令（0x03，len=10，Nano → G3519）：
+
+| 偏移 | 类型 | 含义 |
+|---:|---|---|
+| 0 | uint8 | opcode：1=SET_MODE，2=START_AUTO，3=STOP，4=SET_TARGET，5=SET_PD，6=START_REMOTE |
+| 1 | uint8 | mode：0=MANUAL，2=UART，5=REMOTE（SET_MODE 使用） |
+| 2 | float32 | arg0：SET_TARGET=目标 cm；SET_PD=Kp |
+| 6 | float32 | arg1：SET_PD=Kd |
+
+控制回执（0x83，len=6，G3519 → Nano）：
+
+| 偏移 | 类型 | 含义 |
+|---:|---|---|
+| 0 | uint16 | command_seq（对应 0x03 帧头序号） |
+| 2 | uint8 | opcode |
+| 3 | uint8 | result：0=OK，1=BAD_MODE，2=VISION_INVALID，3=PARAM_RANGE，4=FAULT，5=REJECTED |
+| 4 | uint8 | mode（当前生效模式） |
+| 5 | uint8 | control_state（BallControl 状态） |
 
 遥测帧（len=32）：见 `BSP/VISION/vision_link.h` 顶部注释，字段包括
 时间、目标、位置、速度、误差、倾角指令、脉宽、状态、标志和估算倾角。
@@ -294,7 +313,7 @@ beam_angle_cmd_deg, servo_pwm_us, control_state, vision_valid
 
 | 状态 | 触发 | 舵机行为 | 退出条件 |
 |---|---|---|---|
-| IDLE | 上电/关闭自动 | 限速回中 | K1 使能且视觉新鲜 |
+| IDLE | 上电/关闭自动 | 限速回中 | 0x03 START_AUTO 且视觉新鲜 |
 | MANUAL | 手动测试 | 执行手动倾角（限速） | 切换模式 |
 | AUTO | 显式使能 + 视觉有效 | 新有效帧算 PD；缺测 80 ms 后先回零等待 | 明确无效帧/超时/故障/关闭 |
 | VISION_LOST | 明确无效帧或 >150 ms 无有效帧 | 限速回中，不用旧数据 | 必须重新使能 |
@@ -324,14 +343,16 @@ SIM、ROLL、SERVO 源码保留，但暂时移出常用切换流程。
 | 模式 | K1 | K2 |
 |---|---|---|
 | MANUAL | +0.1° | −0.1° |
-| REMOTE | 允许/停止远程控制 | 暂不分配 |
-| UART | 启动/停止 PD | 切换目标位置 |
+| REMOTE | 本地停止远程控制 | 暂不分配 |
+| UART | 本地停止 PD | 暂不分配 |
 
-`K1+K2` 切换模式；REMOTE 与 UART 自动控制互斥，切换模式会关闭另一侧。
+正常启动由 Nano 发 0x03 完成：`SET_MODE` → `START_AUTO` / `START_REMOTE`。
+`K1+K2` 仅用于本地模式切换；REMOTE 与 UART 自动控制互斥。
 
 REMOTE 安全限制：
 
-- 只有收到 300 ms 内的 0x02 后按 K1 才能 ARM；
+- Nano 发 START_REMOTE 即进入远程并先保持零位；
+  之后若 300 ms 内没有新的 0x02，自动退出远程并回零；K1 只做本地停止；
 - 目标 PWM 相对零位限制在 ±5°（`BALL_TEST_REMOTE_LIMIT_DEG`），
   不直接开放 SERVO 模式的 ±30°；
 - 0x02 超过 300 ms 未更新自动退出远程并回零，不会自动恢复；
@@ -352,12 +373,12 @@ K1:+0.1 K2:-0.1
 
 ```text
 MODE: REMOTE
-State: ARMED / STOP
+State: RUN / STOP
 Target: 110.50 deg
 Output: 110.45 deg
 PWM:    1727 us
 Ticks:  1382
-Seq:    01234
+Seq:01234 R:OK
 ```
 
 Target/Output 都是 PWM 反算的软件角度，不是轨道角度传感器实测值。
@@ -370,12 +391,13 @@ Target: 0.00 cm
 X:+0.87 V:+0.00
 Beam:-0.52 deg
 PWM:1716 us Vis:1
-Age:35ms Seq:1234
-Kp:0.60 Kd:0.30 R:NONE
+Kp:0.60 Kd:0.30
+Stop:NONE Cmd:OK
 ```
 
-`R:` 为 AUTO 退出原因：NONE=未退出，STOP=人工停止，
+`Stop:` 为 AUTO 退出原因：NONE=未退出，STOP=人工/指令停止，
 INV=无效帧/异常数据，TMO=150 ms 超时，FLT=故障。
+`Cmd:` 为最近一条 0x03 的结果（OK/BADM/VISN/RNG/FLT/REJ）。
 
 
 
@@ -406,9 +428,14 @@ INV=无效帧/异常数据，TMO=150 ms 超时，FLT=故障。
 
 ### 8.1c REMOTE 执行机构标定
 
-Nano 或 PC 工具以 10 Hz 发送 0x02，G3519 在 REMOTE 模式按 K1 允许后执行：
+Nano 或 PC 工具先 SET_MODE(REMOTE)，再发 START_REMOTE；之后以 10 Hz 发送 0x02：
 
 ```bash
+# 切到 REMOTE 模式
+python tools/ball_link.py control --port COMx --opcode 1 --mode 5
+# 允许远程控制（无需先发 0x02）
+python tools/ball_link.py control --port COMx --opcode 6 --mode 5
+# 发送远程 PWM 目标
 python tools/ball_link.py remote --port COMx --ticks 1378
 python tools/ball_link.py remote --port COMx --ticks 1382
 ```
@@ -506,7 +533,7 @@ K1 再按一次 -> 立即停止，恢复默认限幅并限速回平衡点
 
 ```c
 CAR_APP_SELECT=1            // main.c 编译期选择滚球应用
-BALL_TEST_ALLOW_AUTO=1      // UART 模式允许 K1 进入 AUTO
+0x03 START_AUTO            // Nano 显式启动 PD（无需本地 K1）
 BALL_TEST_DEFAULT_MODE=UART
 BALL_CONTROL_MAX_BEAM_DEG=1.0
 Kp=0.60  Kd=0.30            // 初始值，尚未经真实闭环验证
@@ -519,12 +546,12 @@ Kp=0.60  Kd=0.30            // 初始值，尚未经真实闭环验证
 3. G3519 上电进入 UART 模式，确认 LCD `Vis=1`、`X` 随钢珠移动；
 4. **首次固定目标 0 cm**，不要按 K2 切换目标；
 5. 钢珠放在 O 点附近 ±0.5～1 cm；
-6. 按 K1 使能 AUTO；观察舵机是否让钢珠向 O 点回归；
+6. Nano 发 0x03 START_AUTO；观察舵机是否让钢珠向 O 点回归；
 7. 分别在 −1 cm、+1 cm 附近释放，确认两个方向都能回中；
 8. 若出现持续振荡或超调，先降 Kp，再逐步加 Kd；
 9. 出现方向错误、接近轨道端部或 `Vis:0` 时，立即按 K1 停止。
 
-保护保持原样：视觉 150 ms 超时退出 AUTO、无效帧不控制、退出后必须重新按 K1
+保护保持原样：视觉 150 ms 超时退出 AUTO、无效帧不控制；退出后必须由 Nano 重新发 START_AUTO
 使能。当前 PD 限幅 ±1°，舵机斜率 20°/s；确认机械安全后再逐步放宽。
 
 记录 0x81 遥测中的 `target_cm`、`ball_x_cm`、`ball_v_cm_s`、
@@ -542,8 +569,8 @@ K2 在 0 / +5 / −5 cm 之间切换，目标在 5 s 内到位且误差 ≤1 cm�
 | 测试程序 | 结果 | 覆盖内容 |
 |---|---|---|
 | `ball_test_host.exe` | 45 checks, 0 failures | 角度/脉宽映射、斜率限制、机械限幅、PD 符号、当前 PD 限幅、80 ms 指令保持/回零、150 ms 超时、失效帧退出、跳变剔除、速度滤波、重复帧、手动保持、闭环仿真 |
-| `vision_link_host.exe` | 40 checks, 0 failures | 0x01/0x02 帧解析、CRC、字段、重复序号、0x02 超龄、遥测组包 |
-| `roll_mode_host.exe` | 68 checks, 0 failures | ROLL/SERVO 历史模式、SERVO 步进限幅，以及 REMOTE 使能/超时/回零/±5° 限幅/K1 停止 |
+| `vision_link_host.exe` | 50 checks, 0 failures | 0x01/0x02/0x03 帧解析、CRC、字段、重复序号、0x02 超龄、0x03 参数、遥测组包 |
+| `roll_mode_host.exe` | 85 checks, 0 failures | 历史模式、REMOTE START_REMOTE 无 0x02 使能/超时/回零/±5° 限幅、SET_MODE/START_AUTO/STOP/SET_TARGET/SET_PD |
 
 一键运行：
 
@@ -568,7 +595,7 @@ sh Car2/tests/host/run_tests.sh
 
 **注意**：以上是模型仿真结果，不是实车数据；真实钢珠受摩擦、舵机死区、
 视觉延迟和机械间隙影响，必须按 8.4/8.5 节重新调参。开环三档的软件验证
-（68 项）只覆盖状态机、限幅切换、REMOTE 逻辑和时序，不能替代实车标定。
+（85 项）只覆盖状态机、限幅切换、0x03 控制逻辑和时序，不能替代实车标定。
 
 ---
 

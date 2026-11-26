@@ -95,27 +95,27 @@
 [BALL] K1=enable/step/run, K2=case/level, K1+K2=mode
 [BALL] mode=SERVO target=0.00 Kp=+0.60 Kd=+0.30
 [PASS] SERVO mode allows +/-30 deg (actual=30.00)
-[CAL] beam=+3.00 -> servo target=+113.00 current=+110.02 deg
+[CAL] beam=+3.00 -> servo target=+107.00 current=+104.02 deg
 [PASS] SERVO K1 +3 deg (actual=3.00)
-[CAL] beam=+0.00 -> servo target=+110.00 current=+110.02 deg
+[CAL] beam=+0.00 -> servo target=+104.00 current=+104.02 deg
 [PASS] SERVO K2 back to 0 (actual=0.00)
-[CAL] beam=-3.00 -> servo target=+107.00 current=+109.98 deg
+[CAL] beam=-3.00 -> servo target=+101.00 current=+103.98 deg
 [PASS] SERVO K2 -3 deg (actual=-3.00)
-[CAL] beam=+0.00 -> servo target=+110.00 current=+109.98 deg
-[CAL] beam=+3.00 -> servo target=+113.00 current=+110.02 deg
-[CAL] beam=+6.00 -> servo target=+116.00 current=+110.06 deg
-[CAL] beam=+9.00 -> servo target=+119.00 current=+110.10 deg
-[CAL] beam=+12.00 -> servo target=+122.00 current=+110.14 deg
-[CAL] beam=+15.00 -> servo target=+125.00 current=+110.18 deg
-[CAL] beam=+18.00 -> servo target=+128.00 current=+110.22 deg
-[CAL] beam=+21.00 -> servo target=+131.00 current=+110.26 deg
-[CAL] beam=+24.00 -> servo target=+134.00 current=+110.30 deg
-[CAL] beam=+27.00 -> servo target=+137.00 current=+110.34 deg
-[CAL] beam=+30.00 -> servo target=+140.00 current=+110.38 deg
+[CAL] beam=+0.00 -> servo target=+104.00 current=+103.98 deg
+[CAL] beam=+3.00 -> servo target=+107.00 current=+104.02 deg
+[CAL] beam=+6.00 -> servo target=+110.00 current=+104.06 deg
+[CAL] beam=+9.00 -> servo target=+113.00 current=+104.10 deg
+[CAL] beam=+12.00 -> servo target=+116.00 current=+104.14 deg
+[CAL] beam=+15.00 -> servo target=+119.00 current=+104.18 deg
+[CAL] beam=+18.00 -> servo target=+122.00 current=+104.22 deg
+[CAL] beam=+21.00 -> servo target=+125.00 current=+104.26 deg
+[CAL] beam=+24.00 -> servo target=+128.00 current=+104.30 deg
+[CAL] beam=+27.00 -> servo target=+131.00 current=+104.34 deg
+[CAL] beam=+30.00 -> servo target=+134.00 current=+104.38 deg
 [PASS] SERVO clamps at +30 deg (actual=30.00)
-[CAL] beam=+30.00 -> servo target=+140.00 current=+110.42 deg
+[CAL] beam=+30.00 -> servo target=+134.00 current=+104.42 deg
 [PASS] SERVO stays at +30 deg (actual=30.00)
-[CAL] beam=+27.00 -> servo target=+137.00 current=+110.46 deg
+[CAL] beam=+27.00 -> servo target=+131.00 current=+104.46 deg
 [PASS] SERVO K2 steps down from limit (actual=27.00)
 [BALL] mode=UART target=0.00 Kp=+0.60 Kd=+0.30
 [PASS] leaving SERVO restores default limit (actual=5.00)
@@ -126,23 +126,47 @@
 [BALL] K1=enable/step/run, K2=case/level, K1+K2=mode
 [BALL] mode=REMOTE target=0.00 Kp=+0.60 Kd=+0.30
 [PASS] REMOTE starts disarmed
-[PASS] REMOTE starts at neutral target (actual=1378.00)
+[PASS] REMOTE starts at neutral target (actual=1324.00)
 [PASS] REMOTE starts STOP
-[PASS] K1 without command stays disarmed
-[PASS] no-command result recorded
-[PASS] K1 arms remote with fresh command
+[PASS] K1 only stops remote
+[PASS] START_REMOTE enables without prior 0x02
+[PASS] remote starts in NO_CMD waiting state
+[PASS] remote without 0x02 times out
+[PASS] no-command timeout recorded
+[PASS] START_REMOTE arms remote without K1
+[PASS] START_REMOTE ack OK
 [PASS] remote command seq recorded
-[PASS] remote target is 1400 ticks (actual=1400.00)
+[PASS] remote target is neutral +20 ticks (actual=1344.00)
 [PASS] remote stays armed while commands are fresh
 [PASS] remote output moves up
 [PASS] remote output does not overshoot
 [PASS] remote timeout disarms
 [PASS] timeout result recorded
-[PASS] timeout target returns to neutral (actual=1378.00)
-[PASS] remote re-arms with fresh command
+[PASS] timeout target returns to neutral (actual=1324.00)
+[PASS] START_REMOTE re-arms remote
 [PASS] remote stays armed after clamp
-[PASS] remote target clamped to neutral +5 deg (actual=1422.00)
+[PASS] remote target clamped to neutral +5 deg (actual=1368.00)
 [PASS] clamp result recorded
-[PASS] K1 stops remote
+[PASS] K1 local stop disarms remote
 [PASS] stop result recorded
-=== 68 checks, 0 failures ===
+
+[BALL] G3519 ball balance control init
+[BALL] mode=UART target=0.00 Kp=+0.60 Kd=+0.30
+[BALL] servo PA9/TIMA0 50Hz, vision UART0 PA10/PA11 115200
+[BALL] K1=enable/step/run, K2=case/level, K1+K2=mode
+[BALL] mode=UART target=0.00 Kp=+0.60 Kd=+0.30
+[PASS] START_AUTO without vision -> VISN
+[PASS] START_AUTO without vision stays out of AUTO
+[PASS] START_AUTO ack OK
+[PASS] START_AUTO enters AUTO
+[PASS] SET_TARGET ack OK
+[PASS] SET_TARGET updates target (actual=2.50)
+[PASS] SET_PD ack OK
+[PASS] SET_PD updates Kp (actual=0.50)
+[PASS] SET_PD updates Kd (actual=0.20)
+[PASS] STOP ack OK
+[PASS] STOP leaves AUTO
+[BALL] mode=MANUAL target=0.00 Kp=+0.60 Kd=+0.30
+[PASS] SET_MODE MANUAL ack OK
+[PASS] SET_MODE MANUAL enters manual
+=== 85 checks, 0 failures ===

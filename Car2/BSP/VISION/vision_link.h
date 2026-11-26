@@ -34,7 +34,8 @@
  *   1     1     同步字节 1
  *   2     1     协议版本，当前 0x01
  *   3     1     帧类型：0x01=视觉位置，0x02=Nano 远程舵机目标，
- *               0x81=G3519 视觉遥测，0x82=Nano 远程舵机回执
+ *               0x03=Nano 控制指令，0x81=视觉遥测，
+ *               0x82=远程舵机回执，0x83=控制指令回执
  *   4     1     负载长度 len
  *   5     2     帧序号 seq（uint16）
  *   7     len   负载
@@ -61,6 +62,21 @@
  *   10  1     remote_enabled（uint8，0/1）
  *   11  1     result（uint8，0=OK，1=STOP，2=TIMEOUT，3=NO_CMD）
  *
+ * 控制指令（类型 0x03，len=10，Nano → G3519）负载：
+ *   0   1     opcode（1=SET_MODE，2=START_AUTO，3=STOP，
+ *                     4=SET_TARGET，5=SET_PD，6=START_REMOTE）
+ *   1   1     mode（用于 SET_MODE：0=MANUAL，2=UART，5=REMOTE）
+ *   2   4     arg0 float32（SET_TARGET=目标 cm；SET_PD=Kp）
+ *   6   4     arg1 float32（SET_PD=Kd）
+ *
+ * 控制回执（类型 0x83，len=6，G3519 → Nano）负载：
+ *   0   2     command_seq（对应 0x03 帧头序号）
+ *   2   1     opcode
+ *   3   1     result（0=OK，1=BAD_MODE，2=VISION_INVALID，
+ *                      3=PARAM_RANGE，4=FAULT，5=REJECTED）
+ *   4   1     mode（当前生效模式）
+ *   5   1     control_state（BallControl 状态）
+ *
  * 遥测帧（类型 0x81，len=32）负载：
  *   0   4     G3519 本地毫秒时间戳
  *   4   4     目标位置 target_cm（float32）
@@ -86,10 +102,14 @@
 #define VISION_LINK_VERSION             (0x01U)
 #define VISION_LINK_TYPE_BALL           (0x01U)
 #define VISION_LINK_TYPE_SERVO_CMD      (0x02U)
+#define VISION_LINK_TYPE_CONTROL_CMD    (0x03U)
 #define VISION_LINK_TYPE_TELEMETRY      (0x81U)
 #define VISION_LINK_TYPE_REMOTE_TELEMETRY (0x82U)
+#define VISION_LINK_TYPE_CONTROL_ACK    (0x83U)
 #define VISION_LINK_BALL_PAYLOAD_LEN    (12U)
 #define VISION_LINK_SERVO_CMD_PAYLOAD_LEN (2U)
+#define VISION_LINK_CONTROL_CMD_PAYLOAD_LEN (10U)
+#define VISION_LINK_CONTROL_ACK_PAYLOAD_LEN (6U)
 #define VISION_LINK_REMOTE_TELEMETRY_PAYLOAD_LEN (12U)
 #define VISION_LINK_MAX_PAYLOAD_LEN     (32U)
 #define VISION_LINK_DEFAULT_BAUD        (115200U)
@@ -133,6 +153,20 @@ typedef struct {
 } ServoCommand;
 
 /*
+ * Nano 控制指令（0x03）。
+ *
+ * opcode/mode/arg0/arg1 为原始解析值，应用层负责校验范围和执行。
+ */
+typedef struct {
+    uint16_t seq;
+    uint8_t  opcode;
+    uint8_t  mode;
+    float    arg0;
+    float    arg1;
+    bool     valid;
+} ControlCommand;
+
+/*
  * 链路健康状态，供上层调试和故障判定使用。
  */
 typedef struct {
@@ -149,9 +183,14 @@ typedef struct {
     uint32_t servo_cmd_duplicate;
     uint32_t last_servo_rx_ms;
     uint16_t last_servo_seq;
+    uint32_t control_cmd_frames;  /* 0x03 控制帧计数 */
+    uint32_t control_cmd_duplicate;
+    uint32_t last_control_rx_ms;
+    uint16_t last_control_seq;
     uint8_t  consecutive_errors;  /* 连续解码错误次数 */
     bool     have_frame;          /* 上电后是否至少收到过一帧完整位置帧 */
     bool     have_servo_cmd;      /* 上电后是否至少收到过一帧 0x02 */
+    bool     have_control_cmd;    /* 上电后是否至少收到过一帧 0x03 */
     bool     link_fault;          /* 连续错误过多，链路判定为故障 */
 } vision_link_status_t;
 
@@ -209,6 +248,21 @@ bool Vision_GetLatest(BallMeasurement *out, uint32_t *age_ms);
  * - false：从未收到过 0x02。
  */
 bool Vision_GetServoCommand(ServoCommand *out, uint32_t *age_ms);
+
+/*
+ * 取最近一帧控制指令（0x03）。
+ *
+ * 参数：
+ * - out：输出缓冲区，不能为 NULL；
+ * - age_ms：可选，返回该指令距当前的毫秒数。
+ *
+ * 返回值：
+ * - true：至少收到过一帧 0x03；
+ * - false：从未收到。
+ *
+ * 应用层用 seq 去重，保证每条命令只执行一次。
+ */
+bool Vision_GetControlCommand(ControlCommand *out, uint32_t *age_ms);
 
 /* 视觉数据当前是否新鲜且有效。 */
 bool Vision_IsFresh(void);

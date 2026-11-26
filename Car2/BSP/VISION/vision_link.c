@@ -64,6 +64,7 @@ static uint16_t s_frame_index = 0U;
 
 static BallMeasurement s_latest;
 static ServoCommand s_servo_cmd;
+static ControlCommand s_control_cmd;
 static vision_link_status_t s_status;
 static bool     s_have_frame = false;
 static uint16_t s_tx_seq = 0U;
@@ -246,6 +247,40 @@ static void vision_process_servo_cmd(const uint8_t *frame, uint8_t payload_len)
 }
 
 /*
+ * 处理一个 CRC 正确、长度符合要求的控制指令帧（0x03）。
+ *
+ * 只解析并保存 opcode/mode/arg0/arg1；参数范围和控制权限由应用层判断。
+ * 重复序号不刷新 last_control_rx_ms。
+ */
+static void vision_process_control_cmd(const uint8_t *frame, uint8_t payload_len)
+{
+    const uint8_t *payload = &frame[7];
+    uint32_t now = system_time_get_tick_ms();
+    uint16_t seq = (uint16_t)((uint16_t)frame[5] | ((uint16_t)frame[6] << 8));
+
+    if (s_status.have_control_cmd && (seq == s_status.last_control_seq)) {
+        s_status.control_cmd_duplicate++;
+        return;
+    }
+
+    s_status.control_cmd_frames++;
+    s_status.last_control_seq = seq;
+    s_status.last_control_rx_ms = now;
+    s_status.have_control_cmd = true;
+    s_status.consecutive_errors = 0U;
+    s_status.link_fault = false;
+
+    s_control_cmd.seq = seq;
+    s_control_cmd.opcode = payload[0];
+    s_control_cmd.mode = payload[1];
+    s_control_cmd.arg0 = vision_read_f32_le(&payload[2]);
+    s_control_cmd.arg1 = vision_read_f32_le(&payload[6]);
+    s_control_cmd.valid = true;
+
+    (void)payload_len;
+}
+
+/*
  * 帧后处理：校验版本、类型、负载长度和 CRC，再分发。
  */
 static void vision_finish_frame(const uint8_t *frame)
@@ -272,6 +307,12 @@ static void vision_finish_frame(const uint8_t *frame)
             vision_note_decode_error();
             return;
         }
+    } else if (frame[3] == VISION_LINK_TYPE_CONTROL_CMD) {
+        if (payload_len != VISION_LINK_CONTROL_CMD_PAYLOAD_LEN) {
+            s_status.frames_format_error++;
+            vision_note_decode_error();
+            return;
+        }
     } else {
         s_status.frames_format_error++;
         vision_note_decode_error();
@@ -291,8 +332,10 @@ static void vision_finish_frame(const uint8_t *frame)
 
     if (frame[3] == VISION_LINK_TYPE_BALL) {
         vision_process_ball_frame(frame, payload_len);
-    } else {
+    } else if (frame[3] == VISION_LINK_TYPE_SERVO_CMD) {
         vision_process_servo_cmd(frame, payload_len);
+    } else {
+        vision_process_control_cmd(frame, payload_len);
     }
 }
 
@@ -428,6 +471,7 @@ void Vision_Init(uint32_t baud)
 
     memset(&s_latest, 0, sizeof(s_latest));
     memset(&s_servo_cmd, 0, sizeof(s_servo_cmd));
+    memset(&s_control_cmd, 0, sizeof(s_control_cmd));
     memset(&s_status, 0, sizeof(s_status));
     s_have_frame = false;
 
@@ -507,6 +551,23 @@ bool Vision_GetServoCommand(ServoCommand *out, uint32_t *age_ms)
     }
 
     return s_status.have_servo_cmd;
+}
+
+bool Vision_GetControlCommand(ControlCommand *out, uint32_t *age_ms)
+{
+    uint32_t now = system_time_get_tick_ms();
+
+    if (out == NULL) {
+        return false;
+    }
+
+    *out = s_control_cmd;
+    if (age_ms != NULL) {
+        *age_ms = s_status.have_control_cmd ?
+                  (uint32_t)(now - s_status.last_control_rx_ms) : 0xFFFFFFFFU;
+    }
+
+    return s_status.have_control_cmd;
 }
 
 bool Vision_IsFresh(void)

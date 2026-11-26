@@ -8,7 +8,9 @@ G3519 滚球控制串口联调工具。
 2. decode  —— 接收 G3519 的遥测帧并打印/保存为 CSV，便于分析响应时间、超调、稳态误差；
 3. sim     —— 半实物闭环：接收遥测里的实际摆杆倾角，用滚球动力学积分出钢珠位置，
               再发回 G3519，可在没有真实钢珠/摄像头时验证整条控制链路；
-4. remote  —— 发送 0x02 远程舵机 PWM 命令并解码 0x82 回执，用于执行机构标定。
+4. remote  —— 发送 0x02 远程舵机 PWM 命令并解码 0x82 回执，用于执行机构标定；
+5. control —— 发送 0x03 控制指令（SET_MODE/START_AUTO/STOP/SET_TARGET/
+              SET_PD/START_REMOTE）并解码 0x83 回执。
 
 协议与 Car2/BSP/VISION/vision_link.h 完全一致：
 帧 = A5 5A | ver(1) type(1) len(1) seq(2) | payload(len) | crc16(2, 小端)
@@ -33,8 +35,10 @@ SYNC1 = 0x5A
 VERSION = 0x01
 TYPE_BALL = 0x01
 TYPE_SERVO_CMD = 0x02
+TYPE_CONTROL_CMD = 0x03
 TYPE_TELEMETRY = 0x81
 TYPE_REMOTE_TELEMETRY = 0x82
+TYPE_CONTROL_ACK = 0x83
 
 FRAME_OVERHEAD = 9  # 同步 2 + 版本/类型/长度/序号 5 + CRC 2
 
@@ -66,6 +70,25 @@ def build_frame(frame_type: int, seq: int, payload: bytes) -> bytes:
     body = struct.pack("<BBBH", VERSION, frame_type, len(payload), seq) + payload
     crc = crc16_ccitt(body)
     return bytes([SYNC0, SYNC1]) + body + struct.pack("<H", crc)
+
+
+def build_control_payload(opcode: int, mode: int, arg0: float, arg1: float) -> bytes:
+    """0x03 控制指令负载：opcode, mode, float arg0, float arg1。"""
+    return struct.pack("<BBff", opcode & 0xFF, mode & 0xFF, arg0, arg1)
+
+
+def parse_control_ack(payload: bytes):
+    """解析 6 字节 0x83 控制回执。"""
+    if len(payload) != 6:
+        return None
+    seq, opcode, result, mode, state = struct.unpack("<HBBBB", payload)
+    return {
+        "seq": seq,
+        "opcode": opcode,
+        "result": result,
+        "mode": mode,
+        "control_state": state,
+    }
 
 
 def build_servo_payload(target_ticks: int) -> bytes:
@@ -213,7 +236,7 @@ def run_send(ser, args):
     parser = FrameParser()
     period = 1.0 / args.rate
     next_t = time.monotonic()
-    seq = 0
+    seq = int(time.monotonic() * 1000.0) & 0xFFFF
     scenario_index = 0
     scenario_start = time.monotonic()
 
@@ -296,12 +319,48 @@ def run_decode(ser, args):
             writer.close()
 
 
+def run_control(ser, args):
+    """发送一条 0x03 控制指令并等待 0x83 回执。"""
+    parser = FrameParser()
+    # 用时间初始化 seq，避免每次运行 CLI 都从 1 开始，被 G3519 当成重复帧。
+    seq = int(time.monotonic() * 1000.0) & 0xFFFF
+    if seq == 0:
+        seq = 1
+    deadline = time.monotonic() + args.wait
+
+    ser.write(build_frame(TYPE_CONTROL_CMD, seq,
+                          build_control_payload(args.opcode, args.mode,
+                                                args.arg0, args.arg1)))
+    print(f"control: opcode={args.opcode} mode={args.mode} "
+          f"arg0={args.arg0} arg1={args.arg1}")
+
+    while time.monotonic() < deadline:
+        data = ser.read(256)
+        if not data:
+            continue
+        for frame_type, _, payload in parser.feed(data):
+            if frame_type == TYPE_CONTROL_ACK:
+                ack = parse_control_ack(payload)
+                if ack:
+                    print(f"ack: seq={ack['seq']} opcode={ack['opcode']} "
+                          f"result={ack['result']} mode={ack['mode']} "
+                          f"state={ack['control_state']}")
+            elif frame_type == TYPE_REMOTE_TELEMETRY:
+                telemetry = parse_remote_telemetry(payload)
+                if telemetry:
+                    print(f"0x82: seq={telemetry['seq']} "
+                          f"target={telemetry['target_ticks']} "
+                          f"output={telemetry['output_ticks']} "
+                          f"enabled={int(telemetry['enabled'])} "
+                          f"result={telemetry['result']}")
+
+
 def run_remote(ser, args):
     """以固定周期发送 0x02 远程舵机命令，并解码 0x82 回执。"""
     parser = FrameParser()
     period = 1.0 / args.rate
     next_t = time.monotonic()
-    seq = 0
+    seq = int(time.monotonic() * 1000.0) & 0xFFFF
 
     print(f"remote: target={args.ticks} ticks, {args.rate:.0f} Hz, Ctrl+C 退出")
     while True:
@@ -424,6 +483,19 @@ def main():
     p_decode = sub.add_parser("decode", parents=[common], help="解码遥测")
     p_decode.add_argument("--csv", default="", help="保存为 CSV 文件")
     p_decode.set_defaults(func=run_decode)
+
+    p_control = sub.add_parser("control", parents=[common],
+                               help="发送 0x03 控制指令并等待 0x83 回执")
+    p_control.add_argument("--opcode", type=int, required=True,
+                           help="1=SET_MODE 2=START_AUTO 3=STOP "
+                                "4=SET_TARGET 5=SET_PD 6=START_REMOTE")
+    p_control.add_argument("--mode", type=int, default=2,
+                           help="SET_MODE 模式：0=MANUAL 2=UART 5=REMOTE")
+    p_control.add_argument("--arg0", type=float, default=0.0)
+    p_control.add_argument("--arg1", type=float, default=0.0)
+    p_control.add_argument("--wait", type=float, default=0.5,
+                           help="等待回执秒数")
+    p_control.set_defaults(func=run_control)
 
     p_remote = sub.add_parser("remote", parents=[common],
                               help="发送 0x02 远程舵机 PWM 命令并解码 0x82")

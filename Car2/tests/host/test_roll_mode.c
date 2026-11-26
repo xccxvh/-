@@ -14,6 +14,7 @@
  */
 
 #include "App/ball_test.h"
+#include "App/ball_control.h"
 #include "SERVO/servo.h"
 #include "SystemTime/system_time.h"
 #include "bsp.h"
@@ -22,6 +23,8 @@
 
 void host_key_press(user_key_id_t key);
 void host_vision_set_servo_command(uint16_t ticks, uint16_t seq);
+void host_vision_set_control_command(uint8_t opcode, uint8_t mode,
+                                     float arg0, float arg1, uint16_t seq);
 void host_key_release(user_key_id_t key);
 
 static int g_checks = 0;
@@ -384,21 +387,40 @@ static void test_remote_mode(void)
                "REMOTE starts at neutral target");
     check_true(rs.result == BALL_REMOTE_RESULT_STOP, "REMOTE starts STOP");
 
-    /* 没有 0x02 命令时 K1 不应使能。 */
+    /* K1 现在只做本地停止，没有 0x02/START_REMOTE 时不会使能。 */
     tap_key(USER_KEY_K1);
     BallTest_GetRemoteStatus(&rs);
-    check_true(!rs.enabled, "K1 without command stays disarmed");
-    check_true(rs.result == BALL_REMOTE_RESULT_NO_CMD,
-               "no-command result recorded");
+    check_true(!rs.enabled, "K1 only stops remote");
 
-    /* 注入 0x02：目标 1400 ticks，序号 7。 */
-    host_vision_set_servo_command(1400U, 7U);
-    tap_key(USER_KEY_K1);
+    /* START_REMOTE 不再要求先收到 0x02：先使能并保持零位。 */
+    host_vision_set_control_command(BALL_CMD_START_REMOTE,
+                                    BALL_TEST_MODE_REMOTE, 0.0f, 0.0f, 0U);
+    BallTest_AppTask();
     BallTest_GetRemoteStatus(&rs);
-    check_true(rs.enabled, "K1 arms remote with fresh command");
+    check_true(rs.enabled, "START_REMOTE enables without prior 0x02");
+    check_true(rs.result == BALL_REMOTE_RESULT_NO_CMD,
+               "remote starts in NO_CMD waiting state");
+
+    host_time_advance_ms(301U);
+    BallTest_AppTask();
+    BallTest_GetRemoteStatus(&rs);
+    check_true(!rs.enabled, "remote without 0x02 times out");
+    check_true(rs.result == BALL_REMOTE_RESULT_TIMEOUT,
+               "no-command timeout recorded");
+
+    /* 注入 0x02（零位 +20 ticks，处于 ±5° 安全范围内），
+     * 再由 0x03 START_REMOTE 使能。 */
+    host_vision_set_servo_command((uint16_t)(neutral + 20U), 7U);
+    host_vision_set_control_command(BALL_CMD_START_REMOTE,
+                                    BALL_TEST_MODE_REMOTE, 0.0f, 0.0f, 1U);
+    BallTest_AppTask();
+    BallTest_GetRemoteStatus(&rs);
+    check_true(rs.enabled, "START_REMOTE arms remote without K1");
+    check_true(BallTest_GetLastCommandResult() == BALL_CMD_RESULT_OK,
+               "START_REMOTE ack OK");
     check_true(rs.seq == 7U, "remote command seq recorded");
-    check_near((float)rs.target_ticks, 1400.0f, 1.0f,
-               "remote target is 1400 ticks");
+    check_near((float)rs.target_ticks, (float)(neutral + 20U), 1.0f,
+               "remote target is neutral +20 ticks");
 
     /* 200 ms 后输出应向 1400 ticks 靠近，但不超过目标。 */
     for (int i = 0; i < 20; i++) {
@@ -407,7 +429,8 @@ static void test_remote_mode(void)
     BallTest_GetRemoteStatus(&rs);
     check_true(rs.enabled, "remote stays armed while commands are fresh");
     check_true(rs.output_ticks > neutral, "remote output moves up");
-    check_true(rs.output_ticks <= 1400U, "remote output does not overshoot");
+    check_true(rs.output_ticks <= (uint16_t)(neutral + 20U),
+               "remote output does not overshoot");
 
     /* 超过 300 ms 没有新 0x02：退出远程并回零。 */
     host_time_advance_ms(301U);
@@ -419,11 +442,13 @@ static void test_remote_mode(void)
     check_near((float)rs.target_ticks, (float)neutral, 1.0f,
                "timeout target returns to neutral");
 
-    /* 新命令可重新使能，K1 再按停止。 */
+    /* 新 0x02 + START_REMOTE 可重新使能。 */
     host_vision_set_servo_command(1360U, 8U);
-    tap_key(USER_KEY_K1);
+    host_vision_set_control_command(BALL_CMD_START_REMOTE,
+                                    BALL_TEST_MODE_REMOTE, 0.0f, 0.0f, 2U);
+    BallTest_AppTask();
     BallTest_GetRemoteStatus(&rs);
-    check_true(rs.enabled, "remote re-arms with fresh command");
+    check_true(rs.enabled, "START_REMOTE re-arms remote");
 
     /* 超出零位 ±5° 的目标应被限幅并回执 CLAMP。 */
     host_vision_set_servo_command(1600U, 9U);
@@ -438,8 +463,81 @@ static void test_remote_mode(void)
 
     tap_key(USER_KEY_K1);
     BallTest_GetRemoteStatus(&rs);
-    check_true(!rs.enabled, "K1 stops remote");
+    check_true(!rs.enabled, "K1 local stop disarms remote");
     check_true(rs.result == BALL_REMOTE_RESULT_STOP, "stop result recorded");
+}
+
+
+/* ===================== 0x03 控制指令 ===================== */
+
+static void test_control_commands(void)
+{
+    BallMeasurement measurement;
+    float kp = 0.0f;
+    float kd = 0.0f;
+
+    host_time_reset();
+    BallTest_AppInit();
+    BallTest_SetMode(BALL_TEST_MODE_UART);
+
+    /* 没有视觉数据时 START_AUTO 必须拒绝。 */
+    host_vision_set_control_command(BALL_CMD_START_AUTO,
+                                    BALL_TEST_MODE_UART, 0.0f, 0.0f, 1U);
+    BallTest_AppTask();
+    check_true(BallTest_GetLastCommandResult() ==
+               BALL_CMD_RESULT_VISION_INVALID,
+               "START_AUTO without vision -> VISN");
+    check_true(BallControl_GetState() != BALL_STATE_AUTO,
+               "START_AUTO without vision stays out of AUTO");
+
+    /* 注入一帧有效钢珠位置后，START_AUTO 应成功。 */
+    measurement.x_cm = 1.0f;
+    measurement.frame_time_ms = 0U;
+    measurement.seq = 1U;
+    measurement.confidence = 95.0f;
+    measurement.valid = true;
+    BallControl_OnMeasurement(&measurement);
+
+    host_vision_set_control_command(BALL_CMD_START_AUTO,
+                                    BALL_TEST_MODE_UART, 0.0f, 0.0f, 2U);
+    BallTest_AppTask();
+    check_true(BallTest_GetLastCommandResult() == BALL_CMD_RESULT_OK,
+               "START_AUTO ack OK");
+    check_true(BallControl_GetState() == BALL_STATE_AUTO,
+               "START_AUTO enters AUTO");
+
+    host_vision_set_control_command(BALL_CMD_SET_TARGET,
+                                    BALL_TEST_MODE_UART, 2.5f, 0.0f, 3U);
+    BallTest_AppTask();
+    check_true(BallTest_GetLastCommandResult() == BALL_CMD_RESULT_OK,
+               "SET_TARGET ack OK");
+    check_near(BallControl_GetTarget(), 2.5f, 0.01f,
+               "SET_TARGET updates target");
+
+    host_vision_set_control_command(BALL_CMD_SET_PD,
+                                    BALL_TEST_MODE_UART, 0.5f, 0.2f, 4U);
+    BallTest_AppTask();
+    check_true(BallTest_GetLastCommandResult() == BALL_CMD_RESULT_OK,
+               "SET_PD ack OK");
+    BallControl_GetGains(&kp, &kd);
+    check_near(kp, 0.5f, 0.01f, "SET_PD updates Kp");
+    check_near(kd, 0.2f, 0.01f, "SET_PD updates Kd");
+
+    host_vision_set_control_command(BALL_CMD_STOP,
+                                    BALL_TEST_MODE_UART, 0.0f, 0.0f, 5U);
+    BallTest_AppTask();
+    check_true(BallTest_GetLastCommandResult() == BALL_CMD_RESULT_OK,
+               "STOP ack OK");
+    check_true(BallControl_GetState() == BALL_STATE_IDLE,
+               "STOP leaves AUTO");
+
+    host_vision_set_control_command(BALL_CMD_SET_MODE,
+                                    BALL_TEST_MODE_MANUAL, 0.0f, 0.0f, 6U);
+    BallTest_AppTask();
+    check_true(BallTest_GetLastCommandResult() == BALL_CMD_RESULT_OK,
+               "SET_MODE MANUAL ack OK");
+    check_true(BallControl_GetState() == BALL_STATE_MANUAL,
+               "SET_MODE MANUAL enters manual");
 }
 
 int main(void)
@@ -452,6 +550,7 @@ int main(void)
     test_max_level();
     test_servo_mode();
     test_remote_mode();
+    test_control_commands();
 
     printf("=== %d checks, %d failures ===\n", g_checks, g_failures);
     return (g_failures == 0) ? 0 : 1;

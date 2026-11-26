@@ -39,4 +39,14 @@
 [PASS] duplicate 0x02 counted
 [PASS] 0x02 remains stored
 [PASS] 0x02 age advances for remote timeout
-=== 40 checks, 0 failures ===
+[PASS] 0x03 control command accepted
+[PASS] 0x03 seq parsed
+[PASS] 0x03 opcode parsed
+[PASS] 0x03 mode parsed
+[PASS] 0x03 arg0 parsed (actual=0.750)
+[PASS] 0x03 arg1 parsed (actual=-0.250)
+[PASS] 0x03 command age fresh
+[PASS] status.have_control_cmd set
+[PASS] control cmd frame counted
+[PASS] duplicate 0x03 counted
+=== 50 checks, 0 failures ===

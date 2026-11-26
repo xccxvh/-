@@ -19,9 +19,10 @@
  * - ROLL：K1 = 启动连续左右滚动（运行中再按 = 立即停止并回平衡点），
  *         K2 = 切换 5°/7.5°/10° 档位（运行中忽略）；
  * - SERVO：K1 = +3°，K2 = -3°，相对零位限制在 ±30°；
- * - REMOTE：K1 = 允许/停止远程控制；K2 暂不使用；
- * - UART：K1 = 启动/停止 PD；K2 = 切换目标位置（首次联调固定 0 cm，不按 K2）；
- * - SIM（历史）：K1 使能/关闭 AUTO（受 BALL_TEST_ALLOW_AUTO 控制），K2 切场景。
+ * - REMOTE：K1 = 本地停止远程控制；K2 暂不使用；
+ * - UART：K1 = 本地停止 PD；K2 暂不使用；
+ * - 启动 AUTO/远程由 Nano 0x03 控制指令完成，按键不再是启动前置条件；
+ * - SIM（历史）：K1 使能/关闭 AUTO，K2 切场景。
  * - 任意模式：先按住 K1 再按 K2 = 切换到下一个模式。
  *
  * 显示与日志：
@@ -84,16 +85,6 @@ typedef struct {
 } ball_roll_status_t;
 
 /*
- * 是否允许 SIM/UART 模式下按 K1 进入 AUTO。
- *
- * 本次静态滚球联调使用 UART 监测 + K1 启动 AUTO，因此设为 1；
- * 设为 0 时 UART/SIM 下 K1 只监测、不进入 PD 闭环。
- */
-#ifndef BALL_TEST_ALLOW_AUTO
-#define BALL_TEST_ALLOW_AUTO            (1U)
-#endif
-
-/*
  * REMOTE 模式参数。
  *
  * - 远程命令 300 ms 未更新则退出远程控制并回安全位置，不自动恢复；
@@ -118,6 +109,22 @@ typedef struct {
 #define BALL_REMOTE_RESULT_TIMEOUT      (2U)
 #define BALL_REMOTE_RESULT_NO_CMD       (3U)
 #define BALL_REMOTE_RESULT_CLAMP        (4U)
+
+/* 0x03 控制指令 opcode。 */
+#define BALL_CMD_SET_MODE               (1U)
+#define BALL_CMD_START_AUTO             (2U)
+#define BALL_CMD_STOP                   (3U)
+#define BALL_CMD_SET_TARGET             (4U)
+#define BALL_CMD_SET_PD                 (5U)
+#define BALL_CMD_START_REMOTE           (6U)
+
+/* 0x83 控制回执 result。 */
+#define BALL_CMD_RESULT_OK              (0U)
+#define BALL_CMD_RESULT_BAD_MODE        (1U)
+#define BALL_CMD_RESULT_VISION_INVALID  (2U)
+#define BALL_CMD_RESULT_PARAM_RANGE     (3U)
+#define BALL_CMD_RESULT_FAULT           (4U)
+#define BALL_CMD_RESULT_REJECTED        (5U)
 
 /* 上电默认模式；本次任务要求默认仍由 main.c 选择循迹，不自动进入滚球测试。 */
 #ifndef BALL_TEST_DEFAULT_MODE
@@ -246,5 +253,8 @@ void BallTest_GetRollStatus(ball_roll_status_t *status);
  * - status：输出缓冲区，不能为 NULL。
  */
 void BallTest_GetRemoteStatus(ball_remote_status_t *status);
+
+/* 最近一条 0x03 指令的处理结果，供 LCD/测试查看拒绝原因。 */
+uint8_t BallTest_GetLastCommandResult(void);
 
 #endif
