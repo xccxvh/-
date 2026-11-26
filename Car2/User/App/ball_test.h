@@ -7,22 +7,21 @@
  * 本应用与 line_following 并列，由 User/main.c 的编译期宏选择，二者不会同时
  * 运行，也不会修改循迹代码。
  *
- * 支持五种测试模式（可在运行时用 K1+K2 循环切换）：
- * - MANUAL：不启用 PD，手动以 0.1° 步长微调摆杆，用于平衡点标定（任务一）；
- * - SERVO：自由舵机角度测试，K1 +3°、K2 -3°，范围相对零位 ±30°；
- * - ROLL：开环 5°/7.5°/10° 自动左右滚动，按 K1 启动后会循环执行
- *   +θ -> 0 -> -θ -> 0，直到再按一次 K1 停止（任务二）；
- * - SIM：用模拟钢珠位置验证 PD 控制逻辑，无需 Jetson；
- * - UART：接收 Jetson 通过 UART0（Type-C/DAPLink，PA10/PA11）发来的真实厘米位置。
+ * 常用模式（K1+K2 循环）：MANUAL -> REMOTE -> UART -> MANUAL。
+ * - MANUAL：不启用 PD，手动以 0.1° 步长微调摆杆，用于平衡点标定；
+ * - REMOTE：接收 Nano 0x02 远程 PWM 目标，K1 允许/停止远程控制；
+ * - UART：接收 Jetson 0x01 厘米位置，K1 启动/停止 PD，K2 切换目标。
+ *
+ * 历史模式 SIM / ROLL / SERVO 保留源码，但暂时移出常用切换流程。
  *
  * 按键操作：
  * - MANUAL：K1 = +BALL_TEST_MANUAL_STEP_DEG，K2 = -BALL_TEST_MANUAL_STEP_DEG；
  * - ROLL：K1 = 启动连续左右滚动（运行中再按 = 立即停止并回平衡点），
  *         K2 = 切换 5°/7.5°/10° 档位（运行中忽略）；
  * - SERVO：K1 = +3°，K2 = -3°，相对零位限制在 ±30°；
- * - SIM/UART：K2 = 切换场景/目标位置；
- *   K1 = 使能/关闭 AUTO，但仅当 BALL_TEST_ALLOW_AUTO=1 时生效；
- *   本版本默认 1（静态滚球联调允许 K1 进入闭环）；设为 0 则只监测。
+ * - REMOTE：K1 = 允许/停止远程控制；K2 暂不使用；
+ * - UART：K1 = 启动/停止 PD；K2 = 切换目标位置（首次联调固定 0 cm，不按 K2）；
+ * - SIM（历史）：K1 使能/关闭 AUTO（受 BALL_TEST_ALLOW_AUTO 控制），K2 切场景。
  * - 任意模式：先按住 K1 再按 K2 = 切换到下一个模式。
  *
  * 显示与日志：
@@ -39,10 +38,11 @@
 /* 测试模式。 */
 typedef enum {
     BALL_TEST_MODE_MANUAL = 0,
-    BALL_TEST_MODE_SIM = 1,
+    BALL_TEST_MODE_SIM = 1,       /* 历史功能，移出常用切换流程 */
     BALL_TEST_MODE_UART = 2,
-    BALL_TEST_MODE_ROLL = 3,
-    BALL_TEST_MODE_SERVO = 4      /* 自由舵机角度：K1 +3°，K2 -3°，范围 ±30° */
+    BALL_TEST_MODE_ROLL = 3,      /* 历史功能，移出常用切换流程 */
+    BALL_TEST_MODE_SERVO = 4,     /* 历史功能，移出常用切换流程 */
+    BALL_TEST_MODE_REMOTE = 5     /* Nano 远程舵机 PWM 控制 */
 } ball_test_mode_t;
 
 /*
@@ -60,6 +60,17 @@ typedef enum {
     BALL_ROLL_RETURN_NEG,     /* 反向结束，回平衡点 */
     BALL_ROLL_FINISH          /* 到位超时中止；摆杆回平衡点 */
 } ball_test_roll_state_t;
+
+/*
+ * REMOTE 模式状态快照，供 LCD、0x82 回执和主机测试使用。
+ */
+typedef struct {
+    bool     enabled;        /* K1 是否已允许远程控制 */
+    uint16_t seq;            /* 最近处理的 0x02 命令序号 */
+    uint16_t target_ticks;   /* 限幅后的目标 PWM 计数 */
+    uint16_t output_ticks;   /* 当前实际写入的 PWM 计数 */
+    uint8_t  result;         /* BALL_REMOTE_RESULT_xxx */
+} ball_remote_status_t;
 
 /*
  * 开环滚动状态的只读快照，供 LCD、串口日志和主机测试使用。
@@ -81,6 +92,32 @@ typedef struct {
 #ifndef BALL_TEST_ALLOW_AUTO
 #define BALL_TEST_ALLOW_AUTO            (1U)
 #endif
+
+/*
+ * REMOTE 模式参数。
+ *
+ * - 远程命令 300 ms 未更新则退出远程控制并回安全位置，不自动恢复；
+ * - 舵机目标每 10 ms 重发一次，保证斜率限制逐步到位；
+ * - 0x82 回执 10 Hz。
+ */
+/*
+ * REMOTE 初始安全行程：相对当前零位限制 ±5°。
+ * 现场空载确认后如需更大范围再调整；不要直接开放 SERVO 模式的 ±30°。
+ */
+#ifndef BALL_TEST_REMOTE_LIMIT_DEG
+#define BALL_TEST_REMOTE_LIMIT_DEG      (5.0f)
+#endif
+
+#define BALL_TEST_REMOTE_TIMEOUT_MS     (300U)
+#define BALL_TEST_REMOTE_APPLY_MS       (10U)
+#define BALL_TEST_REMOTE_TELEMETRY_MS   (100U)
+
+/* 0x82 回执 result 字段。 */
+#define BALL_REMOTE_RESULT_OK           (0U)
+#define BALL_REMOTE_RESULT_STOP         (1U)
+#define BALL_REMOTE_RESULT_TIMEOUT      (2U)
+#define BALL_REMOTE_RESULT_NO_CMD       (3U)
+#define BALL_REMOTE_RESULT_CLAMP        (4U)
 
 /* 上电默认模式；本次任务要求默认仍由 main.c 选择循迹，不自动进入滚球测试。 */
 #ifndef BALL_TEST_DEFAULT_MODE
@@ -201,5 +238,13 @@ void BallTest_SetMode(ball_test_mode_t mode);
  * - status：输出缓冲区，不能为 NULL。
  */
 void BallTest_GetRollStatus(ball_roll_status_t *status);
+
+/*
+ * 读取 REMOTE 状态快照。
+ *
+ * 参数：
+ * - status：输出缓冲区，不能为 NULL。
+ */
+void BallTest_GetRemoteStatus(ball_remote_status_t *status);
 
 #endif

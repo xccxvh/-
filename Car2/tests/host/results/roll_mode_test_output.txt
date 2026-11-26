@@ -119,4 +119,30 @@
 [PASS] SERVO K2 steps down from limit (actual=27.00)
 [BALL] mode=UART target=0.00 Kp=+0.60 Kd=+0.30
 [PASS] leaving SERVO restores default limit (actual=5.00)
-=== 48 checks, 0 failures ===
+
+[BALL] G3519 ball balance control init
+[BALL] mode=UART target=0.00 Kp=+0.60 Kd=+0.30
+[BALL] servo PA9/TIMA0 50Hz, vision UART0 PA10/PA11 115200
+[BALL] K1=enable/step/run, K2=case/level, K1+K2=mode
+[BALL] mode=REMOTE target=0.00 Kp=+0.60 Kd=+0.30
+[PASS] REMOTE starts disarmed
+[PASS] REMOTE starts at neutral target (actual=1378.00)
+[PASS] REMOTE starts STOP
+[PASS] K1 without command stays disarmed
+[PASS] no-command result recorded
+[PASS] K1 arms remote with fresh command
+[PASS] remote command seq recorded
+[PASS] remote target is 1400 ticks (actual=1400.00)
+[PASS] remote stays armed while commands are fresh
+[PASS] remote output moves up
+[PASS] remote output does not overshoot
+[PASS] remote timeout disarms
+[PASS] timeout result recorded
+[PASS] timeout target returns to neutral (actual=1378.00)
+[PASS] remote re-arms with fresh command
+[PASS] remote stays armed after clamp
+[PASS] remote target clamped to neutral +5 deg (actual=1422.00)
+[PASS] clamp result recorded
+[PASS] K1 stops remote
+[PASS] stop result recorded
+=== 68 checks, 0 failures ===

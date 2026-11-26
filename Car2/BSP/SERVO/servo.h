@@ -61,6 +61,7 @@ typedef struct {
     float    beam_angle_cmd_deg;
     float    servo_angle_cmd_deg;
     uint16_t pulse_us;
+    uint16_t pulse_ticks;     /* 精确 PWM 高电平计数，400~2000 */
     bool     ready;
     bool     rate_limited;
 } servo_status_t;
@@ -207,6 +208,35 @@ float Servo_GetBeamAngleActual(void);
 
 /* 返回当前 PWM 高电平脉宽，单位 us。 */
 uint16_t Servo_GetPulseUs(void);
+
+/* 返回当前 PWM 高电平计数（1 tick = 1.25 us，周期 16000）。 */
+uint16_t Servo_GetPulseTicks(void);
+
+/* 返回零位对应的 PWM 计数（当前约 1378 ticks）。 */
+uint16_t Servo_GetNeutralPulseTicks(void);
+
+/*
+ * 把外部目标 PWM 计数限制到舵机安全范围并返回。
+ *
+ * 说明：
+ * - 输入按 400~2000 计数（0~180°）解释；
+ * - 再按 SERVO_MECH_MIN_DEG~MAX_DEG 机械角度限幅；
+ * - 返回限幅后的目标计数，供远程回执上报。
+ */
+uint16_t Servo_ClampPulseTicks(uint16_t ticks);
+
+/*
+ * 直接以 PWM 计数为目标驱动舵机（REMOTE 模式使用）。
+ *
+ * 参数：
+ * - ticks：目标 PWM 高电平计数，内部先按 Servo_ClampPulseTicks() 限幅；
+ *
+ * 行为：
+ * - 复用 SERVO_MAX_SLEW_DPS 斜率限制；
+ * - 不经过摆杆倾角映射，直接换算成舵机角度；
+ * - 非阻塞，只写比较值。
+ */
+void Servo_SetTargetPulseTicks(uint16_t ticks);
 
 /* 返回 Servo_Init() 是否已完成。 */
 bool Servo_IsReady(void);

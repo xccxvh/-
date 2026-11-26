@@ -67,6 +67,15 @@ typedef enum {
 #define BALL_CONTROL_MAX_BEAM_DEG       (1.0f)
 #endif
 
+/* AUTO 退出原因，便于在 LCD/日志中区分人工停止、视觉失效和超时。 */
+typedef enum {
+    BALL_EXIT_NONE = 0,
+    BALL_EXIT_MANUAL = 1,
+    BALL_EXIT_INVALID = 2,
+    BALL_EXIT_TIMEOUT = 3,
+    BALL_EXIT_FAULT = 4
+} ball_exit_reason_t;
+
 /* 故障码，写入调试信息；0 表示无故障。 */
 #define BALL_FAULT_NONE                 (0U)
 #define BALL_FAULT_VISION_LINK          (1U)  /* 视觉链路连续解码错误 */
@@ -97,6 +106,7 @@ typedef struct {
     uint16_t servo_pwm_us;
     uint8_t  control_state;
     uint8_t  fault_code;
+    uint8_t  exit_reason;
     bool     vision_valid;
     bool     auto_enabled;
     uint32_t vision_age_ms;
@@ -248,5 +258,8 @@ void BallControl_GetDebug(ball_debug_t *debug);
 
 /* 状态对应的短字符串，用于 LCD 和日志。 */
 const char *BallControl_StateText(ball_control_state_t state);
+
+/* AUTO 退出原因的短字符串，用于 LCD/日志（NONE/STOP/INV/TMO/FLT）。 */
+const char *BallControl_ExitReasonText(ball_exit_reason_t reason);
 
 #endif

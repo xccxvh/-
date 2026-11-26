@@ -1,4 +1,5 @@
 #include "VISION/vision_link.h"
+#include "SystemTime/system_time.h"
 
 /*
  * 主机测试用的视觉链路替身。
@@ -8,9 +9,26 @@
  * - 遥测组包函数保持和真实实现相同的字节序，便于检查 telemetry 负载。
  */
 
+static ServoCommand s_host_cmd;
+static bool s_host_have_cmd = false;
+static uint32_t s_host_cmd_rx_ms = 0U;
+
+/* 测试用：注入一帧 0x02 远程舵机命令。 */
+void host_vision_set_servo_command(uint16_t ticks, uint16_t seq)
+{
+    s_host_cmd.target_pwm_ticks = ticks;
+    s_host_cmd.seq = seq;
+    s_host_cmd.valid = true;
+    s_host_have_cmd = true;
+    s_host_cmd_rx_ms = system_time_get_tick_ms();
+}
+
 void Vision_Init(uint32_t baud)
 {
     (void)baud;
+    memset(&s_host_cmd, 0, sizeof(s_host_cmd));
+    s_host_have_cmd = false;
+    s_host_cmd_rx_ms = 0U;
 }
 
 void Vision_Update(void)
@@ -27,6 +45,21 @@ bool Vision_GetLatest(BallMeasurement *out, uint32_t *age_ms)
         *age_ms = 0xFFFFFFFFU;
     }
     return false;
+}
+
+bool Vision_GetServoCommand(ServoCommand *out, uint32_t *age_ms)
+{
+    uint32_t now = system_time_get_tick_ms();
+
+    if (out != NULL) {
+        *out = s_host_cmd;
+    }
+    if (age_ms != NULL) {
+        *age_ms = s_host_have_cmd ?
+                  (uint32_t)(now - s_host_cmd_rx_ms) : 0xFFFFFFFFU;
+    }
+
+    return s_host_have_cmd;
 }
 
 bool Vision_IsFresh(void)

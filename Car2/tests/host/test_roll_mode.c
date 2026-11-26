@@ -21,6 +21,7 @@
 #include <stdio.h>
 
 void host_key_press(user_key_id_t key);
+void host_vision_set_servo_command(uint16_t ticks, uint16_t seq);
 void host_key_release(user_key_id_t key);
 
 static int g_checks = 0;
@@ -366,6 +367,81 @@ static void test_servo_mode(void)
                "leaving SERVO restores default limit");
 }
 
+/* ===================== REMOTE 远程舵机控制 ===================== */
+
+static void test_remote_mode(void)
+{
+    ball_remote_status_t rs;
+    uint16_t neutral = Servo_GetNeutralPulseTicks();
+
+    host_time_reset();
+    BallTest_AppInit();
+    BallTest_SetMode(BALL_TEST_MODE_REMOTE);
+
+    BallTest_GetRemoteStatus(&rs);
+    check_true(!rs.enabled, "REMOTE starts disarmed");
+    check_near((float)rs.target_ticks, (float)neutral, 1.0f,
+               "REMOTE starts at neutral target");
+    check_true(rs.result == BALL_REMOTE_RESULT_STOP, "REMOTE starts STOP");
+
+    /* 没有 0x02 命令时 K1 不应使能。 */
+    tap_key(USER_KEY_K1);
+    BallTest_GetRemoteStatus(&rs);
+    check_true(!rs.enabled, "K1 without command stays disarmed");
+    check_true(rs.result == BALL_REMOTE_RESULT_NO_CMD,
+               "no-command result recorded");
+
+    /* 注入 0x02：目标 1400 ticks，序号 7。 */
+    host_vision_set_servo_command(1400U, 7U);
+    tap_key(USER_KEY_K1);
+    BallTest_GetRemoteStatus(&rs);
+    check_true(rs.enabled, "K1 arms remote with fresh command");
+    check_true(rs.seq == 7U, "remote command seq recorded");
+    check_near((float)rs.target_ticks, 1400.0f, 1.0f,
+               "remote target is 1400 ticks");
+
+    /* 200 ms 后输出应向 1400 ticks 靠近，但不超过目标。 */
+    for (int i = 0; i < 20; i++) {
+        step_ms(10U);
+    }
+    BallTest_GetRemoteStatus(&rs);
+    check_true(rs.enabled, "remote stays armed while commands are fresh");
+    check_true(rs.output_ticks > neutral, "remote output moves up");
+    check_true(rs.output_ticks <= 1400U, "remote output does not overshoot");
+
+    /* 超过 300 ms 没有新 0x02：退出远程并回零。 */
+    host_time_advance_ms(301U);
+    BallTest_AppTask();
+    BallTest_GetRemoteStatus(&rs);
+    check_true(!rs.enabled, "remote timeout disarms");
+    check_true(rs.result == BALL_REMOTE_RESULT_TIMEOUT,
+               "timeout result recorded");
+    check_near((float)rs.target_ticks, (float)neutral, 1.0f,
+               "timeout target returns to neutral");
+
+    /* 新命令可重新使能，K1 再按停止。 */
+    host_vision_set_servo_command(1360U, 8U);
+    tap_key(USER_KEY_K1);
+    BallTest_GetRemoteStatus(&rs);
+    check_true(rs.enabled, "remote re-arms with fresh command");
+
+    /* 超出零位 ±5° 的目标应被限幅并回执 CLAMP。 */
+    host_vision_set_servo_command(1600U, 9U);
+    step_ms(10U);
+    BallTest_GetRemoteStatus(&rs);
+    check_true(rs.enabled, "remote stays armed after clamp");
+    check_near((float)rs.target_ticks,
+               (float)Servo_GetNeutralPulseTicks() + 44.0f, 1.0f,
+               "remote target clamped to neutral +5 deg");
+    check_true(rs.result == BALL_REMOTE_RESULT_CLAMP,
+               "clamp result recorded");
+
+    tap_key(USER_KEY_K1);
+    BallTest_GetRemoteStatus(&rs);
+    check_true(!rs.enabled, "K1 stops remote");
+    check_true(rs.result == BALL_REMOTE_RESULT_STOP, "stop result recorded");
+}
+
 int main(void)
 {
     printf("=== roll mode host tests ===\n");
@@ -375,6 +451,7 @@ int main(void)
     test_stop_during_positive();
     test_max_level();
     test_servo_mode();
+    test_remote_mode();
 
     printf("=== %d checks, %d failures ===\n", g_checks, g_failures);
     return (g_failures == 0) ? 0 : 1;

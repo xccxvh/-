@@ -33,7 +33,8 @@
  *   0     1     同步字节 0
  *   1     1     同步字节 1
  *   2     1     协议版本，当前 0x01
- *   3     1     帧类型：0x01=视觉位置，0x81=G3519 遥测
+ *   3     1     帧类型：0x01=视觉位置，0x02=Nano 远程舵机目标，
+ *               0x81=G3519 视觉遥测，0x82=Nano 远程舵机回执
  *   4     1     负载长度 len
  *   5     2     帧序号 seq（uint16）
  *   7     len   负载
@@ -46,6 +47,19 @@
  *   8   1     检测置信度 0~100（uint8）
  *   9   1     标志位：bit0=数据有效，bit1=厘米标定完成
  *   10  2     保留，必须填 0
+ *
+ * 远程舵机命令（类型 0x02，len=2）负载：
+ *   0   2     目标 PWM 高电平计数 target_pwm_ticks（uint16，小端）
+ *              400=500us，2000=2500us，当前零位约 1378 ticks
+ * 帧序号沿用帧头 seq，Nano 负责把绝对舵机角度换算成 PWM 计数。
+ *
+ * 远程舵机回执（类型 0x82，len=12）负载：
+ *   0   2     command_seq（uint16，最近处理的 0x02 序号）
+ *   2   4     board_time_ms（uint32，G3519 本地毫秒）
+ *   6   2     target_pwm_ticks（uint16，G3519 限幅后的目标）
+ *   8   2     output_pwm_ticks（uint16，当前实际写入的 PWM 计数）
+ *   10  1     remote_enabled（uint8，0/1）
+ *   11  1     result（uint8，0=OK，1=STOP，2=TIMEOUT，3=NO_CMD）
  *
  * 遥测帧（类型 0x81，len=32）负载：
  *   0   4     G3519 本地毫秒时间戳
@@ -71,8 +85,12 @@
 #define VISION_LINK_SYNC1               (0x5AU)
 #define VISION_LINK_VERSION             (0x01U)
 #define VISION_LINK_TYPE_BALL           (0x01U)
+#define VISION_LINK_TYPE_SERVO_CMD      (0x02U)
 #define VISION_LINK_TYPE_TELEMETRY      (0x81U)
+#define VISION_LINK_TYPE_REMOTE_TELEMETRY (0x82U)
 #define VISION_LINK_BALL_PAYLOAD_LEN    (12U)
+#define VISION_LINK_SERVO_CMD_PAYLOAD_LEN (2U)
+#define VISION_LINK_REMOTE_TELEMETRY_PAYLOAD_LEN (12U)
 #define VISION_LINK_MAX_PAYLOAD_LEN     (32U)
 #define VISION_LINK_DEFAULT_BAUD        (115200U)
 
@@ -103,6 +121,18 @@ typedef struct {
 } BallMeasurement;
 
 /*
+ * Nano 远程舵机命令（0x02）。
+ *
+ * target_pwm_ticks：目标 PWM 高电平计数，G3519 端会再按 Servo 机械限幅处理。
+ * seq：帧头序号，用于回执和重复帧判断。
+ */
+typedef struct {
+    uint16_t target_pwm_ticks;
+    uint16_t seq;
+    bool     valid;
+} ServoCommand;
+
+/*
  * 链路健康状态，供上层调试和故障判定使用。
  */
 typedef struct {
@@ -115,8 +145,13 @@ typedef struct {
     uint32_t tx_dropped;          /* 遥测因发送缓冲满而丢弃的帧数 */
     uint32_t last_rx_ms;          /* 最近一次收到完整位置帧的本地时间 */
     uint16_t last_seq;
+    uint32_t servo_cmd_frames;    /* 0x02 命令帧计数 */
+    uint32_t servo_cmd_duplicate;
+    uint32_t last_servo_rx_ms;
+    uint16_t last_servo_seq;
     uint8_t  consecutive_errors;  /* 连续解码错误次数 */
     bool     have_frame;          /* 上电后是否至少收到过一帧完整位置帧 */
+    bool     have_servo_cmd;      /* 上电后是否至少收到过一帧 0x02 */
     bool     link_fault;          /* 连续错误过多，链路判定为故障 */
 } vision_link_status_t;
 
@@ -160,6 +195,20 @@ void Vision_Update(void);
  * 注意：返回 false 时 out 仍会被填充（valid=false），便于调试显示。
  */
 bool Vision_GetLatest(BallMeasurement *out, uint32_t *age_ms);
+
+/*
+ * 取最近一帧远程舵机命令（0x02）。
+ *
+ * 参数：
+ * - out：输出缓冲区，不能为 NULL；
+ * - age_ms：可选，返回该命令距当前的毫秒数。
+ *
+ * 返回值：
+ * - true：至少收到过一帧 0x02；out 中的内容可能是旧命令，调用方必须
+ *   自行用 age_ms 判断是否超过 300 ms；
+ * - false：从未收到过 0x02。
+ */
+bool Vision_GetServoCommand(ServoCommand *out, uint32_t *age_ms);
 
 /* 视觉数据当前是否新鲜且有效。 */
 bool Vision_IsFresh(void);

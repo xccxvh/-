@@ -91,6 +91,7 @@ static uint32_t s_prev_tick_ms = 0U;
 static uint8_t  s_outlier_count = 0U;
 
 static uint8_t  s_fault_code = BALL_FAULT_NONE;
+static ball_exit_reason_t s_exit_reason = BALL_EXIT_NONE;
 
 /* 手动模式目标倾角：由 SetManualBeamAngle 写入，由 Update 周期性重发。 */
 static float    s_manual_beam_deg = 0.0f;
@@ -198,6 +199,7 @@ void BallControl_Init(void)
     s_frames_used = 0U;
     s_frames_rejected = 0U;
     s_fault_code = BALL_FAULT_NONE;
+    s_exit_reason = BALL_EXIT_NONE;
     s_manual_beam_deg = 0.0f;
     s_last_manual_ms = 0U;
     s_last_neutral_ms = 0U;
@@ -356,6 +358,7 @@ void BallControl_Update(void)
          * 这里绝不继续使用旧位置，也不做状态预测。
          */
         if ((!s_vision_valid) || (age_ms > BALL_CONTROL_VISION_TIMEOUT_MS)) {
+            s_exit_reason = s_vision_valid ? BALL_EXIT_TIMEOUT : BALL_EXIT_INVALID;
             s_state = BALL_STATE_VISION_LOST;
             s_new_measurement = false;
             s_beam_cmd_deg = 0.0f;
@@ -438,6 +441,9 @@ void BallControl_Enable(bool enable)
     }
 
     if (!enable) {
+        if (s_state == BALL_STATE_AUTO) {
+            s_exit_reason = BALL_EXIT_MANUAL;
+        }
         s_state = BALL_STATE_IDLE;
         s_new_measurement = false;
         s_beam_cmd_deg = 0.0f;
@@ -467,6 +473,7 @@ void BallControl_Enable(bool enable)
 
     s_state = BALL_STATE_AUTO;
     s_fault_code = BALL_FAULT_NONE;
+    s_exit_reason = BALL_EXIT_NONE;
 
     /*
      * 以最近一次有效位置作为速度差分的起点，速度从 0 开始，
@@ -525,6 +532,7 @@ void BallControl_NotifyFault(uint8_t fault_code)
     }
 
     s_fault_code = fault_code;
+    s_exit_reason = BALL_EXIT_FAULT;
     s_state = BALL_STATE_FAULT;
     s_new_measurement = false;
     s_beam_cmd_deg = 0.0f;
@@ -607,6 +615,7 @@ void BallControl_GetDebug(ball_debug_t *debug)
     debug->servo_pwm_us = servo.pulse_us;
     debug->control_state = (uint8_t)s_state;
     debug->fault_code = s_fault_code;
+    debug->exit_reason = (uint8_t)s_exit_reason;
     debug->vision_valid = s_vision_valid &&
                           ((uint32_t)(now - s_last_rx_ms) <= BALL_CONTROL_VISION_TIMEOUT_MS);
     debug->auto_enabled = (s_state == BALL_STATE_AUTO);
@@ -614,6 +623,23 @@ void BallControl_GetDebug(ball_debug_t *debug)
     debug->frames_used = s_frames_used;
     debug->frames_rejected = s_frames_rejected;
     debug->last_seq = s_last_seq;
+}
+
+const char *BallControl_ExitReasonText(ball_exit_reason_t reason)
+{
+    switch (reason) {
+    case BALL_EXIT_MANUAL:
+        return "STOP";
+    case BALL_EXIT_INVALID:
+        return "INV";
+    case BALL_EXIT_TIMEOUT:
+        return "TMO";
+    case BALL_EXIT_FAULT:
+        return "FLT";
+    case BALL_EXIT_NONE:
+    default:
+        return "NONE";
+    }
 }
 
 const char *BallControl_StateText(ball_control_state_t state)

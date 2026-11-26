@@ -141,6 +141,7 @@ static void servo_write_pulse_ticks(uint16_t pulse_ticks)
                                      DL_TIMER_CC_1_INDEX);
 
     s_status.pulse_us = servo_ticks_to_us(pulse_ticks);
+    s_status.pulse_ticks = pulse_ticks;
 }
 
 /*
@@ -382,6 +383,49 @@ float Servo_GetBeamAngleActual(void)
 uint16_t Servo_GetPulseUs(void)
 {
     return s_status.pulse_us;
+}
+
+uint16_t Servo_GetPulseTicks(void)
+{
+    return s_status.pulse_ticks;
+}
+
+uint16_t Servo_GetNeutralPulseTicks(void)
+{
+    return servo_angle_to_pulse_ticks(SERVO_NEUTRAL_ANGLE_DEG);
+}
+
+uint16_t Servo_ClampPulseTicks(uint16_t ticks)
+{
+    float angle;
+
+    if (ticks < SERVO_PULSE_MIN_TICKS) {
+        ticks = SERVO_PULSE_MIN_TICKS;
+    } else if (ticks > SERVO_PULSE_MAX_TICKS) {
+        ticks = SERVO_PULSE_MAX_TICKS;
+    }
+
+    angle = ((float)ticks - (float)SERVO_PULSE_MIN_TICKS) * 180.0f /
+            (float)(SERVO_PULSE_MAX_TICKS - SERVO_PULSE_MIN_TICKS);
+    angle = servo_clampf(angle, SERVO_MECH_MIN_DEG, SERVO_MECH_MAX_DEG);
+
+    return servo_angle_to_pulse_ticks(angle);
+}
+
+void Servo_SetTargetPulseTicks(uint16_t ticks)
+{
+    uint16_t clamped;
+    float angle;
+
+    if (!s_status.ready) {
+        return;
+    }
+
+    clamped = Servo_ClampPulseTicks(ticks);
+    angle = ((float)clamped - (float)SERVO_PULSE_MIN_TICKS) * 180.0f /
+            (float)(SERVO_PULSE_MAX_TICKS - SERVO_PULSE_MIN_TICKS);
+
+    Servo_SetManualServoAngle(angle);
 }
 
 bool Servo_IsReady(void)

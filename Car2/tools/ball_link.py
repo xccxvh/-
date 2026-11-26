@@ -7,7 +7,8 @@ G3519 滚球控制串口联调工具。
 1. send    —— 以 30 Hz 向 G3519 发送视觉位置帧（固定值、测试 B 场景循环或正弦）；
 2. decode  —— 接收 G3519 的遥测帧并打印/保存为 CSV，便于分析响应时间、超调、稳态误差；
 3. sim     —— 半实物闭环：接收遥测里的实际摆杆倾角，用滚球动力学积分出钢珠位置，
-              再发回 G3519，可在没有真实钢珠/摄像头时验证整条控制链路。
+              再发回 G3519，可在没有真实钢珠/摄像头时验证整条控制链路；
+4. remote  —— 发送 0x02 远程舵机 PWM 命令并解码 0x82 回执，用于执行机构标定。
 
 协议与 Car2/BSP/VISION/vision_link.h 完全一致：
 帧 = A5 5A | ver(1) type(1) len(1) seq(2) | payload(len) | crc16(2, 小端)
@@ -31,7 +32,9 @@ SYNC0 = 0xA5
 SYNC1 = 0x5A
 VERSION = 0x01
 TYPE_BALL = 0x01
+TYPE_SERVO_CMD = 0x02
 TYPE_TELEMETRY = 0x81
+TYPE_REMOTE_TELEMETRY = 0x82
 
 FRAME_OVERHEAD = 9  # 同步 2 + 版本/类型/长度/序号 5 + CRC 2
 
@@ -63,6 +66,26 @@ def build_frame(frame_type: int, seq: int, payload: bytes) -> bytes:
     body = struct.pack("<BBBH", VERSION, frame_type, len(payload), seq) + payload
     crc = crc16_ccitt(body)
     return bytes([SYNC0, SYNC1]) + body + struct.pack("<H", crc)
+
+
+def build_servo_payload(target_ticks: int) -> bytes:
+    """远程舵机命令负载：目标 PWM 高电平计数。"""
+    return struct.pack("<H", int(target_ticks) & 0xFFFF)
+
+
+def parse_remote_telemetry(payload: bytes):
+    """解析 12 字节 0x82 回执。"""
+    if len(payload) != 12:
+        return None
+    seq, time_ms, target, output, enabled, result = struct.unpack("<HIHBB", payload)
+    return {
+        "seq": seq,
+        "time_ms": time_ms,
+        "target_ticks": target,
+        "output_ticks": output,
+        "enabled": bool(enabled),
+        "result": result,
+    }
 
 
 def build_ball_payload(x_cm: float, valid: bool = True, calibrated: bool = True) -> bytes:
@@ -273,6 +296,43 @@ def run_decode(ser, args):
             writer.close()
 
 
+def run_remote(ser, args):
+    """以固定周期发送 0x02 远程舵机命令，并解码 0x82 回执。"""
+    parser = FrameParser()
+    period = 1.0 / args.rate
+    next_t = time.monotonic()
+    seq = 0
+
+    print(f"remote: target={args.ticks} ticks, {args.rate:.0f} Hz, Ctrl+C 退出")
+    while True:
+        seq = (seq + 1) & 0xFFFF
+        ser.write(build_frame(TYPE_SERVO_CMD, seq,
+                              build_servo_payload(args.ticks)))
+
+        data = ser.read(512)
+        if data:
+            for frame_type, _, payload in parser.feed(data):
+                if frame_type != TYPE_REMOTE_TELEMETRY:
+                    continue
+                telemetry = parse_remote_telemetry(payload)
+                if telemetry:
+                    print(
+                        f"\rseq={telemetry['seq']:5d} "
+                        f"tgt={telemetry['target_ticks']:4d} "
+                        f"out={telemetry['output_ticks']:4d} "
+                        f"en={int(telemetry['enabled'])} "
+                        f"res={telemetry['result']}",
+                        end="", flush=True,
+                    )
+
+        next_t += period
+        sleep_time = next_t - time.monotonic()
+        if sleep_time > 0:
+            time.sleep(sleep_time)
+        else:
+            next_t = time.monotonic()
+
+
 def run_sim(ser, args):
     """
     半实物闭环仿真。
@@ -364,6 +424,13 @@ def main():
     p_decode = sub.add_parser("decode", parents=[common], help="解码遥测")
     p_decode.add_argument("--csv", default="", help="保存为 CSV 文件")
     p_decode.set_defaults(func=run_decode)
+
+    p_remote = sub.add_parser("remote", parents=[common],
+                              help="发送 0x02 远程舵机 PWM 命令并解码 0x82")
+    p_remote.add_argument("--ticks", type=int, default=1378,
+                          help="目标 PWM 高电平计数，400~2000")
+    p_remote.add_argument("--rate", type=float, default=10.0)
+    p_remote.set_defaults(func=run_remote)
 
     p_sim = sub.add_parser("sim", parents=[common], help="半实物闭环仿真")
     p_sim.add_argument("--start-x", type=float, default=5.0)

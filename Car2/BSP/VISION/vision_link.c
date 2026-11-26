@@ -63,6 +63,7 @@ static uint8_t  s_frame_buf[VISION_FRAME_BUF_SIZE];
 static uint16_t s_frame_index = 0U;
 
 static BallMeasurement s_latest;
+static ServoCommand s_servo_cmd;
 static vision_link_status_t s_status;
 static bool     s_have_frame = false;
 static uint16_t s_tx_seq = 0U;
@@ -212,6 +213,39 @@ static void vision_process_ball_frame(const uint8_t *frame, uint8_t payload_len)
 }
 
 /*
+ * 处理一个 CRC 正确、长度符合要求的远程舵机命令帧（0x02）。
+ *
+ * 这里只保存目标 PWM 计数，不做限幅；限幅和斜率由 Servo 模块负责。
+ * 重复序号不刷新 last_servo_rx_ms，避免只有重复命令时被误判为新鲜。
+ */
+static void vision_process_servo_cmd(const uint8_t *frame, uint8_t payload_len)
+{
+    const uint8_t *payload = &frame[7];
+    uint32_t now = system_time_get_tick_ms();
+    uint16_t seq = (uint16_t)((uint16_t)frame[5] | ((uint16_t)frame[6] << 8));
+    uint16_t ticks = (uint16_t)((uint16_t)payload[0] |
+                                ((uint16_t)payload[1] << 8));
+
+    if (s_status.have_servo_cmd && (seq == s_status.last_servo_seq)) {
+        s_status.servo_cmd_duplicate++;
+        return;
+    }
+
+    s_status.servo_cmd_frames++;
+    s_status.last_servo_seq = seq;
+    s_status.last_servo_rx_ms = now;
+    s_status.have_servo_cmd = true;
+    s_status.consecutive_errors = 0U;
+    s_status.link_fault = false;
+
+    s_servo_cmd.target_pwm_ticks = ticks;
+    s_servo_cmd.seq = seq;
+    s_servo_cmd.valid = true;
+
+    (void)payload_len;
+}
+
+/*
  * 帧后处理：校验版本、类型、负载长度和 CRC，再分发。
  */
 static void vision_finish_frame(const uint8_t *frame)
@@ -220,9 +254,25 @@ static void vision_finish_frame(const uint8_t *frame)
     uint16_t expected_crc;
     uint16_t received_crc;
 
-    if ((frame[2] != VISION_LINK_VERSION) ||
-        (frame[3] != VISION_LINK_TYPE_BALL) ||
-        (payload_len != VISION_LINK_BALL_PAYLOAD_LEN)) {
+    if (frame[2] != VISION_LINK_VERSION) {
+        s_status.frames_format_error++;
+        vision_note_decode_error();
+        return;
+    }
+
+    if (frame[3] == VISION_LINK_TYPE_BALL) {
+        if (payload_len != VISION_LINK_BALL_PAYLOAD_LEN) {
+            s_status.frames_format_error++;
+            vision_note_decode_error();
+            return;
+        }
+    } else if (frame[3] == VISION_LINK_TYPE_SERVO_CMD) {
+        if (payload_len != VISION_LINK_SERVO_CMD_PAYLOAD_LEN) {
+            s_status.frames_format_error++;
+            vision_note_decode_error();
+            return;
+        }
+    } else {
         s_status.frames_format_error++;
         vision_note_decode_error();
         return;
@@ -239,7 +289,11 @@ static void vision_finish_frame(const uint8_t *frame)
         return;
     }
 
-    vision_process_ball_frame(frame, payload_len);
+    if (frame[3] == VISION_LINK_TYPE_BALL) {
+        vision_process_ball_frame(frame, payload_len);
+    } else {
+        vision_process_servo_cmd(frame, payload_len);
+    }
 }
 
 /*
@@ -373,6 +427,7 @@ void Vision_Init(uint32_t baud)
     s_tx_seq = 0U;
 
     memset(&s_latest, 0, sizeof(s_latest));
+    memset(&s_servo_cmd, 0, sizeof(s_servo_cmd));
     memset(&s_status, 0, sizeof(s_status));
     s_have_frame = false;
 
@@ -435,6 +490,23 @@ bool Vision_GetLatest(BallMeasurement *out, uint32_t *age_ms)
     }
 
     return fresh;
+}
+
+bool Vision_GetServoCommand(ServoCommand *out, uint32_t *age_ms)
+{
+    uint32_t now = system_time_get_tick_ms();
+
+    if (out == NULL) {
+        return false;
+    }
+
+    *out = s_servo_cmd;
+    if (age_ms != NULL) {
+        *age_ms = s_status.have_servo_cmd ?
+                  (uint32_t)(now - s_status.last_servo_rx_ms) : 0xFFFFFFFFU;
+    }
+
+    return s_status.have_servo_cmd;
 }
 
 bool Vision_IsFresh(void)

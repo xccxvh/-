@@ -117,6 +117,14 @@ static bool     s_lcd_vision_ok = false;   /* 供第 4 行颜色判断使用 */
 static bool     s_have_forwarded = false;
 static uint16_t s_last_forwarded_seq = 0U;
 
+/* REMOTE 模式状态：Nano 0x02 目标、使能、超时和 0x82 回执。 */
+static bool     s_remote_enabled = false;
+static uint16_t s_remote_seq = 0U;
+static uint16_t s_remote_target_ticks = 0U;
+static uint8_t  s_remote_result = BALL_REMOTE_RESULT_STOP;
+static uint32_t s_remote_apply_tick_ms = 0U;
+static uint32_t s_remote_telemetry_tick_ms = 0U;
+
 /* ===================== 小工具 ===================== */
 
 /*
@@ -177,6 +185,8 @@ static const char *ball_test_mode_name(ball_test_mode_t mode)
         return "ROLL";
     case BALL_TEST_MODE_SERVO:
         return "SERVO";
+    case BALL_TEST_MODE_REMOTE:
+        return "REMOTE";
     default:
         return "?";
     }
@@ -685,24 +695,155 @@ static void ball_test_next_mode(void)
 
     switch (s_mode) {
     case BALL_TEST_MODE_MANUAL:
-        next = BALL_TEST_MODE_SERVO;
+        next = BALL_TEST_MODE_REMOTE;
         break;
-    case BALL_TEST_MODE_SERVO:
-        next = BALL_TEST_MODE_SIM;
-        break;
-    case BALL_TEST_MODE_SIM:
+    case BALL_TEST_MODE_REMOTE:
         next = BALL_TEST_MODE_UART;
         break;
     case BALL_TEST_MODE_UART:
-        next = BALL_TEST_MODE_ROLL;
+        next = BALL_TEST_MODE_MANUAL;
         break;
+    case BALL_TEST_MODE_SIM:
     case BALL_TEST_MODE_ROLL:
+    case BALL_TEST_MODE_SERVO:
     default:
         next = BALL_TEST_MODE_MANUAL;
         break;
     }
 
     BallTest_SetMode(next);
+}
+
+/*
+ * REMOTE 目标 PWM 计数限幅：
+ * - 先限制在零位 ±BALL_TEST_REMOTE_LIMIT_DEG（初始 ±5°）；
+ * - 再交给 Servo_ClampPulseTicks() 做 10°~170° 机械限幅。
+ */
+static uint16_t ball_test_remote_clamp_ticks(uint16_t raw_ticks)
+{
+    int32_t neutral = (int32_t)Servo_GetNeutralPulseTicks();
+    int32_t limit_ticks = (int32_t)(BALL_TEST_REMOTE_LIMIT_DEG * 1600.0f /
+                                    180.0f + 0.5f);
+    int32_t ticks = (int32_t)raw_ticks;
+
+    if (ticks < (neutral - limit_ticks)) {
+        ticks = neutral - limit_ticks;
+    } else if (ticks > (neutral + limit_ticks)) {
+        ticks = neutral + limit_ticks;
+    }
+
+    return Servo_ClampPulseTicks((uint16_t)ticks);
+}
+
+/* 发送 0x82 远程舵机回执（12 字节，非阻塞）。 */
+static void ball_test_remote_send_telemetry(void)
+{
+    uint8_t payload[VISION_LINK_REMOTE_TELEMETRY_PAYLOAD_LEN];
+    uint16_t output_ticks = Servo_GetPulseTicks();
+
+    payload[0] = (uint8_t)(s_remote_seq & 0xFFU);
+    payload[1] = (uint8_t)(s_remote_seq >> 8);
+    Vision_WriteU32LE(&payload[2], system_time_get_tick_ms());
+    payload[6] = (uint8_t)(s_remote_target_ticks & 0xFFU);
+    payload[7] = (uint8_t)(s_remote_target_ticks >> 8);
+    payload[8] = (uint8_t)(output_ticks & 0xFFU);
+    payload[9] = (uint8_t)(output_ticks >> 8);
+    payload[10] = s_remote_enabled ? 1U : 0U;
+    payload[11] = s_remote_result;
+
+    (void)Vision_SendFrame(VISION_LINK_TYPE_REMOTE_TELEMETRY,
+                           payload, sizeof(payload));
+}
+
+/*
+ * REMOTE 任务：
+ * - 已使能时，最近一次 0x02 超过 300 ms 未更新则退出远程控制并回零；
+ * - 目标 PWM 计数先经 Servo 机械限幅，再每 10 ms 下发一次；
+ * - 未使能时保持安全零位；
+ * - 每 100 ms 发送 0x82 回执。
+ */
+static void ball_test_remote_task(void)
+{
+    ServoCommand cmd;
+    uint32_t age_ms = 0U;
+    uint32_t now = system_time_get_tick_ms();
+    bool have_cmd = Vision_GetServoCommand(&cmd, &age_ms);
+
+    if (have_cmd) {
+        s_remote_seq = cmd.seq;
+    }
+
+    if (s_remote_enabled) {
+        if ((!have_cmd) || (age_ms > BALL_TEST_REMOTE_TIMEOUT_MS)) {
+            s_remote_enabled = false;
+            s_remote_result = BALL_REMOTE_RESULT_TIMEOUT;
+            s_remote_target_ticks = Servo_GetNeutralPulseTicks();
+            Servo_SetNeutral();
+        } else {
+            uint16_t clamped = ball_test_remote_clamp_ticks(cmd.target_pwm_ticks);
+
+            s_remote_target_ticks = clamped;
+            s_remote_result = (clamped != cmd.target_pwm_ticks) ?
+                              BALL_REMOTE_RESULT_CLAMP : BALL_REMOTE_RESULT_OK;
+
+            if ((uint32_t)(now - s_remote_apply_tick_ms) >=
+                BALL_TEST_REMOTE_APPLY_MS) {
+                s_remote_apply_tick_ms = now;
+                Servo_SetTargetPulseTicks(clamped);
+            }
+        }
+    } else {
+        if ((uint32_t)(now - s_remote_apply_tick_ms) >=
+            BALL_TEST_REMOTE_APPLY_MS) {
+            s_remote_apply_tick_ms = now;
+            s_remote_target_ticks = Servo_GetNeutralPulseTicks();
+            Servo_SetNeutral();
+        }
+    }
+
+    if ((uint32_t)(now - s_remote_telemetry_tick_ms) >=
+        BALL_TEST_REMOTE_TELEMETRY_MS) {
+        s_remote_telemetry_tick_ms = now;
+        ball_test_remote_send_telemetry();
+    }
+}
+
+/*
+ * K1：允许/停止远程控制。
+ *
+ * 允许前必须已经收到 300 ms 内的 0x02，避免没有任何目标时“空使能”。
+ * 停止后不会自动恢复，必须再次按 K1。
+ */
+static void ball_test_remote_toggle(void)
+{
+    ServoCommand cmd;
+    uint32_t age_ms = 0U;
+    uint32_t now = system_time_get_tick_ms();
+
+    if (s_remote_enabled) {
+        s_remote_enabled = false;
+        s_remote_result = BALL_REMOTE_RESULT_STOP;
+        s_remote_target_ticks = Servo_GetNeutralPulseTicks();
+        Servo_SetNeutral();
+        return;
+    }
+
+    if (Vision_GetServoCommand(&cmd, &age_ms) &&
+        (age_ms <= BALL_TEST_REMOTE_TIMEOUT_MS)) {
+        uint16_t clamped = ball_test_remote_clamp_ticks(cmd.target_pwm_ticks);
+
+        s_remote_enabled = true;
+        s_remote_seq = cmd.seq;
+        s_remote_target_ticks = clamped;
+        s_remote_result = (clamped != cmd.target_pwm_ticks) ?
+                          BALL_REMOTE_RESULT_CLAMP : BALL_REMOTE_RESULT_OK;
+        s_remote_apply_tick_ms = now - BALL_TEST_REMOTE_APPLY_MS;
+    } else {
+        s_remote_enabled = false;
+        s_remote_result = BALL_REMOTE_RESULT_NO_CMD;
+        s_remote_target_ticks = Servo_GetNeutralPulseTicks();
+        Servo_SetNeutral();
+    }
 }
 
 /*
@@ -732,6 +873,8 @@ static void ball_test_handle_keys(void)
         } else if (s_mode == BALL_TEST_MODE_SERVO) {
             /* SERVO：K2 每次 -3°。 */
             ball_test_manual_adjust(-BALL_TEST_SERVO_STEP_DEG);
+        } else if (s_mode == BALL_TEST_MODE_REMOTE) {
+            /* REMOTE：K2 暂不分配。 */
         } else {
             /* MANUAL：K2 反向微调，便于零位标定时来回试探。 */
             ball_test_manual_adjust(-BALL_TEST_MANUAL_STEP_DEG);
@@ -745,6 +888,9 @@ static void ball_test_handle_keys(void)
         } else if (s_mode == BALL_TEST_MODE_SERVO) {
             /* SERVO：K1 每次 +3°。 */
             ball_test_manual_adjust(BALL_TEST_SERVO_STEP_DEG);
+        } else if (s_mode == BALL_TEST_MODE_REMOTE) {
+            /* REMOTE：K1 允许/停止远程控制。 */
+            ball_test_remote_toggle();
         } else if (s_mode == BALL_TEST_MODE_ROLL) {
             /* ROLL：K1 启动连续滚动；运行中按下立即停止并回平衡点。 */
             if (s_roll_running) {
@@ -835,6 +981,25 @@ static void ball_test_lcd_invalidate(void)
  *
  * 只做字符串拼接，不访问 SPI；耗时在微秒级，可以每圈调用。
  */
+/* 无符号两位小数格式，用于舵机/摆杆角度等非负量。 */
+static void ball_test_fmt2_abs(char *buf, float value)
+{
+    int32_t scaled;
+
+    if (value < 0.0f) {
+        value = -value;
+    }
+    scaled = (int32_t)(value * 100.0f + 0.5f);
+
+    sprintf(buf, "%ld.%02ld", (long)(scaled / 100), (long)(scaled % 100));
+}
+
+/* PWM 计数换算成绝对舵机角度，仅用于 LCD/回执显示。 */
+static float ball_test_ticks_to_angle(uint16_t ticks)
+{
+    return ((float)ticks - 400.0f) * 180.0f / 1600.0f;
+}
+
 static void ball_test_lcd_build(void)
 {
     ball_debug_t debug;
@@ -844,10 +1009,11 @@ static void ball_test_lcd_build(void)
     char t[12];
     char x[12];
     char v[12];
-    char e[12];
     char b[12];
     char servo[12];
     char actual[12];
+    char kp_s[12];
+    char kd_s[12];
     float kp;
     float kd;
 
@@ -856,105 +1022,145 @@ static void ball_test_lcd_build(void)
     state = BallControl_GetState();
     s_lcd_vision_ok = debug.vision_valid;
 
-    /*
-     * 第 0 行的状态文字：
-     * - 普通模式显示 PD 状态机；
-     * - ROLL 模式显示 RUN/STOP/DONE/ABRT，因为此时控制器处于 MANUAL，
-     *   直接显示 MANUAL 会让操作者误以为没有在跑自动测试。
-     */
-    state_text = BallControl_StateText(state);
-    if (s_mode == BALL_TEST_MODE_ROLL) {
-        if (s_roll_running) {
-            state_text = "RUN";
-        } else if (s_roll_state == BALL_ROLL_FINISH) {
-            state_text = s_roll_aborted ? "ABRT" : "DONE";
-        } else {
-            state_text = "STOP";
+    if (s_mode == BALL_TEST_MODE_MANUAL) {
+        /* MANUAL：本地零位标定界面。 */
+        ball_test_fmt2_abs(servo, debug.servo_angle_cmd_deg);
+        ball_test_fmt2(b, debug.beam_angle_cmd_deg);
+
+        snprintf(s_lcd_lines[0], sizeof(s_lcd_lines[0]), "MODE: MANUAL");
+        snprintf(s_lcd_lines[1], sizeof(s_lcd_lines[1]), "Servo: %s deg", servo);
+        snprintf(s_lcd_lines[2], sizeof(s_lcd_lines[2]), "PWM:   %4u us",
+                 (unsigned)debug.servo_pwm_us);
+        snprintf(s_lcd_lines[3], sizeof(s_lcd_lines[3]), "Ticks: %4u",
+                 (unsigned)Servo_GetPulseTicks());
+        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Offset:%s deg", b);
+        snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "K1:+0.1 K2:-0.1");
+        s_lcd_lines[6][0] = '\0';
+    } else if (s_mode == BALL_TEST_MODE_REMOTE) {
+        /* REMOTE：Nano 目标 PWM 与 G3519 实际输出。 */
+        ball_remote_status_t remote;
+        float target_angle;
+
+        BallTest_GetRemoteStatus(&remote);
+        target_angle = ball_test_ticks_to_angle(remote.target_ticks);
+        ball_test_fmt2_abs(t, target_angle);
+        ball_test_fmt2_abs(servo, debug.servo_angle_cmd_deg);
+
+        snprintf(s_lcd_lines[0], sizeof(s_lcd_lines[0]), "MODE: REMOTE");
+        snprintf(s_lcd_lines[1], sizeof(s_lcd_lines[1]), "State: %s",
+                 remote.enabled ? "ARMED" : "STOP");
+        snprintf(s_lcd_lines[2], sizeof(s_lcd_lines[2]), "Target: %s deg", t);
+        snprintf(s_lcd_lines[3], sizeof(s_lcd_lines[3]), "Output: %s deg", servo);
+        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "PWM: %4u us",
+                 (unsigned)debug.servo_pwm_us);
+        snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "Ticks: %4u",
+                 (unsigned)remote.output_ticks);
+        snprintf(s_lcd_lines[6], sizeof(s_lcd_lines[6]), "Seq: %05u",
+                 (unsigned)remote.seq);
+    } else if (s_mode == BALL_TEST_MODE_UART) {
+        /* UART：钢珠位置、PD 输出和视觉状态。 */
+        state_text = BallControl_StateText(state);
+        ball_test_fmt2(t, debug.target_cm);
+        ball_test_fmt2(x, debug.ball_x_cm);
+        ball_test_fmt2(v, debug.ball_v_cm_s);
+        ball_test_fmt2(b, debug.beam_angle_cmd_deg);
+        BallControl_GetGains(&kp, &kd);
+        ball_test_fmt2_abs(kp_s, kp);
+        ball_test_fmt2_abs(kd_s, kd);
+
+        snprintf(s_lcd_lines[0], sizeof(s_lcd_lines[0]), "MODE: UART %s",
+                 state_text);
+        snprintf(s_lcd_lines[1], sizeof(s_lcd_lines[1]), "Target: %s cm", t);
+        snprintf(s_lcd_lines[2], sizeof(s_lcd_lines[2]), "X:%s V:%s", x, v);
+        snprintf(s_lcd_lines[3], sizeof(s_lcd_lines[3]), "Beam:%s deg", b);
+        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "PWM:%4u us Vis:%u",
+                 (unsigned)debug.servo_pwm_us,
+                 debug.vision_valid ? 1U : 0U);
+        snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "Age:%3lums Seq:%u",
+                 (unsigned long)debug.vision_age_ms,
+                 (unsigned)debug.last_seq);
+        snprintf(s_lcd_lines[6], sizeof(s_lcd_lines[6]), "Kp:%s Kd:%s R:%s",
+                 kp_s, kd_s,
+                 BallControl_ExitReasonText((ball_exit_reason_t)debug.exit_reason));
+    } else {
+        /* SIM / ROLL / SERVO 历史功能保留原有调试界面。 */
+        state_text = BallControl_StateText(state);
+        if (s_mode == BALL_TEST_MODE_ROLL) {
+            if (s_roll_running) {
+                state_text = "RUN";
+            } else if (s_roll_state == BALL_ROLL_FINISH) {
+                state_text = s_roll_aborted ? "ABRT" : "DONE";
+            } else {
+                state_text = "STOP";
+            }
         }
-    }
 
-    ball_test_fmt2(t, debug.target_cm);
-    ball_test_fmt2(x, debug.ball_x_cm);
-    ball_test_fmt2(v, debug.ball_v_cm_s);
-    ball_test_fmt2(e, debug.error_cm);
-    ball_test_fmt2(b, debug.beam_angle_cmd_deg);
-    ball_test_fmt2(servo, debug.servo_angle_cmd_deg);
-    ball_test_fmt2(actual, debug.beam_angle_actual_deg);
+        ball_test_fmt2(t, debug.target_cm);
+        ball_test_fmt2(x, debug.ball_x_cm);
+        ball_test_fmt2(v, debug.ball_v_cm_s);
+        ball_test_fmt2(b, debug.beam_angle_cmd_deg);
+        ball_test_fmt2(servo, debug.servo_angle_cmd_deg);
+        ball_test_fmt2(actual, debug.beam_angle_actual_deg);
 
-    snprintf(s_lcd_lines[0], sizeof(s_lcd_lines[0]), "M:%-6s S:%-5s T:%s",
-             ball_test_mode_name(s_mode), state_text, b);
-
-    /*
-     * 第 1 行：
-     * - MANUAL/ROLL 显示绝对舵机角度和实际摆杆倾角，便于平衡点标定；
-     * - SIM/UART 显示钢珠位置、速度和误差。
-     */
-    if ((s_mode == BALL_TEST_MODE_MANUAL) ||
-        (s_mode == BALL_TEST_MODE_ROLL) ||
-        (s_mode == BALL_TEST_MODE_SERVO)) {
+        snprintf(s_lcd_lines[0], sizeof(s_lcd_lines[0]), "M:%-6s S:%-5s T:%s",
+                 ball_test_mode_name(s_mode), state_text, b);
         snprintf(s_lcd_lines[1], sizeof(s_lcd_lines[1]), "Servo:%s Act:%s",
                  servo, actual);
-    } else {
-        snprintf(s_lcd_lines[1], sizeof(s_lcd_lines[1]), "X:%s V:%s E:%s",
-                 x, v, e);
+        snprintf(s_lcd_lines[2], sizeof(s_lcd_lines[2]), "Beam:%s Pulse:%4u",
+                 b, (unsigned)debug.servo_pwm_us);
+
+        if (s_mode == BALL_TEST_MODE_ROLL) {
+            snprintf(s_lcd_lines[3], sizeof(s_lcd_lines[3]),
+                     "Stage:%-6s Run:%u Ab:%u",
+                     ball_test_roll_state_name(s_roll_state),
+                     s_roll_running ? 1U : 0U,
+                     s_roll_aborted ? 1U : 0U);
+        } else {
+            snprintf(s_lcd_lines[3], sizeof(s_lcd_lines[3]),
+                     "Vis:%u Age:%3lu Seq:%5u",
+                     debug.vision_valid ? 1U : 0U,
+                     (unsigned long)debug.vision_age_ms,
+                     (unsigned)link.last_seq);
+        }
+
+        if (s_mode == BALL_TEST_MODE_SIM) {
+            snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Case:%-8s",
+                     ball_test_sim_case_name(s_sim_case));
+        } else if (s_mode == BALL_TEST_MODE_SERVO) {
+            ball_test_fmt2(t, s_manual_target_deg);
+            snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "SrvAng:%s", t);
+        } else {
+            ball_test_fmt2(t, ball_test_roll_level_angle());
+            snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Lvl:%u/%u %s",
+                     (unsigned)(s_roll_level + 1U),
+                     (unsigned)BALL_TEST_ROLL_LEVEL_COUNT, t);
+        }
+
+        if (s_mode == BALL_TEST_MODE_SERVO) {
+            snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]),
+                     "Rng:-%d/+%d Step:%d",
+                     (int)BALL_TEST_SERVO_LIMIT_DEG,
+                     (int)BALL_TEST_SERVO_LIMIT_DEG,
+                     (int)BALL_TEST_SERVO_STEP_DEG);
+        } else if (s_mode == BALL_TEST_MODE_ROLL) {
+            snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]),
+                     "Pos:%lums Neg:%lums",
+                     (unsigned long)BALL_TEST_ROLL_POSITIVE_HOLD_MS,
+                     (unsigned long)BALL_TEST_ROLL_NEGATIVE_HOLD_MS);
+        } else {
+            snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]),
+                     "Ok:%lu Bad:%lu Ovf:%lu",
+                     (unsigned long)debug.frames_used,
+                     (unsigned long)debug.frames_rejected,
+                     (unsigned long)link.rx_overflow);
+        }
+
+        BallControl_GetGains(&kp, &kd);
+        ball_test_fmt2(t, kp);
+        ball_test_fmt2(x, kd);
+        snprintf(s_lcd_lines[6], sizeof(s_lcd_lines[6]),
+                 "K1+K2:MODE Kp:%s Kd:%s", t, x);
     }
-
-    snprintf(s_lcd_lines[2], sizeof(s_lcd_lines[2]), "Beam:%s Pulse:%4u",
-             b, (unsigned)debug.servo_pwm_us);
-
-    if (s_mode == BALL_TEST_MODE_ROLL) {
-        snprintf(s_lcd_lines[3], sizeof(s_lcd_lines[3]), "Stage:%-6s Run:%u Ab:%u",
-                 ball_test_roll_state_name(s_roll_state),
-                 s_roll_running ? 1U : 0U,
-                 s_roll_aborted ? 1U : 0U);
-    } else {
-        snprintf(s_lcd_lines[3], sizeof(s_lcd_lines[3]), "Vis:%u Age:%3lu Seq:%5u",
-                 debug.vision_valid ? 1U : 0U,
-                 (unsigned long)debug.vision_age_ms,
-                 (unsigned)link.last_seq);
-    }
-
-    if (s_mode == BALL_TEST_MODE_SIM) {
-        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Case:%-8s",
-                 ball_test_sim_case_name(s_sim_case));
-    } else if (s_mode == BALL_TEST_MODE_UART) {
-        ball_test_fmt2(t, s_targets_cm[s_target_index]);
-        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Target:%s", t);
-    } else if (s_mode == BALL_TEST_MODE_MANUAL) {
-        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Manual:%s", b);
-    } else if (s_mode == BALL_TEST_MODE_SERVO) {
-        ball_test_fmt2(t, s_manual_target_deg);
-        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "SrvAng:%s", t);
-    } else {
-        ball_test_fmt2(t, ball_test_roll_level_angle());
-        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Lvl:%u/%u %s",
-                 (unsigned)(s_roll_level + 1U),
-                 (unsigned)BALL_TEST_ROLL_LEVEL_COUNT,
-                 t);
-    }
-
-    if (s_mode == BALL_TEST_MODE_SERVO) {
-        snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]),
-                 "Rng:-%d/+%d Step:%d",
-                 (int)BALL_TEST_SERVO_LIMIT_DEG,
-                 (int)BALL_TEST_SERVO_LIMIT_DEG,
-                 (int)BALL_TEST_SERVO_STEP_DEG);
-    } else if (s_mode == BALL_TEST_MODE_ROLL) {
-        /* ROLL 模式没有视觉帧，改为显示各阶段保持时间，方便现场核对参数。 */
-        snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "Pos:%lums Neg:%lums",
-                 (unsigned long)BALL_TEST_ROLL_POSITIVE_HOLD_MS,
-                 (unsigned long)BALL_TEST_ROLL_NEGATIVE_HOLD_MS);
-    } else {
-        snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "Ok:%lu Bad:%lu Ovf:%lu",
-                 (unsigned long)debug.frames_used,
-                 (unsigned long)debug.frames_rejected,
-                 (unsigned long)link.rx_overflow);
-    }
-
-    BallControl_GetGains(&kp, &kd);
-    ball_test_fmt2(t, kp);
-    ball_test_fmt2(x, kd);
-    snprintf(s_lcd_lines[6], sizeof(s_lcd_lines[6]), "K1+K2:MODE Kp:%s Kd:%s", t, x);
 
     /* 固定宽度补空格，覆盖写入时不会留下上一帧的尾巴。 */
     {
@@ -1012,13 +1218,15 @@ static void ball_test_lcd_task(void)
                 } else {
                     color = CYAN;
                 }
+            } else if (s_mode == BALL_TEST_MODE_REMOTE) {
+                color = s_remote_enabled ? GREEN : YELLOW;
             } else {
                 color = ball_test_lcd_color_for_state(BallControl_GetState());
             }
         } else if (i == 3U) {
             if (s_mode == BALL_TEST_MODE_ROLL) {
                 color = (s_roll_state == BALL_ROLL_FINISH && s_roll_aborted) ? RED : YELLOW;
-            } else {
+            } else if (s_mode == BALL_TEST_MODE_UART) {
                 color = s_lcd_vision_ok ? GREEN : YELLOW;
             }
         }
@@ -1051,6 +1259,15 @@ void BallTest_SetMode(ball_test_mode_t mode)
     s_roll_aborted = false;
     s_roll_settled = false;
 
+    /* 任何模式切换都先退出远程控制，防止旧目标继续驱动舵机。 */
+    s_remote_enabled = false;
+    s_remote_seq = 0U;
+    s_remote_result = BALL_REMOTE_RESULT_STOP;
+    s_remote_target_ticks = Servo_GetNeutralPulseTicks();
+    s_remote_apply_tick_ms = system_time_get_tick_ms() - BALL_TEST_REMOTE_APPLY_MS;
+    s_remote_telemetry_tick_ms =
+        system_time_get_tick_ms() - BALL_TEST_REMOTE_TELEMETRY_MS;
+
     /*
      * 先清故障再退出自动：ClearFault 本身也是显式操作，
      * 用于允许操作者在故障后重新选择测试模式。
@@ -1077,7 +1294,14 @@ void BallTest_SetMode(ball_test_mode_t mode)
     s_have_forwarded = false;
     s_last_forwarded_seq = 0U;
 
-    if ((mode == BALL_TEST_MODE_MANUAL) ||
+    if (mode == BALL_TEST_MODE_REMOTE) {
+        /*
+         * REMOTE 直接由 Servo_SetTargetPulseTicks() 驱动，
+         * 不进入 BallControl 手动保持，也不调用 BallControl_Update()。
+         * 上电/切换模式后先回到安全零位，等待 K1 使能。
+         */
+        Servo_SetNeutral();
+    } else if ((mode == BALL_TEST_MODE_MANUAL) ||
         (mode == BALL_TEST_MODE_ROLL) ||
         (mode == BALL_TEST_MODE_SERVO)) {
         /*
@@ -1127,6 +1351,19 @@ void BallTest_GetRollStatus(ball_roll_status_t *status)
     status->state = s_roll_state;
 }
 
+void BallTest_GetRemoteStatus(ball_remote_status_t *status)
+{
+    if (status == NULL) {
+        return;
+    }
+
+    status->enabled = s_remote_enabled;
+    status->seq = s_remote_seq;
+    status->target_ticks = s_remote_target_ticks;
+    status->output_ticks = Servo_GetPulseTicks();
+    status->result = s_remote_result;
+}
+
 void BallTest_AppInit(void)
 {
     printf("\r\n[BALL] G3519 ball balance control init\r\n");
@@ -1171,13 +1408,22 @@ void BallTest_AppTask(void)
     } else if (s_mode == BALL_TEST_MODE_ROLL) {
         /* 开环状态机只依赖按键和系统时基，不使用视觉数据。 */
         ball_test_roll_task();
+    } else if (s_mode == BALL_TEST_MODE_REMOTE) {
+        /* 远程舵机控制：直接下发 PWM 目标并发送 0x82 回执。 */
+        ball_test_remote_task();
     }
 
     /*
      * 状态机推进放在喂数据之后：
      * 本圈收到的新测量可以在同一圈转成舵机输出，降低控制延迟。
      */
-    BallControl_Update();
+    /*
+     * REMOTE 直接控制 Servo，不使用 BallControl；
+     * 其他模式继续推进 PD/手动/滚动状态机。
+     */
+    if (s_mode != BALL_TEST_MODE_REMOTE) {
+        BallControl_Update();
+    }
 
     if (system_time_elapsed_ms(&s_telemetry_tick_ms, BALL_TEST_TELEMETRY_MS)) {
         ball_test_send_telemetry();

@@ -98,6 +98,28 @@ static uint16_t build_ball_frame(uint8_t *out, uint16_t seq, uint32_t frame_time
     return 21U;
 }
 
+/* 按 0x02 远程舵机命令格式组帧：len=2，负载为目标 PWM 计数。 */
+static uint16_t build_servo_cmd_frame(uint8_t *out, uint16_t seq, uint16_t ticks)
+{
+    uint16_t crc;
+
+    out[0] = 0xA5U;
+    out[1] = 0x5AU;
+    out[2] = 0x01U;
+    out[3] = 0x02U;
+    out[4] = 2U;
+    out[5] = (uint8_t)(seq & 0xFFU);
+    out[6] = (uint8_t)(seq >> 8);
+    out[7] = (uint8_t)(ticks & 0xFFU);
+    out[8] = (uint8_t)(ticks >> 8);
+
+    crc = crc16_ccitt(&out[2], 5U + 2U);
+    out[9] = (uint8_t)(crc & 0xFFU);
+    out[10] = (uint8_t)(crc >> 8);
+
+    return 11U;
+}
+
 static void uart_push(const uint8_t *data, uint16_t len)
 {
     uint16_t i;
@@ -280,6 +302,38 @@ static void test_telemetry_frame(void)
                "telemetry CRC valid");
 }
 
+static void test_servo_command_frame(void)
+{
+    uint8_t frame[11];
+    ServoCommand cmd;
+    uint32_t age = 0U;
+    vision_link_status_t status;
+
+    prepare();
+    uart_push(frame, build_servo_cmd_frame(frame, 0x2345U, 1400U));
+    uart_service();
+
+    check_true(Vision_GetServoCommand(&cmd, &age) == true,
+               "0x02 servo command accepted");
+    check_true(cmd.seq == 0x2345U, "0x02 seq parsed");
+    check_true(cmd.target_pwm_ticks == 1400U, "0x02 target ticks parsed");
+    check_true(age <= 1U, "0x02 command age fresh");
+
+    Vision_GetStatus(&status);
+    check_true(status.have_servo_cmd, "status.have_servo_cmd set");
+    check_true(status.servo_cmd_frames == 1U, "servo cmd frame counted");
+
+    /* 相同 seq 重复发送不刷新命令时间。 */
+    uart_push(frame, build_servo_cmd_frame(frame, 0x2345U, 1400U));
+    uart_service();
+    Vision_GetStatus(&status);
+    check_true(status.servo_cmd_duplicate == 1U, "duplicate 0x02 counted");
+
+    host_time_advance_ms(301U);
+    check_true(Vision_GetServoCommand(&cmd, &age) == true, "0x02 remains stored");
+    check_true(age >= 301U, "0x02 age advances for remote timeout");
+}
+
 int main(void)
 {
     printf("=== vision_link protocol host tests ===\n");
@@ -290,6 +344,7 @@ int main(void)
     test_uncalibrated_rejected();
     test_low_confidence_and_range();
     test_telemetry_frame();
+    test_servo_command_frame();
 
     printf("=== %d checks, %d failures ===\n", g_checks, g_failures);
     return (g_failures == 0) ? 0 : 1;

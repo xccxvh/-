@@ -100,7 +100,7 @@
 拆装舵盘、摆杆或改变配重后必须重新标定。MANUAL 模式提供 0.1° 微调：
 
 1. 小车固定、底盘调水平，摆杆不带钢珠先回当前初调零位 110°；
-2. 用 K1+K2 切到 MANUAL，LCD 第 1 行显示 `Servo:110.00 Act:+0.00`；
+2. 用 K1+K2 切到 MANUAL，LCD 显示 `MODE: MANUAL`、`Servo: 110.00 deg`；
 3. 把钢珠放到轨道中心 O 附近，观察是否持续向某一侧滚动；
 4. K1/K2 的步长由 `BALL_TEST_MANUAL_STEP_DEG` 决定（当前代码 0.1°；
    标定时建议改为 0.1~0.2° 做精细试探），每次调整后等摆杆稳定再观察；
@@ -190,7 +190,7 @@ TIMA0：80 MHz ÷ 100 = 800 kHz，周期 16000 计数 = 20 ms（50 Hz）。
 | 0 | 1 | `0xA5` |
 | 1 | 1 | `0x5A` |
 | 2 | 1 | 版本 `0x01` |
-| 3 | 1 | 类型：`0x01` 位置帧，`0x81` 遥测帧 |
+| 3 | 1 | 类型：`0x01` 位置帧，`0x02` 远程舵机命令，`0x81` 视觉遥测，`0x82` 远程回执 |
 | 4 | 1 | 负载长度 len |
 | 5 | 2 | 帧序号 seq |
 | 7 | len | 负载 |
@@ -210,6 +210,28 @@ CRC 覆盖偏移 2 到 6+len（版本、类型、长度、序号、负载）。
 
 **未完成厘米标定时必须把 bit1 置 0**，G3519 会拒收该帧，绝不用像素坐标
 冒充厘米位置。
+
+远程舵机命令（0x02，len=2，Nano → G3519）：
+
+| 偏移 | 类型 | 含义 |
+|---:|---|---|
+| 0 | uint16 | 目标 PWM 高电平计数 target_pwm_ticks |
+| — | — | 400=500us，2000=2500us，当前零位约 1378 ticks |
+
+帧头 seq 作为命令序号；G3519 先按零位 ±5° 限幅（REMOTE 初始安全行程），
+再做 10°~170° 机械限幅和 20°/s 斜率限制。
+远程命令超过 300 ms 未更新时退出远程控制并回安全零位。
+
+远程回执（0x82，len=12，G3519 → Nano）：
+
+| 偏移 | 类型 | 含义 |
+|---:|---|---|
+| 0 | uint16 | command_seq（最近处理的 0x02 序号） |
+| 2 | uint32 | board_time_ms（G3519 本地毫秒） |
+| 6 | uint16 | target_pwm_ticks（限幅后的目标） |
+| 8 | uint16 | output_pwm_ticks（当前实际写入的 PWM 计数） |
+| 10 | uint8 | remote_enabled（0/1） |
+| 11 | uint8 | result（0=OK，1=STOP，2=TIMEOUT，3=NO_CMD，4=CLAMP） |
 
 遥测帧（len=32）：见 `BSP/VISION/vision_link.h` 顶部注释，字段包括
 时间、目标、位置、速度、误差、倾角指令、脉宽、状态、标志和估算倾角。
@@ -289,12 +311,80 @@ beam_angle_cmd_deg, servo_pwm_us, control_state, vision_valid
 
 ## 8. 测试方法与结果
 
+### 8.0 正式模式、按键与 LCD
+
+常用模式循环：
+
+```text
+MANUAL -> REMOTE -> UART -> MANUAL
+```
+
+SIM、ROLL、SERVO 源码保留，但暂时移出常用切换流程。
+
+| 模式 | K1 | K2 |
+|---|---|---|
+| MANUAL | +0.1° | −0.1° |
+| REMOTE | 允许/停止远程控制 | 暂不分配 |
+| UART | 启动/停止 PD | 切换目标位置 |
+
+`K1+K2` 切换模式；REMOTE 与 UART 自动控制互斥，切换模式会关闭另一侧。
+
+REMOTE 安全限制：
+
+- 只有收到 300 ms 内的 0x02 后按 K1 才能 ARM；
+- 目标 PWM 相对零位限制在 ±5°（`BALL_TEST_REMOTE_LIMIT_DEG`），
+  不直接开放 SERVO 模式的 ±30°；
+- 0x02 超过 300 ms 未更新自动退出远程并回零，不会自动恢复；
+- 保留 20°/s 斜率和 10°~170° 机械限幅。
+
+**MANUAL LCD**
+
+```text
+MODE: MANUAL
+Servo: 110.00 deg
+PWM:    1722 us
+Ticks:  1378
+Offset:+0.00 deg
+K1:+0.1 K2:-0.1
+```
+
+**REMOTE LCD**
+
+```text
+MODE: REMOTE
+State: ARMED / STOP
+Target: 110.50 deg
+Output: 110.45 deg
+PWM:    1727 us
+Ticks:  1382
+Seq:    01234
+```
+
+Target/Output 都是 PWM 反算的软件角度，不是轨道角度传感器实测值。
+
+**UART LCD**
+
+```text
+MODE: UART AUTO
+Target: 0.00 cm
+X:+0.87 V:+0.00
+Beam:-0.52 deg
+PWM:1716 us Vis:1
+Age:35ms Seq:1234
+Kp:0.60 Kd:0.30 R:NONE
+```
+
+`R:` 为 AUTO 退出原因：NONE=未退出，STOP=人工停止，
+INV=无效帧/异常数据，TMO=150 ms 超时，FLT=故障。
+
+
+
 ### 8.1 平衡点标定（测试 A）
 
 操作步骤见第 4.1 节。验证要点：
 
 1. 切换到 MANUAL（K1+K2 循环到 MANUAL）；
-2. LCD 第 1 行确认 `Servo:110.00 Act:+0.00`，第 0 行目标 `T:+0.00`；
+2. LCD 确认 `MODE: MANUAL`、`Servo: 110.00 deg`、`Offset:+0.00 deg`；
 3. 钢珠放 O 点附近，多次从不同起始位置释放，不得持续单向滚动；
 4. K1/K2 按 `BALL_TEST_MANUAL_STEP_DEG` 调整（当前代码 0.1°，精细标定时
    建议改 0.1~0.2°），观察增量是否与 `SERVO_MAX_SLEW_DPS` 和机械结构相符；
@@ -304,8 +394,8 @@ beam_angle_cmd_deg, servo_pwm_us, control_state, vision_valid
 
 用途：不依赖视觉，直接检查舵机和摆杆在较大角度范围内的动作与限位。
 
-- 模式切换顺序：`MANUAL -> SERVO -> SIM -> UART -> ROLL -> MANUAL`；
-  从默认 UART 进入 SERVO 需按 3 次 `K1+K2`；
+- SERVO 已移出常用模式循环；如需使用，可临时修改 `BALL_TEST_DEFAULT_MODE`
+  或调用 `BallTest_SetMode(BALL_TEST_MODE_SERVO)`；
 - K1：每次 **+3°**；K2：每次 **-3°**；
 - 相对零位范围 **-30° ~ +30°**，进入模式时临时把摆杆软限幅放宽到 30°；
   当前 `SERVO_BEAM_TO_SERVO_RATIO=1.0`，`SrvAng` 等同于舵机角度偏移；
@@ -313,6 +403,26 @@ beam_angle_cmd_deg, servo_pwm_us, control_state, vision_valid
   第 5 行显示 `Range:-30/+30 Step:3`；
 - 退出 SERVO 后自动恢复默认 5° 软限幅；
 - 舵机机械限幅仍是 10°~170°，不要长时间顶在端部。
+
+### 8.1c REMOTE 执行机构标定
+
+Nano 或 PC 工具以 10 Hz 发送 0x02，G3519 在 REMOTE 模式按 K1 允许后执行：
+
+```bash
+python tools/ball_link.py remote --port COMx --ticks 1378
+python tools/ball_link.py remote --port COMx --ticks 1382
+```
+
+- 初始目标限制在零位 ±5°（约 ±44 ticks），需要更大范围时先空载验证；
+- 用不同 ticks 记录“指令值 → 实际舵机/摆杆角度”，确定：
+  - 真实零位（钢珠在 O 点不持续滚动）；
+  - 增加 ticks 时摆杆的实际倾斜方向；
+  - 最小可重复产生运动的 PWM 步长和机械死区；
+  - 传动比例（摆杆角度 / 舵机角度），再写回 PD 配置。
+- REMOTE 直接按 PWM 计数驱动舵机，不经过 `SERVO_BEAM_DIR_SIGN` 和
+  `SERVO_BEAM_TO_SERVO_RATIO`；PD 的控制方向仍需通过 UART/MANUAL 实验单独确认。
+- 0x82 回执中的 target/output 是软件值，不是轨道角度实测值；实际角度必须
+  用量角器或钢珠运动验证。
 
 ### 8.2 开环 5°/7.5°/10° 自动左右滚动（新增）
 
@@ -432,8 +542,8 @@ K2 在 0 / +5 / −5 cm 之间切换，目标在 5 s 内到位且误差 ≤1 cm�
 | 测试程序 | 结果 | 覆盖内容 |
 |---|---|---|
 | `ball_test_host.exe` | 45 checks, 0 failures | 角度/脉宽映射、斜率限制、机械限幅、PD 符号、当前 PD 限幅、80 ms 指令保持/回零、150 ms 超时、失效帧退出、跳变剔除、速度滤波、重复帧、手动保持、闭环仿真 |
-| `vision_link_host.exe` | 31 checks, 0 failures | 帧同步、长度、CRC、字段解析、未标定/低置信度/越界拒收、150 ms 超时、遥测组包与 CRC |
-| `roll_mode_host.exe` | 48 checks, 0 failures | ROLL 三档切换、连续循环、运行中停止、最大档位、限幅切换，以及 SERVO 自由角度 ±3° 步进/±30° 限幅 |
+| `vision_link_host.exe` | 40 checks, 0 failures | 0x01/0x02 帧解析、CRC、字段、重复序号、0x02 超龄、遥测组包 |
+| `roll_mode_host.exe` | 68 checks, 0 failures | ROLL/SERVO 历史模式、SERVO 步进限幅，以及 REMOTE 使能/超时/回零/±5° 限幅/K1 停止 |
 
 一键运行：
 
@@ -458,7 +568,7 @@ sh Car2/tests/host/run_tests.sh
 
 **注意**：以上是模型仿真结果，不是实车数据；真实钢珠受摩擦、舵机死区、
 视觉延迟和机械间隙影响，必须按 8.4/8.5 节重新调参。开环三档的软件验证
-（48 项）只覆盖状态机、限幅切换和时序，不能替代 8.2 节的钢珠实测。
+（68 项）只覆盖状态机、限幅切换、REMOTE 逻辑和时序，不能替代实车标定。
 
 ---
 

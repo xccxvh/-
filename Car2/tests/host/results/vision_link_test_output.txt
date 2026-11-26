@@ -30,4 +30,13 @@
 [PASS] telemetry payload len
 [PASS] telemetry seq starts at 0
 [PASS] telemetry CRC valid
-=== 31 checks, 0 failures ===
+[PASS] 0x02 servo command accepted
+[PASS] 0x02 seq parsed
+[PASS] 0x02 target ticks parsed
+[PASS] 0x02 command age fresh
+[PASS] status.have_servo_cmd set
+[PASS] servo cmd frame counted
+[PASS] duplicate 0x02 counted
+[PASS] 0x02 remains stored
+[PASS] 0x02 age advances for remote timeout
+=== 40 checks, 0 failures ===
