@@ -203,7 +203,8 @@ class LinkJournal(object):
               'telemetry_flags', 'beam_estimated_deg', 'board_vision_valid', 'board_auto_enabled',
               'board_fault')
 
-    def __init__(self, serial, stream):
+    def __init__(self, serial, stream, split_rx=None):
+        self.split_rx = split_rx
         self.serial = serial
         self.writer = csv.DictWriter(stream, fieldnames=self.fields)
         self.writer.writeheader()
@@ -231,6 +232,8 @@ class LinkJournal(object):
                 if not data:
                     raise OSError('USB serial disconnected')
                 self.rx_bytes += len(data)
+                if self.split_rx is not None:
+                    data = self.split_rx(data, time.monotonic())
                 for msg in self.parser.feed(data):
                     row = dict(zip(self.fields[10:], msg))
                     # 0x81 的帧头序号属于遥测发送端，负载未回显接收的位置帧序号。

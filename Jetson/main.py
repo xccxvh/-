@@ -63,7 +63,7 @@ def _pct(values, q):
     return s[max(0, min(k, len(s) - 1))]
 
 
-def main():
+def main(argv=None, experiment=None, codec=None):
     ap = argparse.ArgumentParser(description="钢珠识别系统")
     ap.add_argument("--config", default=DEFAULT_CONFIG)
     ap.add_argument("--video", default=None, help="离线视频路径; 不填则用摄像头")
@@ -83,7 +83,7 @@ def main():
     ap.add_argument("--serial", default=None, help="显式启用 UART 监测，115200 8N1")
     ap.add_argument("--uart-enable-valid", action="store_true",
                     help="现场验证和接收端协议确认后才允许有效测量；默认只发送无效监测帧")
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
     if args.record_fps is not None and (not math.isfinite(args.record_fps) or args.record_fps <= 0):
         ap.error("--record-fps must be finite and positive")
     if args.record_scale is not None and (not math.isfinite(args.record_scale) or not 0 < args.record_scale <= 1):
@@ -251,6 +251,7 @@ def main():
             resources.callback(cv2.destroyAllWindows)
         serial = None
         journal = None
+        task = None
         encoder = G3519PositionEncoder() if binary_link else FeedbackEncoder()
         try:
             if args.serial:
@@ -260,10 +261,26 @@ def main():
                     # 独立事件表保留全部遥测。两端毫秒时钟不相减，不将旧 RX 冒充当前帧。
                     link_path = os.path.join(logs_dir, "link_%s_%s.csv" % (args.label, stamp))
                     stream = resources.enter_context(open(link_path, "x", newline="", buffering=1))
-                    journal = LinkJournal(serial, stream)
+                    if experiment is None:
+                        journal = LinkJournal(serial, stream)
+                    else:
+                        from concurrent.futures import ThreadPoolExecutor
+                        from threading import Event
+                        from experiment_port import ExperimentPort
+                        serial = ExperimentPort(serial, codec)
+                        journal = LinkJournal(serial, stream, split_rx=serial.split_rx)
                     resources.callback(journal.close)
                     print("G3519 UART", "control" if args.uart_enable_valid else "monitor", link_path)
+            if experiment is not None:
+                path = os.path.join(logs_dir, "experiment_%s_%s.csv" % (args.label, stamp))
+                events = resources.enter_context(open(path, 'x', newline='', buffering=1))
+                pool = resources.enter_context(ThreadPoolExecutor(max_workers=1))
+                cancelled = Event()
+                task = pool.submit(experiment, serial, events, cancelled)
             while True:
+                if task is not None and task.done():
+                    task.result()
+                    break
                 if use_motion and binary_link:
                     # 近期处理耗时仅用于选择当前单槽或下一帧。发送前仍按本帧 SOE
                     # 实测年龄执行 100 ms 门限；冷启动时等待下一张新图。
@@ -455,17 +472,23 @@ def main():
         except KeyboardInterrupt:
             print("\ninterrupted")
         finally:
-            if serial is not None and serial.fd is not None:
-                try:
-                    stop_time = time.perf_counter()
-                    line, _, reason = encoder.encode({'valid':False, 'confidence':0.},
-                                                 stop_time, stop_time, False, False)
-                    serial.send(line)
-                    if journal is not None:
-                        journal.sent(line, '', reason, False)
-                except Exception as exc:
-                    print("final UART invalid frame not delivered: %s" % exc)
-                # ExitStack 先停接收线程并关闭 CSV，最后释放串口。
+            try:
+                if task is not None:
+                    cancelled.set()
+                    # Keep RX and port alive until the worker has attempted STOP.
+                    task.result()
+            finally:
+                if serial is not None and serial.fd is not None:
+                    try:
+                        stop_time = time.perf_counter()
+                        line, _, reason = encoder.encode({'valid':False, 'confidence':0.},
+                                                     stop_time, stop_time, False, False)
+                        serial.send(line)
+                        if journal is not None:
+                            journal.sent(line, '', reason, False)
+                    except Exception as exc:
+                        print("final UART invalid frame not delivered: %s" % exc)
+                    # ExitStack 先停接收线程并关闭 CSV，最后释放串口。
         elapsed = time.perf_counter() - t_start
         print("\n--- summary ---")
         print("frames: %d, elapsed: %.1fs, avg fps: %.1f" % (

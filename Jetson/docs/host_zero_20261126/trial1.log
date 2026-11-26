@@ -1,0 +1,28 @@
+source: /dev/video0  1280x720  fps=30.0
+calibration: rail model: validated
+G3519 UART control /home/jetson/host_zero_03991/logs/link_host_auto_20260324_160534.csv
+G3519 ACK seq=2905 SET_MODE OK mode=2 state=0
+G3519 ACK seq=2906 SET_TARGET OK mode=2 state=0
+G3519 ACK seq=2907 SET_PD OK mode=2 state=0
+G3519 ACK seq=2908 START_AUTO OK mode=2 state=2
+frame=30 fps=15.0 x=487.0 state=DETECTED conf=0.88 algo=41.8ms
+frame=60 fps=14.9 x=486.8 state=DETECTED conf=0.95 algo=41.7ms
+frame=90 fps=15.0 x=487.1 state=DETECTED conf=0.91 algo=41.5ms
+frame=120 fps=15.1 x=487.2 state=DETECTED conf=0.88 algo=42.1ms
+frame=150 fps=15.0 x=486.8 state=DETECTED conf=0.88 algo=41.9ms
+frame=180 fps=26.8 x=487.1 state=DETECTED conf=0.91 algo=33.7ms
+frame=210 fps=28.0 x=487.0 state=DETECTED conf=0.94 algo=33.6ms
+G3519 ACK seq=2909 STOP OK mode=2 state=0
+
+--- summary ---
+frames: 220, elapsed: 12.8s, avg fps: 17.2
+states: {'DETECTED': 216, 'UNCERTAIN': 4, 'LOST': 0}
+capture: 380 frames, 29.8 fps, wait-for-newer: 159
+algo_ms: mean=39.88 p95=43.25 max=77.28
+queue_wait_ms: mean=2.35 p95=11.19 max=15.83
+capture_to_result_ms: mean=42.23 p95=45.89 max=77.53 (n=220)
+draw_ms: mean=0.00 p95=0.00 max=0.00
+write_ms: mean=0.00 p95=0.00 max=0.00
+frame_ms: mean=40.34 p95=43.68 max=77.51
+csv: /home/jetson/host_zero_03991/logs/track_host_auto_20260324_160534.csv
+G3519 TX=220 RX_bytes=5323 telemetry=128 CRC_errors=0
