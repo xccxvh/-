@@ -33,6 +33,7 @@ def main():
     adaptive.add_argument('--seconds', type=float, help='operator-specified trial duration; otherwise continue holding until STOP')
     for mode in (adaptive, scan):
         mode.add_argument('--board-profile', help='PWM stroke for the flashed G3519 build')
+    adaptive.add_argument('--timed-route', action='store_true', help='O to +5 then -5 cm in five seconds')
     adaptive.add_argument('--probe-sign', type=int, choices=(-1, 1), help='probe one PWM direction then STOP')
     adaptive.add_argument('--polarity', type=int, choices=(-1, 1), default=-1,
                           help='sign of measured x acceleration under increasing PWM')
@@ -45,6 +46,9 @@ def main():
     adaptive.add_argument('--model', help='explicit historical velocity-plan replay/tuning parameters (not the default controller)')
     adaptive.add_argument('--record', action='store_true', help='save timestamped experiment video')
     args = ap.parse_args()
+    if args.experiment == 'adaptive' and args.timed_route:
+        if any(v is not None for v in (args.probe_sign,args.identify_offset,args.identify_platforms,args.brake_ticks,args.model,args.seconds)) or args.polarity != -1:
+            ap.error('timed route uses the glued-ruler polarity and its own deadline')
     if args.experiment in ('auto', 'adaptive'):
         if (args.experiment == 'adaptive' and args.seconds is None and
                 (args.identify_offset is not None or args.identify_platforms or args.probe_sign or args.model)):
@@ -90,7 +94,7 @@ def main():
                 with open(args.model) as stream:
                     model = json.load(stream)
             run(board, port, log, args.seconds, cancelled, profile, args.probe_sign, args.polarity,
-                args.identify_offset, model, args.identify_platforms, args.brake_ticks, args.experience)
+                args.identify_offset, model, args.identify_platforms, args.brake_ticks, args.experience, timed_route=args.timed_route)
         else:
             board = BoardController(port.execute, port.send, (args.min_ticks,args.max_ticks))
             if args.neutral not in (None, neutral):

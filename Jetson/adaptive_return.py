@@ -28,7 +28,7 @@ def exposure_output(echoes, changes, stamp):
 
 
 def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-1,
-        offset=None, model=None, platforms=None, brake_ticks=None, experience_path=None):
+        offset=None, model=None, platforms=None, brake_ticks=None, experience_path=None, timed_route=False):
     now = time.monotonic
     neutral = profile['neutral_ticks']
     lo, hi = board.confirmed_ticks
@@ -47,7 +47,11 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
         raise ValueError('identification pulse outside confirmed stroke')
     state = AlphaBeta()
     direct = legacy = None
-    if offset is None:
+    route = None
+    if timed_route:
+        from timed_route import TimedRoute
+        route = TimedRoute(lo, neutral, hi)
+    elif offset is None:
         if model is None:
             from direct_return import DirectReturn
             direct = DirectReturn((lo, hi), neutral, polarity, experience_path)
@@ -80,6 +84,8 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
                 raise ValueError('measured rail end')
             if direct and state.stamp is not None and stamp - state.stamp > FRESH_S:
                 direct.reset_observation()
+            if route and state.stamp is not None and stamp-state.stamp > FRESH_S:
+                route.interrupt_hold()
             accepted = state.update(stamp, x)
             if not accepted:
                 reason = 'duplicate or implausible innovation'
@@ -90,6 +96,8 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
             measured_x = x
         elif direct:
             direct.interrupt_hold()
+        elif route:
+            route.interrupt_hold()
         record('vision', frame=frame,capture_s=stamp,received_s=received,
                **dict(x_cm=x,valid=int(accepted),reason=reason,estimate_cm=state.x,
                       velocity_cm_s=state.v,phase='update' if accepted else 'pause'))
@@ -118,10 +126,13 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
             time.sleep(.002)
         else:
             raise TimeoutError('no reliable starting position')
+        if route and abs(measured_x) > .30:
+            raise ValueError("place ball at O before starting timed route")
         seq = board.set_pwm_ticks(neutral)
         start = now()
         while debug_after(start,start+.25)['command_seq'] != seq:
             pass
+        route_start = now()
         board.start_remote()
         start = due = last_ack = now()
         record('armed', target_ticks=neutral, output_ticks=neutral,reason=profile['firmware'])
@@ -184,6 +195,11 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
             tick = now()
             if tick-last_ack > .25:
                 raise TimeoutError('no advancing PWM echo')
+            if route and tick-route_start >= 5.:
+                # Extend only an already-observed settling interval to confirm stability.
+                if route.hold_start is None or route.hold_start > route_start+5.:
+                    record('route_deadline', target_cm=route.goal, reason='no settled endpoint by five seconds')
+                    break
             if tick < due:
                 time.sleep(min(.002,due-tick))
                 continue
@@ -196,7 +212,17 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
                 dt = state.stamp-planned_stamp
                 planned_stamp = state.stamp
                 if offset is None:
-                    if direct:
+                    if route:
+                        plan = route.step(x, v, state.stamp, measured_x)
+                        route.check_endpoint(plan['target_ticks'], output, trusted_output, state.stamp, measured_x, v)
+                        if route.first_hit == state.stamp:
+                            record('route_reverse', capture_s=state.stamp, x_cm=measured_x, target_cm=5.,
+                                   reason='elapsed %.4f s' % (state.stamp-route_start))
+                        if plan['hold_s'] >= 1. and route.hold_start <= route_start+5.:
+                            record('route_settled', capture_s=state.stamp,x_cm=measured_x,target_cm=-5.,
+                                   hold_s=plan['hold_s'],reason='settling began %.4f s' % (route.hold_start-route_start))
+                            break
+                    elif direct:
                         plan = direct.step(x, v, state.stamp, measured_x, output, trusted_output)
                         if plan['hold_complete'] and not holding_confirmed:
                             record('hold_confirmed', capture_s=state.stamp, x_cm=measured_x,
@@ -249,11 +275,11 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
             seq = board.set_pwm_ticks(command)
             sent[seq] = command
             record('tx',seq=seq,target_ticks=command,output_ticks=output,predicted_cm=x,
-                   velocity_cm_s=v,target_cm=0,error_cm=-x,phase=phase,
+                   velocity_cm_s=v,target_cm=route.goal if route else 0.,error_cm=(route.goal if route else 0.)-x,phase=phase,
                    exposure_age_ms=(tick-state.stamp)*1000,
                    output_at_exposure=trusted_output if updated else None,
                    reason=plan.get('reason') if phase not in ('hold_command','hold_missing') else phase,
-                   hold_s=plan.get('hold_s') if phase == 'hold' else None,
+                   hold_s=plan.get('hold_s') if phase in ('hold','endpoint_hold') else None,
                    **{k:plan[k] for k in ('v_ref','a_cmd','start_bias','balance_ticks') if k in plan})
             updated = False
             # 按绝对期限调度。操作系统延误时跳过已错过周期，避免补发成串旧指令。
