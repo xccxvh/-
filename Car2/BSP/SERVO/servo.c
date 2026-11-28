@@ -394,60 +394,30 @@ uint16_t Servo_GetNeutralPulseTicks(void)
     return servo_angle_to_pulse_ticks(SERVO_NEUTRAL_ANGLE_DEG);
 }
 
-/* 计算 REMOTE 安全行程的 PWM 计数边界（允许正负不对称）。 */
-static void servo_safe_tick_bounds(uint16_t *min_ticks, uint16_t *max_ticks)
-{
-    float min_angle = SERVO_NEUTRAL_ANGLE_DEG - SERVO_SAFE_NEG_DEG;
-    float max_angle = SERVO_NEUTRAL_ANGLE_DEG + SERVO_SAFE_POS_DEG;
-    uint16_t lo;
-    uint16_t hi;
-
-    min_angle = servo_clampf(min_angle, SERVO_MECH_MIN_DEG, SERVO_MECH_MAX_DEG);
-    max_angle = servo_clampf(max_angle, SERVO_MECH_MIN_DEG, SERVO_MECH_MAX_DEG);
-
-    lo = servo_angle_to_pulse_ticks(min_angle);
-    hi = servo_angle_to_pulse_ticks(max_angle);
-    if (lo > hi) {
-        uint16_t tmp = lo;
-        lo = hi;
-        hi = tmp;
-    }
-
-    *min_ticks = lo;
-    *max_ticks = hi;
-}
-
 uint16_t Servo_GetSafeMinTicks(void)
 {
-    uint16_t lo;
-    uint16_t hi;
-
-    servo_safe_tick_bounds(&lo, &hi);
-    return lo;
+    return SERVO_SAFE_MIN_TICKS;
 }
 
 uint16_t Servo_GetSafeMaxTicks(void)
 {
-    uint16_t lo;
-    uint16_t hi;
-
-    servo_safe_tick_bounds(&lo, &hi);
-    return hi;
+    return SERVO_SAFE_MAX_TICKS;
 }
 
 uint16_t Servo_ClampSafePulseTicks(uint16_t ticks)
 {
-    uint16_t lo;
-    uint16_t hi;
-
-    servo_safe_tick_bounds(&lo, &hi);
-    if (ticks < lo) {
-        ticks = lo;
-    } else if (ticks > hi) {
-        ticks = hi;
+    /*
+     * REMOTE 只做这一层机械安全行程限制。
+     * 不再调用 Servo_ClampPulseTicks()，避免在安全范围内叠加
+     * 10°~170° 机械限幅或角度换算。
+     */
+    if (ticks < SERVO_SAFE_MIN_TICKS) {
+        ticks = SERVO_SAFE_MIN_TICKS;
+    } else if (ticks > SERVO_SAFE_MAX_TICKS) {
+        ticks = SERVO_SAFE_MAX_TICKS;
     }
 
-    return Servo_ClampPulseTicks(ticks);
+    return ticks;
 }
 
 void Servo_SetSlewRate(float dps)
@@ -480,7 +450,7 @@ uint16_t Servo_ClampPulseTicks(uint16_t ticks)
     return servo_angle_to_pulse_ticks(angle);
 }
 
-void Servo_SetTargetPulseTicks(uint16_t ticks)
+uint16_t Servo_SetTargetPulseTicks(uint16_t ticks)
 {
     uint16_t clamped;
     int32_t current_ticks;
@@ -492,7 +462,7 @@ void Servo_SetTargetPulseTicks(uint16_t ticks)
     float angle;
 
     if (!s_status.ready) {
-        return;
+        return ticks;
     }
 
     clamped = Servo_ClampSafePulseTicks(ticks);
@@ -533,6 +503,8 @@ void Servo_SetTargetPulseTicks(uint16_t ticks)
     s_status.beam_angle_cmd_deg =
         (angle - SERVO_NEUTRAL_ANGLE_DEG) / (s_beam_dir_sign * s_beam_ratio);
     s_status.rate_limited = limited;
+
+    return clamped;
 }
 
 bool Servo_IsReady(void)

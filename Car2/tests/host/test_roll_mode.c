@@ -386,6 +386,10 @@ static void test_remote_mode(void)
     check_near((float)rs.target_ticks, (float)neutral, 1.0f,
                "REMOTE starts at neutral target");
     check_true(rs.result == BALL_REMOTE_RESULT_STOP, "REMOTE starts STOP");
+    check_true(Servo_GetSafeMinTicks() == 1236U,
+               "single safe min is 1236 ticks");
+    check_true(Servo_GetSafeMaxTicks() == 1413U,
+               "single safe max is 1413 ticks");
     check_true((uint32_t)(Servo_GetSafeMaxTicks() - neutral) > 44U,
                "safe range exceeds old +/-5 deg");
     check_true(Servo_GetSlewRate() > 20.0f,
@@ -412,9 +416,9 @@ static void test_remote_mode(void)
     check_true(rs.result == BALL_REMOTE_RESULT_TIMEOUT,
                "no-command timeout recorded");
 
-    /* 注入 0x02（零位 +100 ticks，超过旧 ±5° 限幅），
+    /* 注入 0x02（零位 +80 ticks，超过旧 ±5° 且在 1236~1413 内），
      * 再由 0x03 START_REMOTE 使能。 */
-    host_vision_set_servo_command((uint16_t)(neutral + 100U), 7U);
+    host_vision_set_servo_command((uint16_t)(neutral + 80U), 7U);
     host_vision_set_control_command(BALL_CMD_START_REMOTE,
                                     BALL_TEST_MODE_REMOTE, 0.0f, 0.0f, 1U);
     BallTest_AppTask();
@@ -423,7 +427,7 @@ static void test_remote_mode(void)
     check_true(BallTest_GetLastCommandResult() == BALL_CMD_RESULT_OK,
                "START_REMOTE ack OK");
     check_true(rs.seq == 7U, "remote command seq recorded");
-    check_near((float)rs.target_ticks, (float)(neutral + 100U), 1.0f,
+    check_near((float)rs.target_ticks, (float)(neutral + 80U), 1.0f,
                "remote target accepts > old +/-5 deg");
 
     /* 200 ms 后输出应向目标靠近，但不超过目标。 */
@@ -433,7 +437,7 @@ static void test_remote_mode(void)
     BallTest_GetRemoteStatus(&rs);
     check_true(rs.enabled, "remote stays armed while commands are fresh");
     check_true(rs.output_ticks > neutral, "remote output moves up");
-    check_true(rs.output_ticks <= (uint16_t)(neutral + 100U),
+    check_true(rs.output_ticks <= (uint16_t)(neutral + 80U),
                "remote output does not overshoot");
 
     /* 超过 300 ms 没有新 0x02：退出远程并回零。 */

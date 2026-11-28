@@ -46,16 +46,21 @@
 #define SERVO_BEAM_LIMIT_MAX_DEG        (35.0f)
 
 /*
- * REMOTE 直接 PWM 执行的安全行程（相对零位的舵机角度，允许正负不对称）。
+ * REMOTE 直接 PWM 执行的唯一安全行程（整数 ticks，允许正负不对称）。
  *
- * 默认 ±20° 只是空载起点，必须通过实际机械检查确认后再扩大/收紧；
- * 不要直接把 SERVO_MECH_MIN_DEG~MAX_DEG 当成已验证的安全行程。
+ * 当前采用现场实验窗口 1236~1413 ticks（中位 1324）：
+ * - 下限 1236：负方向已确认行程；
+ * - 上限 1413：正方向已确认行程；
+ * - 不再同时维护一套“角度 ±20°”参数，避免数值不同步。
+ *
+ * 固件机械允许 400~2000 ticks 并不等于已确认的机械安全行程。
+ * 只有空载+带载检查后才能修改这两个宏，禁止在其他文件再定义一份。
  */
-#ifndef SERVO_SAFE_NEG_DEG
-#define SERVO_SAFE_NEG_DEG              (20.0f)
+#ifndef SERVO_SAFE_MIN_TICKS
+#define SERVO_SAFE_MIN_TICKS            (1236U)
 #endif
-#ifndef SERVO_SAFE_POS_DEG
-#define SERVO_SAFE_POS_DEG              (20.0f)
+#ifndef SERVO_SAFE_MAX_TICKS
+#define SERVO_SAFE_MAX_TICKS            (1413U)
 #endif
 
 /*
@@ -267,9 +272,10 @@ float Servo_GetSlewRate(void);
  * 行为：
  * - 直接在 PWM 计数域做斜率限制，不再经过角度浮点换算，保留 1 tick 分辨率；
  * - 复用运行时 Servo_SetSlewRate() 的速率；
- * - 非阻塞，只写比较值。
+ * - 非阻塞，只写比较值；
+ * - 返回经过安全行程限幅后的目标 ticks，供上层判断 CLAMP 和遥测。
  */
-void Servo_SetTargetPulseTicks(uint16_t ticks);
+uint16_t Servo_SetTargetPulseTicks(uint16_t ticks);
 
 /* 返回 Servo_Init() 是否已完成。 */
 bool Servo_IsReady(void);

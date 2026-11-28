@@ -827,16 +827,20 @@ static void ball_test_remote_task(void)
             s_remote_target_ticks = Servo_GetNeutralPulseTicks();
             Servo_SetNeutral();
         } else if (have_cmd) {
-            uint16_t clamped = Servo_ClampSafePulseTicks(cmd.target_pwm_ticks);
-
-            s_remote_target_ticks = clamped;
-            s_remote_result = (clamped != cmd.target_pwm_ticks) ?
-                              BALL_REMOTE_RESULT_CLAMP : BALL_REMOTE_RESULT_OK;
-
+            /*
+             * 10 ms 执行节拍：直接把 Nano 的新目标交给 Servo，
+             * 安全行程限幅只在 Servo_SetTargetPulseTicks() 内部做一次。
+             */
             if ((uint32_t)(now - s_remote_apply_tick_ms) >=
                 BALL_TEST_REMOTE_APPLY_MS) {
+                uint16_t clamped;
+
                 s_remote_apply_tick_ms = now;
-                Servo_SetTargetPulseTicks(clamped);
+                clamped = Servo_SetTargetPulseTicks(cmd.target_pwm_ticks);
+                s_remote_target_ticks = clamped;
+                s_remote_result = (clamped != cmd.target_pwm_ticks) ?
+                                  BALL_REMOTE_RESULT_CLAMP :
+                                  BALL_REMOTE_RESULT_OK;
             }
         } else {
             /* START_REMOTE 后尚未收到 0x02：保持零位等待。 */
@@ -1255,12 +1259,11 @@ static void ball_test_lcd_build(void)
                  (unsigned)remote.target_ticks);
         snprintf(s_lcd_lines[3], sizeof(s_lcd_lines[3]), "Output:%4u ticks",
                  (unsigned)remote.output_ticks);
-        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "PWM: %4u us",
-                 (unsigned)debug.servo_pwm_us);
-        snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "Range:%4u~%4u",
+        snprintf(s_lcd_lines[4], sizeof(s_lcd_lines[4]), "Range:%4u~%4u",
                  (unsigned)range_min, (unsigned)range_max);
-        snprintf(s_lcd_lines[6], sizeof(s_lcd_lines[6]), "Seq:%05u R:%s",
-                 (unsigned)remote.seq,
+        snprintf(s_lcd_lines[5], sizeof(s_lcd_lines[5]), "Rate:%3.0f deg/s",
+                 (double)Servo_GetSlewRate());
+        snprintf(s_lcd_lines[6], sizeof(s_lcd_lines[6]), "R:%s",
                  ball_test_remote_result_text(remote.result));
     } else if (s_mode == BALL_TEST_MODE_UART) {
         /* UART：钢珠位置、PD 输出和视觉状态。 */

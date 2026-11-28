@@ -130,6 +130,8 @@
 [PASS] REMOTE starts disarmed
 [PASS] REMOTE starts at neutral target (actual=1324.00)
 [PASS] REMOTE starts STOP
+[PASS] single safe min is 1236 ticks
+[PASS] single safe max is 1413 ticks
 [PASS] safe range exceeds old +/-5 deg
 [PASS] slew rate is faster than old 20 deg/s
 [PASS] K1 only stops remote
@@ -140,7 +142,7 @@
 [PASS] START_REMOTE arms remote without K1
 [PASS] START_REMOTE ack OK
 [PASS] remote command seq recorded
-[PASS] remote target accepts > old +/-5 deg (actual=1424.00)
+[PASS] remote target accepts > old +/-5 deg (actual=1404.00)
 [PASS] remote stays armed while commands are fresh
 [PASS] remote output moves up
 [PASS] remote output does not overshoot
@@ -149,7 +151,7 @@
 [PASS] timeout target returns to neutral (actual=1324.00)
 [PASS] START_REMOTE re-arms remote
 [PASS] remote stays armed after clamp
-[PASS] remote target clamped to safe max (actual=1502.00)
+[PASS] remote target clamped to safe max (actual=1413.00)
 [PASS] clamp result recorded
 [PASS] K1 local stop disarms remote
 [PASS] stop result recorded
@@ -306,4 +308,4 @@
 [CAL] beam=-15.00 -> servo target=+89.00 current=+89.00 deg
 [PASS] MANUAL lower limit clamps at -15 deg (actual=-15.00)
 [PASS] MANUAL actual angle reaches -15 deg (actual=-15.00)
-=== 93 checks, 0 failures ===
+=== 95 checks, 0 failures ===
