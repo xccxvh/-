@@ -41,9 +41,7 @@ class BoardController:
         return self.set_pwm_ticks(degrees_to_ticks(deg))
 
     def set_pwm_ticks(self, ticks):
-        if (self.confirmed_ticks is None or type(ticks) is not int or
-                not 400 <= ticks <= 2000 or
-                not self.confirmed_ticks[0] <= ticks <= self.confirmed_ticks[1]):
+        if self.confirmed_ticks is None or type(ticks) is not int:
             raise ValueError('pulse outside confirmed tick range')
         seq = self.seq
         self.send_packet(command_packet(seq, ticks, self.confirmed_ticks))

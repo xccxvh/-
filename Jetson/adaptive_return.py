@@ -5,14 +5,30 @@ import math
 import queue
 import time
 
-from velocity_return import AlphaBeta, VelocityPlan
+from velocity_return import AlphaBeta, VelocityPlan, FRESH_S, LOST_S
 
 PERIOD = .020
-LOSS = .220
+
+
+def target_echo_known(sent, ack, applied_target):
+    # Firmware a2edda1 reports the last received sequence and the target applied
+    # on its 10 ms tick. At a 50 Hz host update either adjacent target can appear.
+    return ack in sent and applied_target in (sent[ack], sent.get((ack - 1) & 65535))
+
+
+def exposure_output(echoes, changes, stamp):
+    """Last confirmed settled output, provided no newer target preceded the exposure."""
+    last_change = next(((t, pwm) for t, pwm in reversed(changes) if t <= stamp), None)
+    for received, target, output in reversed(echoes):
+        if received <= stamp:
+            if last_change and last_change[0] <= received and last_change[1] == target == output:
+                return output
+            break
+    return None
 
 
 def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-1,
-        offset=None, model=None, platforms=None, brake_ticks=None):
+        offset=None, model=None, platforms=None, brake_ticks=None, experience_path=None):
     now = time.monotonic
     neutral = profile['neutral_ticks']
     lo, hi = board.confirmed_ticks
@@ -30,31 +46,40 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
     if offset is not None and (offset == 0 or not lo <= neutral+offset <= hi):
         raise ValueError('identification pulse outside confirmed stroke')
     state = AlphaBeta()
-    law = VelocityPlan((lo, hi), neutral, polarity, model) if offset is None else None
+    direct = legacy = None
+    if offset is None:
+        if model is None:
+            from direct_return import DirectReturn
+            direct = DirectReturn((lo, hi), neutral, polarity, experience_path)
+        else:
+            legacy = VelocityPlan((lo, hi), neutral, polarity, model)
+
     fields = ('event','nano_s','frame','capture_s','received_s','last_capture_s',
               'last_received_s','x_cm','valid','estimate_cm','predicted_cm','velocity_cm_s',
               'target_cm','error_cm','v_ref','a_cmd','start_bias','balance_ticks','phase',
-              'target_ticks','output_ticks','seq','board_ms','reason','breakaway_pos_ticks','breakaway_neg_ticks')
+              'target_ticks','output_ticks','seq','board_ms','reason','breakaway_pos_ticks','breakaway_neg_ticks','exposure_age_ms','output_at_exposure','hold_s')
     writer = csv.DictWriter(stream, fields)
     writer.writeheader()
-    last_received = frame = None
+    last_received = frame = measured_x = None
 
     def record(event, **row):
         row.update(event=event, nano_s=now(), last_capture_s=state.stamp, last_received_s=last_received)
         writer.writerow(row)
 
     def observe():
-        nonlocal frame, last_received
+        nonlocal frame, last_received, measured_x
         m = getattr(port, 'measurement', None)
         if not m or m[0] == frame:
             return None
         frame, stamp, x, reason, received = m
         decision = now()
-        # 每个帧号仅接纳一次；即使排队延迟，摄像头 SOE 到使用时仍须在 100 ms 内。
+        # Only the control loop admits a REMOTE measurement, on the SOE clock.
         accepted = False
-        if x is not None and 0 <= decision-stamp <= .1:
+        if x is not None and 0 <= decision-stamp <= FRESH_S:
             if abs(x) >= 5.7:
                 raise ValueError('measured rail end')
+            if direct and state.stamp is not None and stamp - state.stamp > FRESH_S:
+                direct.reset_observation()
             accepted = state.update(stamp, x)
             if not accepted:
                 reason = 'duplicate or implausible innovation'
@@ -62,6 +87,9 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
             reason = 'aged_before_admission'
         if accepted:
             last_received = received
+            measured_x = x
+        elif direct:
+            direct.interrupt_hold()
         record('vision', frame=frame,capture_s=stamp,received_s=received,
                **dict(x_cm=x,valid=int(accepted),reason=reason,estimate_cm=state.x,
                       velocity_cm_s=state.v,phase='update' if accepted else 'pause'))
@@ -85,8 +113,7 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
         while now() < deadline:
             if cancelled.is_set():
                 raise RuntimeError('vision stopped')
-            if (observe() and state.count >= 3 and abs(state.predict(now())[0]) < 5.5
-                    and (offset is None or abs(state.v)<.35)):
+            if observe() and (offset is None or (state.count >= 3 and abs(state.v) < .35)):
                 break
             time.sleep(.002)
         else:
@@ -110,10 +137,19 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
         output_progress = now()
         last_output = neutral
         output_history = deque(maxlen=24)
-        trusted_output = neutral
-        while now()-start < seconds:
+        target_changes = deque([(start, neutral)], maxlen=24)
+        trusted_output = None
+        holding_confirmed = False
+        while seconds is None or now()-start < seconds:
             if cancelled.is_set():
                 raise RuntimeError('vision stopped')
+            while True:
+                try:
+                    status = port.status.get_nowait()
+                except queue.Empty:
+                    break
+                if status['received'] >= start and (status['board_fault'] or status['board_auto_enabled']):
+                    raise RuntimeError('board fault or internal AUTO active in REMOTE')
             while True:
                 try:
                     row = port.debug.get_nowait()
@@ -126,7 +162,7 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
                 echoed = row['target_pwm_ticks']
                 record('rx', seq=ack, board_ms=row['board_timestamp'], target_ticks=echoed,
                        output_ticks=output,reason='enabled=%d result=%d' % (row['remote_enabled'],row['result']))
-                if not row['remote_enabled'] or row['result'] or not lo <= output <= hi or sent.get(ack) != echoed:
+                if not row['remote_enabled'] or row['result'] or not lo <= output <= hi or not target_echo_known(sent, ack, echoed):
                     raise RuntimeError('unexpected REMOTE state, clamp or PWM echo')
                 if ack != ack_seq:
                     ack_seq,last_ack = ack,row['received']
@@ -134,24 +170,20 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
                     output_progress = row['received']
                 elif row['received']-output_progress > .25 + abs(output-echoed)/slew:
                     raise TimeoutError('PWM output not following commands')
-                output_history.append((row['received'],output))
+                output_history.append((row['received'],echoed,output))
                 last_output = output
                 active = True
+            if now() - state.stamp > LOST_S:
+                raise TimeoutError('no trusted exposure for 300 ms')
             accepted = observe()
             if accepted is not None:
                 blocked = not accepted
                 updated = accepted
                 if accepted:
-                    for stamp, ticks in reversed(output_history):
-                        if stamp <= state.stamp:
-                            trusted_output = ticks
-                            break
+                    trusted_output = exposure_output(output_history, target_changes, state.stamp)
             tick = now()
             if tick-last_ack > .25:
                 raise TimeoutError('no advancing PWM echo')
-            if tick-last_received > LOSS:
-                # 从最后接纳帧交付时计缺测；该帧的曝光年龄已验证不超过 100 ms。
-                raise TimeoutError('no accepted measurement received for 220 ms')
             if tick < due:
                 time.sleep(min(.002,due-tick))
                 continue
@@ -160,11 +192,18 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
                 raise ValueError('predicted rail end')
             requested = command
             phase = 'hold_command'
-            if active and updated and not blocked:
+            if active and updated and not blocked and tick - state.stamp <= FRESH_S:
                 dt = state.stamp-planned_stamp
                 planned_stamp = state.stamp
                 if offset is None:
-                    plan = law.step(x,v,dt,output,observed_x=state.x)
+                    if direct:
+                        plan = direct.step(x, v, state.stamp, measured_x, output, trusted_output)
+                        if plan['hold_complete'] and not holding_confirmed:
+                            record('hold_confirmed', capture_s=state.stamp, x_cm=measured_x,
+                                   target_cm=0., output_ticks=trusted_output, hold_s=plan['hold_s'])
+                        holding_confirmed = plan['hold_complete']
+                    else:
+                        plan = legacy.step(x, v, dt, output, observed_x=state.x)
                     requested = plan['target_ticks']
                     phase = plan['phase']
                 else:
@@ -200,31 +239,21 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
                             record('brake_end',capture_s=state.stamp,estimate_cm=state.x,velocity_cm_s=v,
                                    output_ticks=output,reason='observed sign reversal' if v*offset*polarity<=0 else 'brake deadline')
                             break
-            elif active and not blocked and offset is None and plan and abs(v) > .35:
-                # 纯预测只可降低原驱动；不把预测写入实测列，也不据此增加反向驱动。
-                preview = law.step(x,v,0.,output)
-                delta = preview['a_cmd'] - plan['a_cmd']
-                desired = plan['target_ticks'] + polarity * delta / law.gains[1 if plan['a_cmd'] >= 0 else -1]
-                if (desired-command)*(command-neutral) < 0:
-                    requested = max(neutral,desired) if command > neutral else min(neutral,desired)
-                    phase = 'ease_prediction'
-            if blocked and tick-last_received > .11 and trusted_output != neutral:
-                # 多帧缺测且刚向外加力：退至上一张可信曝光时已经回读的同向输出。
-                # 只撤销未经视觉验证的增量，保留已起作用的偏置；单帧掉帧仍保持。
-                if (trusted_output-neutral)*(command-neutral)>0 and abs(trusted_output-neutral)<abs(command-neutral):
-                    requested, phase = trusted_output, 'last_observed_drive'
-            # 有效观测之间保持已发量；新目标只在有观测时推进。单次写入不超过现场 15°。
-            max_step = min(133,max(1,int(slew*PERIOD)))
-            if offset is None and (requested-neutral)*(command-neutral) >= 0 and abs(requested-neutral)>abs(command-neutral):
-                # 缓升避免阶跃造成纹理突然位移；制动和撤力仍可使用板端全速。
-                max_step = min(max_step, max(1,round((hi-lo)*PERIOD/.7)))
-            command = int(round(max(lo,min(hi,command + max(-max_step,min(max_step,requested-command))))))
+            elif tick - state.stamp > FRESH_S:
+                phase = 'hold_missing'
+            # Only the board slews the actuator. A missed exposure preserves the
+            # most recent command until observation resumes or the SOE timeout.
+            command = int(round(max(lo, min(hi, requested))))
+            if target_changes[-1][1] != command:
+                target_changes.append((now(), command))
             seq = board.set_pwm_ticks(command)
             sent[seq] = command
             record('tx',seq=seq,target_ticks=command,output_ticks=output,predicted_cm=x,
                    velocity_cm_s=v,target_cm=0,error_cm=-x,phase=phase,
-                   breakaway_pos_ticks=law.breakaway_ticks[1] if law else None,
-                   breakaway_neg_ticks=law.breakaway_ticks[-1] if law else None,
+                   exposure_age_ms=(tick-state.stamp)*1000,
+                   output_at_exposure=trusted_output if updated else None,
+                   reason=plan.get('reason') if phase not in ('hold_command','hold_missing') else phase,
+                   hold_s=plan.get('hold_s') if phase == 'hold' else None,
                    **{k:plan[k] for k in ('v_ref','a_cmd','start_bias','balance_ticks') if k in plan})
             updated = False
             # 按绝对期限调度。操作系统延误时跳过已错过周期，避免补发成串旧指令。
@@ -241,4 +270,6 @@ def run(board, port, stream, seconds, cancelled, profile, probe=None, polarity=-
             row = debug_after(start,end)
             if not row['remote_enabled'] and row['output_pwm_ticks'] == neutral:
                 record('stop_confirmed',output_ticks=neutral,board_ms=row['board_timestamp'])
+                if direct:
+                    direct.save()
                 break

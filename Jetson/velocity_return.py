@@ -1,6 +1,9 @@
 """以厘米、秒和 PWM tick 为单位的回零控制。所有默认参数均为工程先验。"""
 import math
 
+FRESH_S = .150
+LOST_S = .300
+
 
 def _clip(value, low, high):
     return min(high, max(low, value))
@@ -17,11 +20,12 @@ class AlphaBeta:
         self.stamp = None
         self.x = self.v = 0.
         self.count = 0
+        self.pending = None
 
     def predict(self, now):
         if not math.isfinite(now):
             raise ValueError('invalid prediction time')
-        dt = 0 if self.stamp is None else _clip(now - self.stamp, 0., .32)
+        dt = 0 if self.stamp is None else _clip(now - self.stamp, 0., LOST_S)
         return self.x + self.v * dt, self.v
 
     def update(self, stamp, x):
@@ -30,17 +34,30 @@ class AlphaBeta:
         dt = 0 if self.stamp is None else stamp - self.stamp
         if self.stamp is not None and dt <= 0:
             return False
-        if self.stamp is None or dt > .32:
+        if self.stamp is None or dt > LOST_S:
             self.x, self.v, self.count = x, 0., 1
         else:
             predicted = self.x + self.v * dt
             residual = x - predicted
-            # 容许定位噪声及初速度误差，拒绝跳点时保留原时间戳。
-            if abs(residual) > .28 + 12. * dt:
-                return False
-            self.x = predicted + .65 * residual
-            self.v = _clip(self.v + .18 * residual / max(dt, .01), -15., 15.)
+            # Confirm an unusual innovation against a second real exposure.
+            if abs(residual) > .28 + abs(self.v) * dt:
+                if self.pending is None:
+                    self.pending = stamp, x
+                    return False
+                t1, x1 = self.pending
+                if stamp <= t1:
+                    return False
+                along = self.x + (x - self.x) * (t1 - self.stamp) / dt
+                if abs(x1 - along) > .28:
+                    self.pending = stamp, x
+                    return False
+                self.v = (x - self.x) / dt
+                self.x = x
+            else:
+                self.x = predicted + .65 * residual
+                self.v += .18 * residual / dt
             self.count += 1
+        self.pending = None
         self.stamp = stamp
         return True
 

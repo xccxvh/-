@@ -128,12 +128,13 @@ class SerialFeedback(object):
 class G3519MonitorEncoder(FeedbackEncoder):
     """按 vision_link.h 编码 0x01；监测坐标可读，但 bit0 永远清零。"""
     control_capable = False
+    remote_pwm = False
 
     def encode(self, out, capture_time, now, pose_ok, enabled=False, source_time_verified=False):
         x = out.get('rail_x_cm')
         calibrated = bool(out.get('calibration_valid'))
         eligible = calibrated and out.get('cm_valid') and out.get('pixel_valid')
-        control = enabled and self.control_capable
+        control = (enabled or self.remote_pwm) and self.control_capable
         reason, stamp, _ = self.assess(out, x if eligible else None, capture_time, now,
                                        pose_ok and out.get('reference_valid'), control, source_time_verified,
                                        position_control=control)
@@ -148,11 +149,15 @@ class G3519MonitorEncoder(FeedbackEncoder):
                 reason = 'position_range'
             elif round(out['confidence'] * 100) < 20:
                 reason = 'low_confidence'
+            elif self.remote_pwm:
+                # Time of exposure travels with this diagnostic position. Only the
+                # Nano PWM loop can admit it; the G3519 AUTO bit stays clear.
+                reason = 'remote_observation'
             elif now > capture_time + self.max_age_ms / 1000.0:
                 # 比较同一时钟上的截止点，恰好 100 ms 仍有效。返回前不分配序号。
                 return None, False, 'stale_only_drop'
         valid = reason == 'ok'
-        present = valid or (not control and reason in ('monitor', 'source_time'))
+        present = valid or reason == 'remote_observation' or (not control and reason in ('monitor', 'source_time'))
         flags = int(valid) | (2 if calibrated else 0)
         payload = struct.pack('<IfBBH', stamp, x if present else 0.,
                               round(out['confidence']*100) if present else 0, flags, 0)

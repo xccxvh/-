@@ -12,10 +12,16 @@ class EstimatorTests(unittest.TestCase):
         est = AlphaBeta()
         self.assertTrue(est.update(0, 1))
         self.assertTrue(est.update(.04, 1.08))
-        state = vars(est).copy()
+        state = (est.x, est.v, est.stamp, est.count)
         for t, x in ((.04, 1), (.03, 0), (.08, 5), (.08, float('nan'))):
             self.assertFalse(est.update(t, x))
-            self.assertEqual(vars(est), state)
+            self.assertEqual((est.x, est.v, est.stamp, est.count), state)
+
+    def test_confirmed_fast_motion_has_no_velocity_clip(self):
+        est = AlphaBeta()
+        for i in range(24):
+            est.update(i * .02, -4.0 + i * .42)
+        self.assertAlmostEqual(est.v, 21., delta=.2)
 
     def test_constant_velocity_and_bounded_prediction(self):
         est = AlphaBeta()
@@ -24,7 +30,7 @@ class EstimatorTests(unittest.TestCase):
         self.assertEqual(est.count, 30)
         self.assertAlmostEqual(est.v, 2, delta=.05)
         self.assertAlmostEqual(est.predict(est.stamp + .05)[0], est.x + .1, delta=.01)
-        self.assertAlmostEqual(est.predict(100)[0] - est.x, .64, delta=.01)
+        self.assertAlmostEqual(est.predict(100)[0] - est.x, .60, delta=.01)
         self.assertTrue(est.update(100, -2))
         self.assertEqual((est.x, est.v, est.count), (-2, 0, 1))
 

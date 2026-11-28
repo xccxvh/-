@@ -24,6 +24,19 @@ GOOD = dict(valid=True, predicted=False, cm_valid=True, pixel_valid=True, refere
 
 
 class StaleDropTests(unittest.TestCase):
+    def test_remote_pwm_uses_local_admission_and_keeps_board_auto_invalid(self):
+        enc = G3519PositionEncoder()
+        enc.remote_pwm = True
+        for stamp, measurement, verified, reason in (
+                (4., GOOD, True, 'remote_observation'),
+                (5., dict(GOOD, predicted=True), True, 'vision'),
+                (6., dict(GOOD, reference_valid=False), True, 'pose'),
+                (7., GOOD, False, 'unverified_capture_time')):
+            packet, valid, why = enc.encode(measurement, stamp, stamp+.125, True, True, verified)
+            _, cm, _, flags, _ = struct.unpack_from('<IfBBH', packet, 7)
+            self.assertEqual((valid, why, flags), (False, reason, 2))
+            self.assertEqual(cm, GOOD['rail_x_cm'] if why == 'remote_observation' else 0.)
+
     def test_age_boundary_and_sequence_wrap(self):
         enc = G3519PositionEncoder()
         enc.seq = 65535

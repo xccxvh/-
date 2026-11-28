@@ -6,6 +6,25 @@ from servo_scan import make_plan
 
 
 class AdaptiveReturnTests(unittest.TestCase):
+    def test_exposure_requires_a_settled_echo_after_last_target_change(self):
+        from adaptive_return import exposure_output
+        changes = [(1., 1324), (1.06, 1314), (1.22, 1324)]
+        echoes = [(1.04,1324,1324), (1.09,1314,1320), (1.14,1314,1314)]
+        self.assertEqual(exposure_output(echoes, changes, 1.05), 1324)
+        self.assertIsNone(exposure_output(echoes, changes, 1.08))
+        self.assertIsNone(exposure_output(echoes, changes, 1.10))
+        self.assertEqual(exposure_output(echoes, changes, 1.21), 1314)
+        self.assertIsNone(exposure_output(echoes, changes, 1.23))
+
+    def test_board_can_report_previous_target_at_10ms_apply_boundary(self):
+        from adaptive_return import target_echo_known
+        sent = {65535: 1324, 0: 1314, 1: 1314}
+        self.assertTrue(target_echo_known(sent, 0, 1324))
+        self.assertTrue(target_echo_known(sent, 1, 1314))
+        self.assertFalse(target_echo_known(sent, 1, 1324))
+        self.assertFalse(target_echo_known(sent, 2, 1314))
+        self.assertFalse(target_echo_known(sent, 0, 1290))
+
     def test_new_firmware_window_propagates_through_encoding(self):
         packets = []
         board = BoardController(None, packets.append, (1250,1450))
@@ -16,7 +35,7 @@ class AdaptiveReturnTests(unittest.TestCase):
             board.set_pwm_ticks(1451)
 
 class VisionGapTests(unittest.TestCase):
-    def trial(self, gap_end):
+    def trial(self, gap_end, age=0.):
         import csv
         import io
         import queue
@@ -32,6 +51,7 @@ class VisionGapTests(unittest.TestCase):
                 self.enabled = False
                 self.confirmed_ticks = (1180,1470)
                 self.debug = queue.Queue()
+                self.status = queue.Queue()
                 self.next_rx = self.t
                 self.ticks = 1320
                 self.stopped = False
@@ -41,7 +61,7 @@ class VisionGapTests(unittest.TestCase):
                 n = int(self.t/.03)
                 t = n*.03
                 invalid = self.enabled and .52 <= self.t-self.start < gap_end
-                return n,t,None if invalid else -2.,'vision' if invalid else 'ok',t
+                return n,t-age,None if invalid else -2.,'vision' if invalid else 'ok',t
 
             def sleep(self, sec):
                 self.t += sec
@@ -101,4 +121,7 @@ class VisionGapTests(unittest.TestCase):
         self.assertIsNone(self.trial(.60))
 
     def test_sustained_dropout_stops(self):
-        self.assertIn('220 ms',self.trial(.90))
+        self.assertIn('300 ms',self.trial(.90))
+
+    def test_125ms_exposures_drive_and_hold_during_a_brief_gap(self):
+        self.assertIsNone(self.trial(.60, age=.125))

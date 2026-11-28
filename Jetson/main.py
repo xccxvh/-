@@ -63,7 +63,7 @@ def _pct(values, q):
     return s[max(0, min(k, len(s) - 1))]
 
 
-def main(argv=None, experiment=None, codec=None):
+def main(argv=None, experiment=None, codec=None, remote_pwm=False):
     ap = argparse.ArgumentParser(description="钢珠识别系统")
     ap.add_argument("--config", default=DEFAULT_CONFIG)
     ap.add_argument("--video", default=None, help="离线视频路径; 不填则用摄像头")
@@ -258,6 +258,8 @@ def main(argv=None, experiment=None, codec=None):
         journal = None
         task = None
         encoder = G3519PositionEncoder() if binary_link else FeedbackEncoder()
+        if remote_pwm:
+            encoder.remote_pwm = True
         try:
             if args.serial:
                 serial = SerialFeedback(args.serial)
@@ -380,9 +382,9 @@ def main(argv=None, experiment=None, codec=None):
                     feedback_valid, feedback_reason = False, 'reference_preview'
                 if rail_coordinates.enabled and not binary_link:
                     feedback_valid, feedback_reason = False, 'rail_measurement_only'
-                if experiment is not None and getattr(serial, 'adaptive', False):
+                if remote_pwm:
                     # Atomic latest sample; expose invalid frames as well as verified SOE measurements.
-                    serial.measurement = (frame_idx, frame_time, x_cm if feedback_valid else None,
+                    serial.measurement = (frame_idx, frame_time, x_cm if feedback_reason == 'remote_observation' else None,
                                           feedback_reason, t_out)
                 if line is None:
                     # 仅 G3519 有效控制模式可能跳过纯超时样本；保留本帧 track 和独立 drop 事件。

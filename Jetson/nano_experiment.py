@@ -30,7 +30,7 @@ def main():
     adaptive = sub.add_parser('adaptive')
     adaptive.add_argument('--min-ticks', type=int, required=True)
     adaptive.add_argument('--max-ticks', type=int, required=True)
-    adaptive.add_argument('--seconds', type=float, default=15.)
+    adaptive.add_argument('--seconds', type=float, help='operator-specified trial duration; otherwise continue holding until STOP')
     for mode in (adaptive, scan):
         mode.add_argument('--board-profile', help='PWM stroke for the flashed G3519 build')
     adaptive.add_argument('--probe-sign', type=int, choices=(-1, 1), help='probe one PWM direction then STOP')
@@ -40,11 +40,16 @@ def main():
     identify.add_argument('--identify-platforms', nargs='+', type=int, help='ordered absolute PWM targets with ball')
     identify.add_argument('--identify-offset', type=int, help='signed PWM offset from live neutral')
     adaptive.add_argument('--brake-ticks', type=int, help='verified opposite-side brake target')
-    adaptive.add_argument('--model', help='directional acceleration gains and braking parameters JSON')
+    adaptive.add_argument('--experience', type=Path, default=Path(__file__).with_name('roll_experience.json'),
+                          help='measured breakaway and braking observations across runs')
+    adaptive.add_argument('--model', help='explicit historical velocity-plan replay/tuning parameters (not the default controller)')
     adaptive.add_argument('--record', action='store_true', help='save timestamped experiment video')
     args = ap.parse_args()
     if args.experiment in ('auto', 'adaptive'):
-        if not math.isfinite(args.seconds) or args.seconds <= 0:
+        if (args.experiment == 'adaptive' and args.seconds is None and
+                (args.identify_offset is not None or args.identify_platforms or args.probe_sign or args.model)):
+            args.seconds = 15.  # historical identification runs
+        if args.seconds is not None and (not math.isfinite(args.seconds) or args.seconds <= 0):
             ap.error('duration must be finite and positive')
         if args.experiment == 'auto' and not all(math.isfinite(v) for v in (args.target_cm, args.kp, args.kd)):
             ap.error('auto needs finite target and gains')
@@ -79,14 +84,13 @@ def main():
                      args.seconds, cancelled=cancelled)
         elif args.experiment == 'adaptive':
             from adaptive_return import run
-            port.adaptive = True
             board = BoardController(port.execute, port.send, (args.min_ticks,args.max_ticks))
             model = None
             if args.model:
                 with open(args.model) as stream:
                     model = json.load(stream)
             run(board, port, log, args.seconds, cancelled, profile, args.probe_sign, args.polarity,
-                args.identify_offset, model, args.identify_platforms, args.brake_ticks)
+                args.identify_offset, model, args.identify_platforms, args.brake_ticks, args.experience)
         else:
             board = BoardController(port.execute, port.send, (args.min_ticks,args.max_ticks))
             if args.neutral not in (None, neutral):
@@ -111,7 +115,7 @@ def main():
         vision_args.append('--ruler-samples')
     if args.experiment in ('adaptive', 'scan') and args.record:
         vision_args.extend(['--record', '--record-fps', '8', '--record-scale', '.5'])
-    vision(argv=vision_args, experiment=experiment, codec=codec)
+    vision(argv=vision_args, experiment=experiment, codec=codec, remote_pwm=args.experiment == 'adaptive')
 
 
 if __name__ == '__main__':
