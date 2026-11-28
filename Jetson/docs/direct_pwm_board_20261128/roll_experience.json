@@ -1,0 +1,38 @@
+{
+  "schema": "direct-pwm-v1",
+  "profile": {
+    "limits": [
+      1236,
+      1413
+    ],
+    "neutral": 1324,
+    "polarity": -1
+  },
+  "regions": {
+    "13-15": [
+      {
+        "kind": "start",
+        "direction": -1,
+        "start_x_cm": 1.5830921973336958,
+        "end_x_cm": 1.4612559390913447,
+        "output_ticks": 1413,
+        "elapsed_s": 0.1359589999999571,
+        "displacement_cm": -0.12183625824235111
+      }
+    ],
+    "11-13": [
+      {
+        "kind": "brake",
+        "direction": -1,
+        "start_x_cm": 0.8613482611533158,
+        "end_x_cm": -3.5109113138177857,
+        "output_ticks": 1310,
+        "elapsed_s": 1.208075000000008,
+        "entry_speed_cm_s": 1.9765069897073382,
+        "stop_distance_cm": 4.3722595749711015,
+        "applied_stop_distance_cm": 3.4379514456117555,
+        "applied_entry_speed_cm_s": 3.7044267479570623
+      }
+    ]
+  }
+}

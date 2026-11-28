@@ -1,0 +1,35 @@
+source: /dev/video0  1280x720  fps=30.0
+calibration: rail model: validated
+G3519 UART control /home/jetson/direct_b25d30e_Sxm7IF/logs/link_host_adaptive_20260324_152158.csv
+G3519 ACK seq=8980 GET_PARAMS OK mode=5 state=0
+Actuator parameters: {'firmware': 'G3519:0x84', 'neutral_ticks': 1324, 'min_ticks': 1236, 'max_ticks': 1413, 'slew_ticks_per_s': 1600.0}
+G3519 ACK seq=8981 SET_MODE OK mode=5 state=0
+G3519 ACK seq=8982 START_REMOTE OK mode=5 state=0
+frame=30 fps=21.8 x=501.0 state=DETECTED conf=0.93 algo=37.2ms
+frame=60 fps=19.7 x=494.1 state=DETECTED conf=0.92 algo=43.8ms
+G3519 ACK seq=8983 STOP OK mode=5 state=0
+G3519 TX=75 RX_bytes=2561 telemetry=40 CRC_errors=0
+Traceback (most recent call last):
+  File "nano_experiment.py", line 122, in <module>
+    main()
+  File "nano_experiment.py", line 118, in main
+    vision(argv=vision_args, experiment=experiment, codec=codec, remote_pwm=args.experiment == 'adaptive')
+  File "/home/jetson/direct_b25d30e_Sxm7IF/main.py", line 497, in main
+    task.result()
+  File "/usr/lib/python3.6/concurrent/futures/_base.py", line 425, in result
+    return self.__get_result()
+  File "/usr/lib/python3.6/concurrent/futures/_base.py", line 384, in __get_result
+    raise self._exception
+  File "/home/jetson/direct_b25d30e_Sxm7IF/main.py", line 289, in main
+    task.result()
+  File "/usr/lib/python3.6/concurrent/futures/_base.py", line 425, in result
+    return self.__get_result()
+  File "/usr/lib/python3.6/concurrent/futures/_base.py", line 384, in __get_result
+    raise self._exception
+  File "/usr/lib/python3.6/concurrent/futures/thread.py", line 56, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "nano_experiment.py", line 93, in experiment
+    args.identify_offset, model, args.identify_platforms, args.brake_ticks, args.experience)
+  File "/home/jetson/direct_b25d30e_Sxm7IF/adaptive_return.py", line 177, in run
+    raise TimeoutError('no trusted exposure for 300 ms')
+TimeoutError: no trusted exposure for 300 ms
