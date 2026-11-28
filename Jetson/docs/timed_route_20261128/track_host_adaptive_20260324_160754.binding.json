@@ -1,0 +1,46 @@
+{
+  "binding": {
+    "schema": "rail-binding-v1",
+    "measurement_version": "topview-circle-v1",
+    "rail_coordinate_version": "rail-reference-v1",
+    "geometry": {
+      "mode": "points",
+      "resolution": [
+        1280,
+        720
+      ],
+      "camera_id": "icspring-usb-camera",
+      "focus_id": "topview-focused-20261120",
+      "intrinsics_sha256": "89245c1b97980d92d0b940ad38ae20371196cf21f0fb6232479cd19ed7cb081b",
+      "correction_model": "opencv-pinhole-brown5-v1",
+      "projection": "P=K"
+    },
+    "reference_image_sha256": "faccdfe4107f43702d1e204e2142167847b8647d805d6aa857a17704678faa9e",
+    "reference_config_sha256": "bd3d126ce43ebd8f361bb179b21a692f0763cf20085bb2198dd98a0d8c8dbae0",
+    "algorithm_sha256": "c84822f8125afbaed149a171d95b896e8319072817063e5bd07ca551484a573c",
+    "static_control": {
+      "base_binding_id": "6a91f08000c6a26a230c57dd9383c90f94cdc421d6fb0ff64dc7fbebd6b19e3b",
+      "static_control_motion": true,
+      "sources": {
+        "fusion_motion.py": "25fd3748ae9abe236f1f875f9245b13631a9e99ff7b374c5240fbf7bee1dc55a",
+        "static_control_detection.py": "730919649e9c29a4b559ee6cfda468d0688c091afb8036303fccae37ac858b11",
+        "static_control_geometry.py": "d1babee12862765231f7d346107eb2ef5fdfb68a8e9c3c673967d87cbed4b6d6"
+      }
+    },
+    "static_reference": {
+      "base_binding_id": "28d825919c2e49f295136a879e434e26988f822fa9224719aca64f49b5565307",
+      "sources": {
+        "static_control_reference.py": "219e271d214054f1a06a60866bacdaebe29aebddb48e471817414ba4b8f27d74",
+        "static_reference_geometry.py": "50202c0b9cc4c68df95e0d4d9e3564aeb2eaa8a3fdfd8bb7b4b5078d4b511e7b"
+      }
+    },
+    "static_fast_reference": {
+      "base_binding_id": "9cadd5ee32cda84d69b10a03d032066c9fcb0b64a5ec0993fb32cd1e59c67961",
+      "sources": {
+        "static_fast_reference.py": "731e2509788a6f3439a719197c26c1efd53c91db22b9394a8efa6f3b5811387f",
+        "static_fast_geometry.py": "d7e5c96fe3050fb1ce88f2ecdf266711ca8b84bc62473d224ddee200bc417e7c"
+      }
+    }
+  },
+  "rail_binding_id": "807c8ba95a12d5768429ca0c28fa6ed5682de694e2749e4054a3ea3d5ec6eb95"
+}
